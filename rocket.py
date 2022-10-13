@@ -3,7 +3,7 @@ CALL = 1
 READ = 2
 EXEC = 3
 
-def recieveRF(signal): #Lists out the signals and its components to it (called execute)
+def recieveRF(signal): #Lists out the signals and its components to it (called executive)
 	if(signal == "XD71"):
 		executive = ["A1", "G7", "B2"]
 
@@ -25,11 +25,11 @@ def main():
 	while True:
 		call = "XD71" #Brief outline of the call that we will recieve from our call variable
 		data = recieveRF(call) #Put in that call into this function
-		currentState = CALL #Changes currentStte when call recieved
+		currentState = CALL #Changes currentState when call recieved
 
 		if(data == teamRF(call)): #Checks to see if the call is ours
 			currentState = EXEC 
-			FSM(currentState) #Will make currentState to execute condition, follows FSM function (see line 15)
+			FSM(currentState) #Will make currentState to execute condition, follows FSM function (see lines 15-20)
 			currentState = WAIT #Back to wait condition once it's done, restarting the cycle
 
 		else:
