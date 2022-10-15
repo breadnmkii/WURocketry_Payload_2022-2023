@@ -48,7 +48,10 @@ def FSM(state):
 			nextState = State.WAIT
 
 	elif state == State.CALL:
-		nextState = State.READ
+		if ( ''' TODO: what should this condition be? '''):
+			nextState = State.READ
+		else:
+			nextState = State.WAIT
 
 	elif state == State.READ:
 		if ( ''' TODO: what should this condition be? ''' ):
