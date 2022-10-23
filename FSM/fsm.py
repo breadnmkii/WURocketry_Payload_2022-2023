@@ -29,6 +29,20 @@ def receiveRF():
 					callsign) 
 		'''
 	]
+	
+	#run rtl_recieve.sh first
+
+	#open text file in read mode
+	text_file = open("transmission.txt", "r")
+
+	#read whole file to a string
+	transmission = text_file.read().split()
+	
+	#close file
+	text_file.close()
+
+	# return transmission
+
 	return randomInputs[random.randint(0, len(randomInputs))]
 
 
