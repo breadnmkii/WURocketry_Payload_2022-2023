@@ -33,17 +33,14 @@ def receiveRF():
 	#run rtl_recieve.sh first
 
 	#open text file in read mode
-	text_file = open("data.txt", "r")
+	text_file = open("transmission.txt", "r")
 
 	#read whole file to a string
-	data = text_file.read()
+	transmission = text_file.read().split()
 	
 	#close file
 	text_file.close()
 
-	#make string into a list
-	transmission = data.split()
-	
 	# return transmission
 
 	return randomInputs[random.randint(0, len(randomInputs))]
