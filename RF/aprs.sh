@@ -1,9 +1,9 @@
 # RF Module APRS CLI
 # Options (TODO: fill these out):
-#   -f
-#   -s
-#   -t
-#   -a
-#   -f
+#   -f (frequency, given by nasa or universal APRS standard)
+#   -s (sample rate, universal APRS standard)
+#   -t (input type, in this case raw from transmission)
+#   -a (specify demodulator, APRS standard AFSK1200)
+#   -f (force data to be deocded using alpha mode)
 
 rtl_fm -f 144.390M -s 22050 | multimon-ng -t raw -a AFSK1200 -f alpha /dev/stdin
