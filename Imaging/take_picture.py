@@ -2,6 +2,11 @@
 	capture images on Raspberry Pi using Pi Camera
 	http://www.electronicwings.com
 '''
+
+# usr/lib/python3/dist-packages
+# above: file path
+import sys
+sys.path.append('paste the copied path here')
 import picamera
 from time import sleep
 
