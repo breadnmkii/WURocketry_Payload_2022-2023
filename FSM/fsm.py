@@ -29,7 +29,7 @@ def receiveRF():
 		["NASA22", "A1", "G7", "D4", "F6"],
 		["TRASH", "NASA22", "A1", "F6", "D4"]
 	]
-	return randomInputs[random.randint(0, len(randomInputs))]
+	return randomInputs[random.randint(0,2)]
 
 
 ## THIS IS THE MAIN FSM PROGRAM
@@ -56,46 +56,51 @@ def FSM(state):
 		nextState = State.WAIT
 
 	elif state == State.EXEC:
-		for RAFCO in signalBuffer[0]:
+		for RAFCO in signalBuffer:
 			if (RAFCO == "A1"):
-				print("exec1")
+				print("60 degrees right")
 				#execA1()
 			elif (RAFCO == "B2"):
-				print("exec2")
+				print("60 degrees left")
 				#execB2()
 			elif (RAFCO == "C3"):
-				print("exec3")
+				print("take pic")
 				#execC3()
 			elif (RAFCO == "D4"):
-				print("exec4")
+				print("color to grayscale")
 				#execD4()
 			elif (RAFCO == "E5"):
-				print("exec5")
+				print("grayscale to color")
 				#execE5()
 			elif (RAFCO == "F6"):
-				print("exec6")
+				print("rotate 180 degrees")
 				#execF6()
 			elif (RAFCO == "G7"):
-				print("exec7")
+				print("special effects filter")
 				#execG7()
 			elif (RAFCO == "H8"):
-				print("exec8")
+				print("remove all filters")
 				#execH8()
 		
-		signalBuffer.remove(0)
 		nextState = State.WAIT
 
 	else:
 		# default cause to wait
 		nextState = State.WAIT
 
+	return nextState
+
 
 def main():
 	currentState = State.WAIT	#Initial waiting condition
-
+	if receiveRF() == "NASA2022":
+		print("yes")
+	else:
+		print("no")
 	# Main loop that continuously runs FSM
 	while True:
 		currentState = FSM(currentState)
+		print(currentState)
 		
 if __name__ == '__main__':
         main()
