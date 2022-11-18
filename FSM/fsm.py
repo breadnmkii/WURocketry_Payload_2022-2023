@@ -36,7 +36,7 @@ def receiveRF():
 # A function that changes state depending on only state (Moore machine)
 # Reads each of the signal's components for that given signal and executes it
 def FSM(state): 
-	nextState	# the next state to be transitioned to
+	nextState = 0	# the next state to be transitioned to
 	# This is essentially a switch statement, but not available < Python 3.10
 	if state == State.WAIT:
 		input = receiveRF()
@@ -97,6 +97,8 @@ def main():
 	while True:
 		currentState = FSM(currentState)
 		
+if __name__ == '__main__':
+        main()
 
 '''
 WAIT = 0
