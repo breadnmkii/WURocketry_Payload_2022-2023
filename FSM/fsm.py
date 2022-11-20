@@ -27,9 +27,12 @@ def receiveRF():
 	randomInputs = [
 		[],	# empty input
 		["NASA22", "A1", "G7", "D4", "F6"],
-		["TRASH", "NASA22", "A1", "F6", "D4"]
+		["TRASH", "NASA22", "A1", "F6", "D4"],
+		["GO", "TO", "NASA22", "B2"],
+		["STEP","PUSH","NASA22","F6", "G7"]
+
 	]
-	return randomInputs[random.randint(0,2)]
+	return randomInputs[random.randint(0,4)]
 
 
 ## THIS IS THE MAIN FSM PROGRAM
@@ -84,7 +87,7 @@ def FSM(state):
 				elif (RAFCO == "H8"):
 					print("remove all filters")
 					#execH8()
-		
+			signalBuffer.remove(element)
 		state = State.WAIT
 
 	else:
