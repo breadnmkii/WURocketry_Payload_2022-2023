@@ -43,64 +43,71 @@ def FSM(state):
 		if (input):
 			# if signal received (i.e. not empty list)
 			signalBuffer.append(input)
-			nextState = State.CALL
+			state = State.CALL
 		else:
 			# else, keep on waiting
-			nextState = State.WAIT
+			state = State.WAIT
 
 	elif state == State.CALL:
 		for pkt in signalBuffer[0]:
 			if (pkt == callsign):
-				nextState = State.EXEC
-
-		nextState = State.WAIT
+				#print("EXEC")
+				state = State.EXEC
+				break
+		if(state != State.EXEC):
+			state = State.WAIT
 
 	elif state == State.EXEC:
-		for RAFCO in signalBuffer:
-			if (RAFCO == "A1"):
-				print("60 degrees right")
-				#execA1()
-			elif (RAFCO == "B2"):
-				print("60 degrees left")
-				#execB2()
-			elif (RAFCO == "C3"):
-				print("take pic")
-				#execC3()
-			elif (RAFCO == "D4"):
-				print("color to grayscale")
-				#execD4()
-			elif (RAFCO == "E5"):
-				print("grayscale to color")
-				#execE5()
-			elif (RAFCO == "F6"):
-				print("rotate 180 degrees")
-				#execF6()
-			elif (RAFCO == "G7"):
-				print("special effects filter")
-				#execG7()
-			elif (RAFCO == "H8"):
-				print("remove all filters")
-				#execH8()
+		for element in signalBuffer:
+			for RAFCO in element:
+				if (RAFCO == "A1"):
+					print("60 degrees right")
+					#execA1()
+				elif (RAFCO == "B2"):
+					print("60 degrees left")
+					#execB2()
+				elif (RAFCO == "C3"):
+					print("take pic")
+					#execC3()
+				elif (RAFCO == "D4"):
+					print("color to grayscale")
+					#execD4()
+				elif (RAFCO == "E5"):
+					print("grayscale to color")
+					#execE5()
+				elif (RAFCO == "F6"):
+					print("rotate 180 degrees")
+					#execF6()
+				elif (RAFCO == "G7"):
+					print("special effects filter")
+					#execG7()
+				elif (RAFCO == "H8"):
+					print("remove all filters")
+					#execH8()
 		
-		nextState = State.WAIT
+		state = State.WAIT
 
 	else:
 		# default cause to wait
-		nextState = State.WAIT
+		state = State.WAIT
 
-	return nextState
+	return state
 
 
 def main():
+	i = 1
 	currentState = State.WAIT	#Initial waiting condition
-	if receiveRF() == "NASA2022":
+	'''
+	if receiveRF() == "NASA22":
 		print("yes")
 	else:
 		print("no")
+	'''
 	# Main loop that continuously runs FSM
-	while True:
+	while i <= 20:
 		currentState = FSM(currentState)
 		print(currentState)
+		i += 1
 		
 if __name__ == '__main__':
         main()
