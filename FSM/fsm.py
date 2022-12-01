@@ -10,6 +10,7 @@
 
 import random
 from enum import Enum
+import time
 
 signalBuffer = [] #Queue to hold all other signals
 callsign = "NASA22"
@@ -27,9 +28,12 @@ def receiveRF():
 	randomInputs = [
 		[],	# empty input
 		["NASA22", "A1", "G7", "D4", "F6"],
-		["TRASH", "NASA22", "A1", "F6", "D4"]
+		["TRASH", "NASA22", "A1", "F6", "D4"],
+		["GO", "TO", "NASA22", "B2"],
+		["STEP","PUSH","NASA22","F6", "G7"]
+
 	]
-	return randomInputs[random.randint(0,2)]
+	return randomInputs[random.randint(0,4)]
 
 
 ## THIS IS THE MAIN FSM PROGRAM
@@ -60,6 +64,7 @@ def FSM(state):
 	elif state == State.EXEC:
 		for element in signalBuffer:
 			for RAFCO in element:
+				st = time.time()
 				if (RAFCO == "A1"):
 					print("60 degrees right")
 					#execA1()
@@ -84,7 +89,12 @@ def FSM(state):
 				elif (RAFCO == "H8"):
 					print("remove all filters")
 					#execH8()
-		
+			signalBuffer.remove(element)
+			et = time.time_ns()
+			elasped = time.time() - st #Prints the time between th
+			print(f'Elapsed time (RAFCO): {elasped}')
+			print(f'Start time (RAFCO): {st}')
+			print(f'End time (RAFCO): {et}')
 		state = State.WAIT
 
 	else:
