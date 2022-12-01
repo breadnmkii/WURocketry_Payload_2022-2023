@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 
 # the current way of inputing image will be replaced by input from Raspberry Pi camera module
-img = cv2.imread("./first_image.jpg")
+img = cv2.imread("./first.jpg")
 cv2.imshow('Original', img)
 
 cv2.waitKey(0) 
