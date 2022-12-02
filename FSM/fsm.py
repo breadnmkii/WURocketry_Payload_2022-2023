@@ -10,6 +10,7 @@
 
 import random
 from enum import Enum
+import time
 
 signalBuffer = [] #Queue to hold all other signals
 callsign = "NASA22"
@@ -27,78 +28,99 @@ def receiveRF():
 	randomInputs = [
 		[],	# empty input
 		["NASA22", "A1", "G7", "D4", "F6"],
-		["TRASH", "NASA22", "A1", "F6", "D4"]
+		["TRASH", "NASA22", "A1", "F6", "D4"],
+		["GO", "TO", "NASA22", "B2"],
+		["STEP","PUSH","NASA22","F6", "G7"]
+
 	]
-	return randomInputs[random.randint(0, len(randomInputs))]
+	return randomInputs[random.randint(0,4)]
 
 
 ## THIS IS THE MAIN FSM PROGRAM
 # A function that changes state depending on only state (Moore machine)
 # Reads each of the signal's components for that given signal and executes it
 def FSM(state): 
-	nextState	# the next state to be transitioned to
+	nextState = 0	# the next state to be transitioned to
 	# This is essentially a switch statement, but not available < Python 3.10
 	if state == State.WAIT:
 		input = receiveRF()
 		if (input):
 			# if signal received (i.e. not empty list)
 			signalBuffer.append(input)
-			nextState = State.CALL
+			state = State.CALL
 		else:
 			# else, keep on waiting
-			nextState = State.WAIT
+			state = State.WAIT
 
 	elif state == State.CALL:
 		for pkt in signalBuffer[0]:
 			if (pkt == callsign):
-				nextState = State.EXEC
-
-		nextState = State.WAIT
+				#print("EXEC")
+				state = State.EXEC
+				break
+		if(state != State.EXEC):
+			state = State.WAIT
 
 	elif state == State.EXEC:
-		for RAFCO in signalBuffer[0]:
-			if (RAFCO == "A1"):
-				print("exec1")
-				#execA1()
-			elif (RAFCO == "B2"):
-				print("exec2")
-				#execB2()
-			elif (RAFCO == "C3"):
-				print("exec3")
-				#execC3()
-			elif (RAFCO == "D4"):
-				print("exec4")
-				#execD4()
-			elif (RAFCO == "E5"):
-				print("exec5")
-				#execE5()
-			elif (RAFCO == "F6"):
-				print("exec6")
-				#execF6()
-			elif (RAFCO == "G7"):
-				print("exec7")
-				#execG7()
-			elif (RAFCO == "H8"):
-				print("exec8")
-				#execH8()
-		
-		signalBuffer.remove(0)
-		nextState = State.WAIT
+		for element in signalBuffer:
+			for RAFCO in element:
+				st = time.time()
+				if (RAFCO == "A1"):
+					print("60 degrees right")
+					#execA1()
+				elif (RAFCO == "B2"):
+					print("60 degrees left")
+					#execB2()
+				elif (RAFCO == "C3"):
+					print("take pic")
+					#execC3()
+				elif (RAFCO == "D4"):
+					print("color to grayscale")
+					#execD4()
+				elif (RAFCO == "E5"):
+					print("grayscale to color")
+					#execE5()
+				elif (RAFCO == "F6"):
+					print("rotate 180 degrees")
+					#execF6()
+				elif (RAFCO == "G7"):
+					print("special effects filter")
+					#execG7()
+				elif (RAFCO == "H8"):
+					print("remove all filters")
+					#execH8()
+			signalBuffer.remove(element)
+			et = time.time_ns()
+			elasped = time.time() - st #Prints the time between th
+			print(f'Elapsed time (RAFCO): {elasped}')
+			print(f'Start time (RAFCO): {st}')
+			print(f'End time (RAFCO): {et}')
+		state = State.WAIT
 
 	else:
 		# default cause to wait
-		nextState = State.WAIT
+		state = State.WAIT
+
+	return state
 
 
 def main():
+	i = 1
 	currentState = State.WAIT	#Initial waiting condition
-
+	'''
+	if receiveRF() == "NASA22":
+		print("yes")
+	else:
+		print("no")
+	'''
 	# Main loop that continuously runs FSM
-	while True:
+	while i <= 20:
 		currentState = FSM(currentState)
+		print(currentState)
+		i += 1
 
 if __name__ == '__main__':
-	main()
+        main()
 
 '''
 WAIT = 0
