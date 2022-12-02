@@ -96,7 +96,9 @@ def main():
 	# Main loop that continuously runs FSM
 	while True:
 		currentState = FSM(currentState)
-		
+
+if __name__ == '__main__':
+	main()
 
 '''
 WAIT = 0
