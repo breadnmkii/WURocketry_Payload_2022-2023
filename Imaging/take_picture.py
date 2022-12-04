@@ -10,6 +10,7 @@ sys.path.append('paste the copied path here')
 import picamera
 from time import sleep
 
+
 #create object for PiCamera class
 camera = picamera.PiCamera()
 #set resolution
@@ -22,3 +23,15 @@ sleep(5)
 #store image
 camera.capture('image1.jpeg')
 camera.stop_preview()
+
+def camera_time():
+	#create object for PiCamera class
+	camera = picamera.PiCamera()
+	#set resolution
+	camera.resolution = (1024, 768)
+	camera.brightness = 60
+	#add text on image
+	camera.annotate_text = 'Hi Pi User'
+	sleep(5)
+	#store image
+	camera.capture('image1.jpeg')

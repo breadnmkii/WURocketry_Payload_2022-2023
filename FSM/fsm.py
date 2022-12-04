@@ -11,6 +11,8 @@
 import random
 from enum import Enum
 import time
+from Imaging import filter_image
+from Imaging import take_picture
 
 signalBuffer = [] #Queue to hold all other signals
 callsign = "NASA22"
@@ -72,21 +74,27 @@ def FSM(state):
 					print("60 degrees left")
 					#execB2()
 				elif (RAFCO == "C3"):
+					take_picture.picture_time()
 					print("take pic")
 					#execC3()
 				elif (RAFCO == "D4"):
+					filter_image.rgb2bgr()
 					print("color to grayscale")
 					#execD4()
 				elif (RAFCO == "E5"):
+					filter_image.greyscale2rgb()
 					print("grayscale to color")
 					#execE5()
 				elif (RAFCO == "F6"):
+					filter_image.rotate()
 					print("rotate 180 degrees")
 					#execF6()
 				elif (RAFCO == "G7"):
+					filter_image.projective_transform()
 					print("special effects filter")
 					#execG7()
 				elif (RAFCO == "H8"):
+					filter_image.get_original()
 					print("remove all filters")
 					#execH8()
 			signalBuffer.remove(element)
