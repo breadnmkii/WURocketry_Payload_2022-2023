@@ -11,10 +11,10 @@
 import random
 from enum import Enum
 import time
-import sys
-sys.path.append('../')
-from Imaging import filter_image
-from Imaging import take_picture
+#import sys
+#sys.path.append('../')
+from ..Imaging import filter_image
+from ..Imaging import take_picture
 
 signalBuffer = [] #Queue to hold all other signals
 callsign = "NASA22"
@@ -76,7 +76,7 @@ def FSM(state):
 					print("60 degrees left")
 					#execB2()
 				elif (RAFCO == "C3"):
-					take_picture.picture_time()
+					take_picture.camera_time()
 					print("take pic")
 					#execC3()
 				elif (RAFCO == "D4"):
