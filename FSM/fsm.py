@@ -7,7 +7,7 @@
 # 			2-char RAFCO character data. (made possible by Logan's Py wrapper)
 
 # DEBUG NOTE: assume team callsign is WU22RC
-
+ # comment
 import random
 from enum import Enum
 import time
