@@ -11,10 +11,10 @@
 import random
 from enum import Enum
 import time
-#import sys
-#sys.path.append('../')
-from ..Imaging import filter_image
-from ..Imaging import take_picture
+import sys
+sys.path.append('../')
+from Imaging import filter_image
+from Imaging import take_picture
 
 signalBuffer = [] #Queue to hold all other signals
 callsign = "NASA22"
