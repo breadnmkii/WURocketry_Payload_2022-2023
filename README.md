@@ -36,6 +36,8 @@ Enables processing of RAFCO via a finite state machine for execution of Payload 
 
 ## Avionics
 - mathlib
+- adafruit-circuitpython-bno055
+- adafruit-circuitpython-bmp3xx
 
 ## Imaging
 - picamera
