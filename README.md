@@ -26,3 +26,22 @@ Provides functionality for running RTL-SDR based APRS reception of RF data
 
 # Software-Control
 Enables processing of RAFCO via a finite state machine for execution of Payload mission
+
+## Dependencies
+# System
+- APRS Direwolf OS
+- CircuitPython configuration: https://learn.adafruit.com/circuitpython-on-raspberrypi-linux/installing-circuitpython-on-raspberry-pi
+
+# Avionics
+- mathlib
+
+# Imaging
+- picamera
+- cv2
+- numpy
+
+# Motive
+
+# Radio
+
+# Software-Control
