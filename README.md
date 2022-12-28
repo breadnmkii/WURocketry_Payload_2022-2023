@@ -31,6 +31,7 @@ Enables processing of RAFCO via a finite state machine for execution of Payload 
 ## System
 - APRS Direwolf OS
 - CircuitPython configuration: https://learn.adafruit.com/circuitpython-on-raspberrypi-linux/installing-circuitpython-on-raspberry-pi
+- I2C Clock Stretching: https://learn.adafruit.com/circuitpython-on-raspberrypi-linux/i2c-clock-stretching
 
 ## Avionics
 - mathlib
