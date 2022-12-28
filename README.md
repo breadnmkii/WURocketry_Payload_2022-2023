@@ -1,47 +1,47 @@
-## WURocketry_Payload_2022-2023
+# WURocketry_Payload_2022-2023
 Electrical Team:
 * Autumn
 * Logan
 * John
 
-## Directories
-# main
+# Directories
+## main
 Directory for mission Payload code, no code tests in here!
 
-# dev
+## dev
 Directory for all code tests of components, development, etc.
 
-## SubDirectories
-# Avionics
+# SubDirectories
+## Avionics
 Software related to on-board avionics sensor collection components
 
-# Imaging
+## Imaging
 Contains software related to configuring RPI camera and image filters
 
-# Motive
+## Motive
 Functionality for motor/servo and general electromotive tests
 
-# Radio
+## Radio
 Provides functionality for running RTL-SDR based APRS reception of RF data
 
-# Software-Control
+## Software-Control
 Enables processing of RAFCO via a finite state machine for execution of Payload mission
 
-## Dependencies
-# System
+# Dependencies
+## System
 - APRS Direwolf OS
 - CircuitPython configuration: https://learn.adafruit.com/circuitpython-on-raspberrypi-linux/installing-circuitpython-on-raspberry-pi
 
-# Avionics
+## Avionics
 - mathlib
 
-# Imaging
+## Imaging
 - picamera
 - cv2
 - numpy
 
-# Motive
+## Motive
 
-# Radio
+## Radio
 
-# Software-Control
+## Software-Control
