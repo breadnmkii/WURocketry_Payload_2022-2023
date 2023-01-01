@@ -41,7 +41,7 @@ Enables processing of RAFCO via a finite state machine for execution of Payload 
 
 ## Imaging
 - picamera
-- cv2
+- opencv-python
 - numpy
 
 ## Motive
