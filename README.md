@@ -35,14 +35,14 @@ Enables processing of RAFCO via a finite state machine for execution of Payload 
 - I2C Clock Stretching: https://learn.adafruit.com/circuitpython-on-raspberrypi-linux/i2c-clock-stretching
 
 ## Avionics
-- mathlib
-- adafruit-circuitpython-bno055
-- adafruit-circuitpython-bmp3xx
+- mathlib			(pip)
+- adafruit-circuitpython-bno055	(pip)
+- adafruit-circuitpython-bmp3xx	(pip)
 
 ## Imaging
-- picamera
-- opencv-python
-- numpy
+- picamera			(pip)
+- nstall python3-opencv 	(apt)
+- numpy				(pip)
 
 ## Motive
 
