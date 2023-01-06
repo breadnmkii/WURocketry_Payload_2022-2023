@@ -28,35 +28,35 @@ Functionality for motor/servo and general electromotive tests
 
 
 TODOS:
-	1. verify that the angular position is actually accurate with how much the servo has moved.
-	2. set the pigpio daemon to start on startup of rasberry pi 
-	3. further discuss benefits of using 6V with a regulator for servo power to make sure it does not stall
-	
+* verify that the angular position is actually accurate with how much the servo has moved.
+* set the pigpio daemon to start on startup of rasberry pi 
+* further discuss benefits of using 6V with a regulator for servo power to make sure it does not stall
+
 	
 
 Libraries Used: 
-	pigpio - allows us to send pulse width modulation signals for servo control on the pi pins
-	lib_para_servo_360 - controls for seeing position of servo and changing speeds
+* pigpio - allows us to send pulse width modulation signals for servo control on the pi pins
+* lib_para_servo_360 - controls for seeing position of servo and changing speeds
 	
 
 
 Current Functionality and Notes:
-	- servo.py can find angles and stop the servo at them within a 2 degree margin of error
-	- slowest counterclockwise is -.2
-	- servo can run at 5V but preference is 6V
-	- slowest speed for rotation .1 clockwise 
-	- calibration library returns in scale of 1000 but we want 100 for percentage duty cycle scale 
-	- minimum duty cycle 3.185%
-	- maximum duty cycle 99.19%
+* servo.py can find angles and stop the servo at them within a 2 degree margin of error
+* slowest counterclockwise is -.2
+* servo can run at 5V but preference is 6V
+* slowest speed for rotation .1 clockwise 
+* calibration library returns in scale of 1000 but we want 100 for percentage duty cycle scale 
+* minimum duty cycle 3.185%
+* maximum duty cycle 99.19%
 	
 	
 	
 Important Steps For Testing servo.py:
-	1. start pigpio daemon before running script (sudo pigpiod)
-	2. connect servo to 5V and ground
-	3. feedback pin to broadcomm gpio 24
-	4. control pin to broadcomm gpio 23 (right above feedback) 
-	5. run servo.py (python3 servo.py)
+ 1. start pigpio daemon before running script (sudo pigpiod)
+ 2. connect servo to 5V and ground
+ 3. feedback pin to broadcomm gpio 24
+ 4. control pin to broadcomm gpio 23 (right above feedback) 
+ 5. run servo.py (python3 servo.py)
 	
 
 
