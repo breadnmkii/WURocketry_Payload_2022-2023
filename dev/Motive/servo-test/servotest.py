@@ -18,7 +18,7 @@ print("Running");
 # Sweep duty values from 0 to 100 (1 sec)
 
 for duty in range(40,60,1):
-    print(f"Duty cycle of {duty:.2f}%");
+    print(f"Duty cycle of {duty:.2f}%")
     servo1.ChangeDutyCycle(duty/100)
     time.sleep(2)
 
