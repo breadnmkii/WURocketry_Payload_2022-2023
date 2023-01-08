@@ -24,21 +24,10 @@ Contains software related to configuring RPI camera and image filters
 ## Motive
 Functionality for motor/servo and general electromotive tests
 
-
-
-
 TODOS:
 * verify that the angular position is actually accurate with how much the servo has moved.
 * set the pigpio daemon to start on startup of rasberry pi 
 * further discuss benefits of using 6V with a regulator for servo power to make sure it does not stall
-
-	
-
-Libraries Used: 
-* pigpio - allows us to send pulse width modulation signals for servo control on the pi pins
-* lib_para_servo_360 - controls for seeing position of servo and changing speeds
-	
-
 
 Current Functionality and Notes:
 * servo.py can find angles and stop the servo at them within a 2 degree margin of error
@@ -48,8 +37,6 @@ Current Functionality and Notes:
 * calibration library returns in scale of 1000 but we want 100 for percentage duty cycle scale 
 * minimum duty cycle 3.185%
 * maximum duty cycle 99.19%
-	
-	
 	
 Important Steps For Testing servo.py:
  1. start pigpio daemon before running script (sudo pigpiod)
@@ -86,6 +73,12 @@ Enables processing of RAFCO via a finite state machine for execution of Payload 
 - numpy				(pip)
 
 ## Motive
+(Servo)
+- pigpio 			(apt): allows us to send pulse width modulation signals for servo control on the pi pins
+- lib_para_servo_360 		(pip): controls for seeing position of servo and changing speeds
+(Motor)
+- adafruit-circuitpython-motorkit (pip)
+
 
 ## Radio
 
