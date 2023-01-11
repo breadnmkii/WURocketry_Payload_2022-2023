@@ -81,6 +81,6 @@ Enables processing of RAFCO via a finite state machine for execution of Payload 
 - adafruit-circuitpython-motorkit (pip)
 
 ## Radio
-- adafruit-circuitpython-rfm9x
+- adafruit-circuitpython-rfm9x	(pip)
 
 ## Software-Control
