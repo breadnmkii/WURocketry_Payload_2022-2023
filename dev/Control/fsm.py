@@ -3,131 +3,149 @@
 # Input:	(likely) file reader (that is continuously updated by Logan's APRS
 #			bash script)
 #				OR
-# 			formatted as list headed with team's callsign and a sequence of 
+# 			formatted as list headed with team's CALLSIGN and a sequence of 
 # 			2-char RAFCO character data. (made possible by Logan's Py wrapper)
 
-# DEBUG NOTE: assume team callsign is WU22RC
+# DEBUG NOTE: assume team CALLSIGN is WU22RC
 
 import random
 from enum import Enum
 import time
 import sys
-sys.path.append('../')
-from Imaging import filter_image
-from Imaging import take_picture
 
-signalBuffer = [] #Queue to hold all other signals
-callsign = "NASA22"
+# sys.path.append('../')
+# from Imaging import filter_image
+# from Imaging import take_picture
+
+CALLSIGN = "NASA22"
 
 # States enum
 class State(Enum):
 	WAIT = 0		# default state where program is awaiting new input
-	CALL = 1		# state that reads input and checks if callsign is ours
+	CALL = 1		# state that reads input and checks if CALLSIGN is ours
 	READ = 2		# state that reads a single RAFCO
 	EXEC = 3		# state that executes AND WAITS for physical completion
 
 
 # This provides randomly selected RAFCO sequence signals (i.e. your test cases)
 def receiveRF():
-	randomInputs = [
+	testcases = [
 		[],	# empty input
+		["NASA22", "CORRUPTED", "CORRUPTED"],
 		["NASA22", "A1", "G7", "D4", "F6"],
-		["TRASH", "NASA22", "A1", "F6", "D4"],
-		["GO", "TO", "NASA22", "B2"],
-		["STEP","PUSH","NASA22","F6", "G7"]
-
+		["CORRUPTED", "NASA22", "A1", "F6", "D4"],
+		["NASA22", "B2", "CORRUPTED", "H8"],
+		["NASA22", "A1", "B2", "C3", "D4", "E5", "F6", "G7", "H8"]
 	]
-	return randomInputs[random.randint(0,4)]
+	return testcases[random.randint(0,len(testcases)-1)]
 
 
 ## THIS IS THE MAIN FSM PROGRAM
-# A function that changes state depending on only state (Moore machine)
-# Reads each of the signal's components for that given signal and executes it
-def FSM(state): 
-	nextState = 0	# the next state to be transitioned to
-	# This is essentially a switch statement, but not available < Python 3.10
+# A function that changes state depending on state and input (Mealy machine)
+# Inputs:
+# - sequenceBuffer: queue of received APRS signals, managed externally from FSM
+# - sequence: a temp list for current sequence being processed
+def FSM(state, sequence, sequenceBuffer): 
+	
 	if state == State.WAIT:
-		input = receiveRF()
-		if (input):
-			# if signal received (i.e. not empty list)
-			signalBuffer.append(input)
+		# if sequenceBuffer has awaiting signals
+		if (len(sequenceBuffer) > 0):
+			sequence = sequenceBuffer.pop(0)
 			state = State.CALL
 		else:
-			# else, keep on waiting
 			state = State.WAIT
 
 	elif state == State.CALL:
-		for pkt in signalBuffer[0]:
-			if (pkt == callsign):
-				#print("EXEC")
+		# Look for NASA CALLSIGN in RAFCO sequence and change to exec if found
+		state = State.WAIT
+		while (len(sequence) > 0):
+			RAFCO = sequence.pop(0)		# Remove callsign or any corrupt RAFCO from sequence (optimization)
+			if (RAFCO == CALLSIGN):
 				state = State.EXEC
 				break
-		if(state != State.EXEC):
+			
+	elif state == State.EXEC:
+		# Grab first RAFCO from currently executing sequence
+		if (len(sequence) > 0):
+			RAFCO = sequence.pop(0)
+
+			# Execute RAFCO
+			# st = time.time()
+			if (RAFCO == "A1"):
+				print("A1: servo 60 degrees right")
+				
+			elif (RAFCO == "B2"):
+				print("B2: servo 60 degrees left")
+				
+			elif (RAFCO == "C3"):
+				# take_picture.camera_time()
+				print("C3: take picture")
+				
+			elif (RAFCO == "D4"):
+				print("D4: image color to grayscale")
+				
+			elif (RAFCO == "E5"):
+				# filter_image.greyscale2rgb()
+				print("E5: image grayscale to color")
+				
+			elif (RAFCO == "F6"):
+				# filter_image.rotate()
+				print("F6: image rotate")
+				
+			elif (RAFCO == "G7"):
+				# filter_image.projective_transform()
+				print("G7: special effects filter")
+				
+			elif (RAFCO == "H8"):
+				# filter_image.get_original()
+				print("H8: remove all filters")
+			
+			else:
+				print("Corrupted RAFCO: Could not execute")
+				
+			# et = time.time_ns()
+			# elasped = time.time() - st #Prints the time between th
+			# print(f'Elapsed time (RAFCO): {elasped}')
+			# print(f'Start time (RAFCO): {st}')
+			# print(f'End time (RAFCO): {et}')
+
+			# Save FSM cycle for checking empty sequence (optimization)
+			if (len(sequence) <= 0):
+				state = State.WAIT
+
+		else:
+			# Finished executing current RAFCO sequence, return to waiting
 			state = State.WAIT
 
-	elif state == State.EXEC:
-		for element in signalBuffer:
-			for RAFCO in element:
-				st = time.time()
-				if (RAFCO == "A1"):
-					print("60 degrees right")
-					#execA1()
-				elif (RAFCO == "B2"):
-					print("60 degrees left")
-					#execB2()
-				elif (RAFCO == "C3"):
-					take_picture.camera_time()
-					print("take pic")
-					#execC3()
-				elif (RAFCO == "D4"):
-					filter_image.rgb2bgr()
-					print("color to grayscale")
-					#execD4()
-				elif (RAFCO == "E5"):
-					filter_image.greyscale2rgb()
-					print("grayscale to color")
-					#execE5()
-				elif (RAFCO == "F6"):
-					filter_image.rotate()
-					print("rotate 180 degrees")
-					#execF6()
-				elif (RAFCO == "G7"):
-					filter_image.projective_transform()
-					print("special effects filter")
-					#execG7()
-				elif (RAFCO == "H8"):
-					filter_image.get_original()
-					print("remove all filters")
-					#execH8()
-			signalBuffer.remove(element)
-			et = time.time_ns()
-			elasped = time.time() - st #Prints the time between th
-			print(f'Elapsed time (RAFCO): {elasped}')
-			print(f'Start time (RAFCO): {st}')
-			print(f'End time (RAFCO): {et}')
-		state = State.WAIT
-
 	else:
-		# default cause to wait
+		# default case to wait
 		state = State.WAIT
 
-	return state
+	return (state, sequence)
 
 
 def main():
-	i = 1
-	currentState = State.WAIT	#Initial waiting condition
-	'''
-	if receiveRF() == "NASA22":
-		print("yes")
-	else:
-		print("no")
-	'''
-	# Main loop that continuously runs FSM
-	while i <= 20:
-		currentState = FSM(currentState)
-		print(currentState)
-		i += 1
+	sequenceBuffer = [] 		# Queue to hold all other signals
+	currentState = State.WAIT	# Initial start state
+	currentSequence = []		# Initial start sequence
+	
+	# Fill sequence buffer with 'n' random signals (max 9n RAFCO)
+	# Note: In practice, this will be asynchronously updated with the APRS module 
+	#       (runs with different frequency compared to FSM)
+	n = 5
+
+	print("= TESTCASE SEQUENCES =")
+	for _ in range(n):
+		tempseq = receiveRF()
+		sequenceBuffer.append(tempseq)
+		print(tempseq)
+
+	# Run FSM for a maximum of 9n iterations
+	print("= RUNNING FSM =")
+	for _ in range(9*n):
+		print("FSM State:", currentState)
+		currentState, currentSequence = FSM(currentState, currentSequence, sequenceBuffer)
+		
 
 if __name__ == '__main__':
         main()
@@ -138,16 +156,16 @@ CALL = 1
 READ = 2
 EXEC = 3
 
-def recieveRF(signal): #Lists out the signals and its components to it (called executive)
-	if(signal == "XD71"):
+def recieveRF(sequence): #Lists out the signals and its components to it (called executive)
+	if(sequence == "XD71"):
 		executive = ["A1", "G7", "B2"]
 
-	elif (signal == "XX4XXX"):
+	elif (sequence == "XX4XXX"):
 		executive = ["C3", "A1", "D4", "C3", "F6", "C3",...]
 
-	return signal
+	return sequence
 
-def FSM(state): #Reads each of the signal's components for that given signal and executes it
+def FSM(state): #Reads each of the sequence's components for that given sequence and executes it
 	if(state == EXEC):
 		for i in executive:
 			return i
