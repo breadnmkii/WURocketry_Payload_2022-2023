@@ -39,7 +39,9 @@ def transmit():
 
         # Transmit
         if (this_sample_T >= last_sample_T + DELTA_T):
-            tx_data = bytes(f'{time.time_ns()}\r\n', 'utf-8')
+            data = time.time_ns()
+
+            tx_data = bytes(f'{data}\r\n', 'utf-8')
             rfm9x.send(tx_data)
             print(f'Sent -> {tx_data}')
             
