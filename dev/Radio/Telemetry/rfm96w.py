@@ -5,12 +5,14 @@
     GPIO 11 - SCK
     GPIO 08 - CS
     GPIO 25 - RST
+    GPIO 24 - EN
 
     print(board.MOSI)
     print(board.MISO)
     print(board.SCK)
     print(board.CE0)
     print(board.D25)
+    print(board.D24)
 """
 
 import sys
