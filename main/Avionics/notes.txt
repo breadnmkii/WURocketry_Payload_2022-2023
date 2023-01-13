@@ -1,0 +1,14 @@
+NOTE:
+
+- i2c devices have a chance of IO, physical bus errors,
+  SO BE SURE TO WRITE TRY CATCH WRAPPERS around functions
+  to ensure main routine does not crash if an i2c device
+  goes down!!
+  + happens when handling, wear rubber gloves when assembling?
+  + esd protection
+
+BNO055:
+- does not seem to be calibrating when in AMG_MODE
+
+
+BMP388
