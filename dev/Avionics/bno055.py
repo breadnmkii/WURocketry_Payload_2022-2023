@@ -15,7 +15,7 @@ if __name__ == '__main__':
 
     ### IMU Configuration
     # Change to configuration mode
-    bno055.mode = a_bno.CONFIG_MODE
+    # bno055.mode = a_bno.CONFIG_MODE
     ## Accelerometer Config
     # bno055.accel_mode = a_bno.ACCEL_NORMAL_MODE
     # bno055.accel_range = a_bno.ACCEL_16G
@@ -30,7 +30,7 @@ if __name__ == '__main__':
     # bno055.magnet_rate = a_bno.MAGNET_30HZ
 
     # Revert back to operation mode    
-    bno055.mode = a_bno.AMG_MODE
+    # bno055.mode = a_bno.AMG_MODE
 
     SECOND_NS = 1_000_000_000
     NUM_READINGS = 25
