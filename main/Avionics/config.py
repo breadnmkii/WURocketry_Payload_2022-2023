@@ -1,5 +1,4 @@
-# Default utility file for init & config of Avionic components
-# and relevant helper functions
+# Default config file for init/config of avionic components
 
 import board
 import adafruit_bno055
@@ -15,7 +14,6 @@ def init_avionics():
     __config_BMP388(bmp388, 25)
 
     return(bno055, bmp388)
-
 
 def __config_BNO055(sensor, mode):
     print("Configuring bno055...")
@@ -57,6 +55,8 @@ def __config_BMP388(sensor, avg_iter):
     sensor.sea_level_pressure = avg
     
     print("...set base MSL pressure to", avg)
+
+
 
 if __name__ == '__main__':
     (bno, bmp) = init_avionics()
