@@ -51,3 +51,5 @@ if __name__ == '__main__':
 # https://www.nasa.gov/sites/default/files/atoms/files/2023_slhandbook_508.pdf
 
 # add timestamp: format with date/time
+# save to disk, rename with timestamp...
+# C3 ~ H8
