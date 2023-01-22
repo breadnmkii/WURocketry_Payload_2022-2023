@@ -46,3 +46,8 @@ if __name__ == '__main__':
     cv2.destroyAllWindows() 
     
 
+# D4 E5 change global camera mode
+# global variable???
+# https://www.nasa.gov/sites/default/files/atoms/files/2023_slhandbook_508.pdf
+
+# add timestamp: format with date/time
