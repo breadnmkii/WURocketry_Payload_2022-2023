@@ -54,15 +54,15 @@ def take_picture():
 
 if __name__ == '__main__':
     # RGB to BGR Image Transformation Demo
-    img = cv2.imread("./clear_16_11.jpg")
-    path = "./image_results/bgr_transform.jpg"
-
-    img_transformed = rgb2bgr(img)
-    cv2.imwrite(path, img_transformed)
-
-    cv2.imshow('RGB2BGR', img_transformed)
-    cv2.waitKey(0) 
-    cv2.destroyAllWindows() 
+    #img = cv2.imread("./clear_16_11.jpg")
+    #path = "./image_results/bgr_transform.jpg"
+    
+    #img_transformed = rgb2bgr(img)
+    #cv2.imwrite(path, img_transformed)
+    take_picture()
+    #cv2.imshow('RGB2BGR', img_transformed)
+    #cv2.waitKey(0) 
+    #cv2.destroyAllWindows() 
     
 
 # D4 E5 change global camera mode
