@@ -33,7 +33,7 @@ if __name__ == '__main__':
     # bno055.mode = a_bno.AMG_MODE
 
     SECOND_NS = 1_000_000_000
-    NUM_READINGS = 25
+    NUM_READINGS = 100
     SAMPLE_FREQUENCY = 100   # in Hz
     DELTA_T = SECOND_NS/SAMPLE_FREQUENCY
     last_sample_T = time.monotonic_ns()
@@ -46,7 +46,7 @@ if __name__ == '__main__':
 
             if (bno055.calibrated):
                 # Read bno055 data
-                print(f"time:{this_sample_T-start_sample_T}\tgyro:{bno055.gyro}\taccl:{bno055.acceleration}\tmagn:{bno055.magnetic}")
+                print(f"time:{this_sample_T-start_sample_T}\tgyro:{bno055.gyro}\taccl:{bno055.linaear_acceleration}\tmagn:{bno055.magnetic}")
                 NUM_READINGS -= 1
             else:
                 print(f'Calibration (s,g,a,m) {bno055.calibration_status}')

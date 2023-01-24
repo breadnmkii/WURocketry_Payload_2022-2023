@@ -4,24 +4,53 @@ import time
 import math
 
 
+
 # Calculate angular position (degrees)
 # ang = ((read_dc - dc_min) * 360) / (dc_max - dc_min + 1) 
-def get_angpos(read_dc):
+def get_angpos_helper(read_dc):
     # Constants
    DC_MIN = 3.185 # / 10
    DC_MAX = 99.19 # / 10
 
    return ((read_dc - DC_MIN) * 360) / (DC_MAX - DC_MIN + 1)
 
+
+#set a custom angle position
 def set_angpos(servo, angle):
     servo.set_speed(0.1)
-    curr_pos = math.floor(get_angpos(reader.read()/10))
+    curr_pos = math.floor(get_angpos_helper(reader.read()/10))
     while (curr_pos > angle+2 or curr_pos < angle-2):
         #print(curr_pos)
         curr_pos = math.floor(get_angpos(reader.read()/10))
 
     servo.stop()
 
+    
+#return the current angular position
+def get_angpos():
+    return math.floor(get_angpos_helper(reader.read()/10))
+
+
+#set angular position to zero    
+def set_zero(servo):
+    set_angpos(servo, 0)
+    print("Set 360 Position to Zero Sucessfully")
+
+    
+    
+def left_60(servo):
+    current = get_angpos()
+    current = current - 60
+    if current < 0:
+        current = current + 360
+    set_angpos(servo, current)
+    
+
+def right_60(servo):
+    current = get_angpos()
+    current = current + 60
+    set_angpos(servo, current)
+  
 
 if __name__ == '__main__':
     #define GPIO for each servo to read from
@@ -39,44 +68,8 @@ if __name__ == '__main__':
     servo.stop()
 
 
-    # Test 60 degree intervals
-    for i in range(0, 360, 60):
-        print("Setting angle to", i)
-        set_angpos(servo, i)
-        time.sleep(3)
 
-
-
-
-    # Set servo speed for calibration
-    # servo.set_speed(0.2)
-
-    # Calibrate servos
-    # wheel = lib_para_360_servo.calibrate_pwm(pi = pi, gpio = gpio_r_r)
-
-    # print(get_angpos(reader.read()/10))
-    # servo.set_speed(0.1)
-    # time.sleep(0.5)
-    # print(get_angpos(reader.read()/10))
-
-    # time.sleep(0.5)
-    # print(get_angpos(reader.read()/10))
-
-    # time.sleep(0.5)
-    # print(get_angpos(reader.read()/10))
-
-    # time.sleep(0.5)
-    # print(get_angpos(reader.read()/10))
-
-    # Cleanup
     servo.stop()
     pi.stop()
 
-"""
 
-print("Calibrating")
-wheel = lib_para_360_servo.calibrate_pwm(pi = pi, gpio = gpio_r_r)
-servo.set_speed(0)
-#http://abyz.me.uk/rpi/pigpio/python.html#stop
-pi.stop()
-"""
