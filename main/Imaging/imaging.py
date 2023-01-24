@@ -1,6 +1,14 @@
 import cv2
 import numpy as np
+import picamera
+from time import sleep
 
+
+#create object for PiCamera class
+camera = picamera.PiCamera()
+#set resolution
+camera.resolution = (1024, 768)
+camera.brightness = 60
 # write each function for each RAFCO command that is camera related 
 
 '''
@@ -32,6 +40,17 @@ def rgb2bgr(img):
     rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     return rgb
 
+def take_picture():
+    #create object for PiCamera class
+	camera = picamera.PiCamera()
+	#set resolution
+	camera.resolution = (1024, 768)
+	camera.brightness = 60
+	#add text on image
+	camera.annotate_text = 'Hi Pi User'
+	sleep(5)
+	#store image
+	camera.capture('image1.jpeg')
 
 if __name__ == '__main__':
     # RGB to BGR Image Transformation Demo
