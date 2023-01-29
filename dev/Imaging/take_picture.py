@@ -23,7 +23,8 @@ current_time = now.strftime("%H:%M:%S")
 camera.annotate_text = current_time
 sleep(5)
 #store image
-camera.capture('image1.jpeg')
+
+camera.capture(str(current_time)+'.jpeg')
 camera.stop_preview()
 
 def camera_time():
