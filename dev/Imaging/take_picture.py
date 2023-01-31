@@ -10,10 +10,13 @@ sys.path.append('paste the copied path here')
 import picamera
 from time import sleep
 from datetime import datetime
-from datetime import date
 #from pytz import timezone
 import pytz
 
+from datetime import date
+
+today = date.today()
+print("Today's date:", today)
 
 
 #create object for PiCamera class
