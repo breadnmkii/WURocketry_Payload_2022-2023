@@ -13,14 +13,29 @@ from datetime import datetime
 #from pytz import timezone
 import pytz
 
+
+
 #create object for PiCamera class
 camera = picamera.PiCamera()
 #set resolution
 camera.resolution = (1024, 768)
 camera.brightness = 60
+
+
+# Get the timezone object for Chicago
+tz_cst = pytz.timezone('America/Chicago') 
+
+# Get the current time in New York
+datetime_cst = datetime.now(tz_cst)
+
+# Format the time as a string and print it
+print("CST time:", datetime_cst.strftime("%H:%M:%S"))
+
+
 #central = timezone('US/Central')
 #camera.start_preview()
 now = datetime.now()
+trying = now.strftime("%H:%M:%S")
 print(now)
 #utc = timezone('UTC')
 timezone = pytz.timezone("America/Chicago")
