@@ -40,25 +40,13 @@ print("full annotation: ", annotation)
 
 
 #camera.start_preview()
-now = datetime.now()
-trying = now.strftime("%H:%M:%S")
-print(now)
-#utc = timezone('UTC')
-timezone = pytz.timezone("America/Chicago")
-now = timezone.localize(now)
-print(now)
-current_time = now.strftime("%H:%M:%S %Z")
-#published_time = datetime.strptime(current_time, '%H:%M:%S %Z')
-#published_gmt = published_time.replace(tzinfo=utc)
-#published_cst = published_gmt.astimezone(central)
-actual_time_published = current_time.strftime('%I:%M:%S %p %Z')
-#add text on image
-camera.annotate_text = actual_time_published
+
+camera.annotate_text = annotation
 sleep(5)
 #store image
 
-camera.capture(str(current_time)+'.jpeg')
-camera.stop_preview()
+camera.capture(str(annotation)+'.jpeg')
+# camera.stop_preview()
 
 def camera_time():
 	#create object for PiCamera class
