@@ -10,6 +10,7 @@ sys.path.append('paste the copied path here')
 import picamera
 from time import sleep
 from datetime import datetime
+from datetime import date
 #from pytz import timezone
 import pytz
 
@@ -32,7 +33,7 @@ local_time = datetime_cst.strftime("%H:%M:%S")
 # Format the time as a string and print it
 print("CST time:", local_time)
 
-today_date = datetime.date.today()
+today_date = date.today()
 print("today:", today_date)
 
 #camera.start_preview()
