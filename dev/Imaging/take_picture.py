@@ -35,7 +35,7 @@ print("CST time:", local_time, type(local_time))
 today_date = date.today()
 print("Today's date:", today_date, type(today_date))
 
-annotation = str(today_date)+local_time
+annotation = str(today_date)+' '+local_time
 print("full annotation: ", annotation)
 
 
