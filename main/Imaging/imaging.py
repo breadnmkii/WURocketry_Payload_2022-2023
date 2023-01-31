@@ -2,6 +2,9 @@ import cv2
 import numpy as np
 import picamera
 from time import sleep
+from datetime import datetime
+from pytz import timezone
+from datetime import date
 
 #create object for PiCamera class
 camera = picamera.PiCamera()
@@ -49,23 +52,37 @@ def rgb2bgr(img):
 # C3: take picture
 def take_picture():
     #create object for PiCamera class
-	camera = picamera.PiCamera()
-	#set resolution
-	camera.resolution = (1024, 768)
-	camera.brightness = 60
-	#add text on image
-	camera.annotate_text = 'Hi Pi User'
-	sleep(5)
-	#store image
-	camera.capture('image1.jpeg')
+    camera = picamera.PiCamera()
+    #set resolution
+    camera.resolution = (1024, 768)
+    camera.brightness = 60
+
+
+    # Get the timezone object for Chicago
+    tz_cst = timezone('America/Chicago') 
+    # Get the current time in CST
+    datetime_cst = datetime.now(tz_cst)
+    # Format the time as a string 
+    local_time = datetime_cst.strftime("%H:%M:%S")
+    # get date 
+    today_date = date.today()
+    #print("Today's date:", today_date, type(today_date))
+    annotation = str(today_date)+'_'+local_time
+    print("full annotation: ", annotation)
+    #camera.start_preview()
+    camera.annotate_text = annotation
+    sleep(5)
+    #store image
+    camera.capture(annotation+'.jpeg')
+
 
 if __name__ == '__main__':
     # RGB to BGR Image Transformation Demo
-    #img = cv2.imread("./clear_16_11.jpg")
-    path = "./image_results/bgr_transform.jpg"
+    #img = cv2.imread("../../")
+    #path = "./image_results/bgr_transform.jpg"
     #img_transformed = rgb2bgr(img)
     #cv2.imwrite(path, img_transformed)
-    #take_picture()
+    take_picture()
     #cv2.imshow('RGB2BGR', img_transformed)
     #cv2.waitKey(0) 
     #cv2.destroyAllWindows() 
