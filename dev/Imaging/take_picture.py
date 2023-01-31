@@ -21,6 +21,7 @@ camera.brightness = 60
 #central = timezone('US/Central')
 #camera.start_preview()
 now = datetime.now()
+print(now)
 #utc = timezone('UTC')
 timezone = pytz.timezone("America/Chicago")
 now = timezone.localize(now)
