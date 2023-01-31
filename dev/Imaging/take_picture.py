@@ -12,11 +12,7 @@ from time import sleep
 from datetime import datetime
 #from pytz import timezone
 import pytz
-
 from datetime import date
-
-today = date.today()
-print("Today's date:", today)
 
 
 #create object for PiCamera class
@@ -34,10 +30,12 @@ datetime_cst = datetime.now(tz_cst)
 
 local_time = datetime_cst.strftime("%H:%M:%S")
 # Format the time as a string and print it
-print("CST time:", local_time)
+print("CST time:", local_time, type(local_time))
 
-today_date = date.today()
-print("today:", today_date)
+today = date.today()
+print("Today's date:", today, type(today))
+
+
 
 #camera.start_preview()
 now = datetime.now()
