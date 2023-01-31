@@ -28,11 +28,13 @@ tz_cst = pytz.timezone('America/Chicago')
 # Get the current time in New York
 datetime_cst = datetime.now(tz_cst)
 
+local_time = datetime_cst.strftime("%H:%M:%S")
 # Format the time as a string and print it
-print("CST time:", datetime_cst.strftime("%H:%M:%S"))
+print("CST time:", local_time)
 
+today_date = datetime.date.today()
+print("today:", today_date)
 
-#central = timezone('US/Central')
 #camera.start_preview()
 now = datetime.now()
 trying = now.strftime("%H:%M:%S")
