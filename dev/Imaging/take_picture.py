@@ -10,8 +10,7 @@ sys.path.append('paste the copied path here')
 import picamera
 from time import sleep
 from datetime import datetime
-#from pytz import timezone
-import pytz
+from pytz import timezone
 from datetime import date
 
 
@@ -23,7 +22,7 @@ camera.brightness = 60
 
 
 # Get the timezone object for Chicago
-tz_cst = pytz.timezone('America/Chicago') 
+tz_cst = timezone('America/Chicago') 
 # Get the current time in CST
 datetime_cst = datetime.now(tz_cst)
 # Format the time as a string 
