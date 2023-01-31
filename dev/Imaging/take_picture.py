@@ -32,9 +32,11 @@ local_time = datetime_cst.strftime("%H:%M:%S")
 # Format the time as a string and print it
 print("CST time:", local_time, type(local_time))
 
-today = date.today()
-print("Today's date:", today, type(today))
+today_date = date.today()
+print("Today's date:", today_date, type(today_date))
 
+annotation = str(today_date)+local_time
+print("full annotation: ", annotation)
 
 
 #camera.start_preview()
