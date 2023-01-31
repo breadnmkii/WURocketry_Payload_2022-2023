@@ -10,7 +10,7 @@ camera.resolution = (1024, 768)
 camera.brightness = 60
 # write each function for each RAFCO command that is camera related 
 
-
+ 
 # modify input, outputs 
 # no input -> find the photo most recently taken, then perform modifications as needed 
 '''
@@ -62,11 +62,10 @@ def take_picture():
 if __name__ == '__main__':
     # RGB to BGR Image Transformation Demo
     #img = cv2.imread("./clear_16_11.jpg")
-    #path = "./image_results/bgr_transform.jpg"
-    
+    path = "./image_results/bgr_transform.jpg"
     #img_transformed = rgb2bgr(img)
     #cv2.imwrite(path, img_transformed)
-    take_picture()
+    #take_picture()
     #cv2.imshow('RGB2BGR', img_transformed)
     #cv2.waitKey(0) 
     #cv2.destroyAllWindows() 
