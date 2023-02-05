@@ -34,9 +34,9 @@ def rotate():
     list_of_files = glob.glob('./image_results/*.jpg') # * means all if need specific format then *.csv
     latest_file = max(list_of_files, key=os.path.getctime)
     print(latest_file)
+    img = cv2.imread(latest_file)
     if (not img):
         print("cannot read image right now")
-    img = cv2.imread(latest_file)
     
     rotated = cv2.rotate(img, cv2.ROTATE_180)
     file_path = str(latest_file+'_rotated')
