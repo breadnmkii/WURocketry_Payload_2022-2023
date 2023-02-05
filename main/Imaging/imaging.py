@@ -40,11 +40,18 @@ def rotate():
     return rotated 
 
 # E5: change camera mode back from grayscale to color 
-# H8: remove all filters 
 def get_original():
     camera.color_effects = None
     return camera
 
+# H8: remove all filters 
+# remove filter on taking pictures
+def remove_filter():
+    camera.image_effect = None
+    list_of_files = glob.glob('./image_results/*.jpg') # * means all if need specific format then *.csv
+    list_of_files.sort(key=os.path.getctime)
+    print(list_of_files)
+    return camera
 
 
 '''
@@ -53,6 +60,7 @@ input: image
 output: image with color space switched from RGB to BGR
 '''
 def rgb2bgr(img):
+    camera.image_effect = 'colorswap'
     list_of_files = glob.glob('./image_results/*.jpg') # * means all if need specific format then *.csv
     latest_file = max(list_of_files, key=os.path.getctime)
     img = cv2.imread(latest_file)
@@ -100,6 +108,7 @@ if __name__ == '__main__':
     #cv2.imshow('RGB2BGR', img_transformed)
     #cv2.waitKey(0) 
     #cv2.destroyAllWindows() 
+    print("executing tasks in imaging.py")
     
 
 # https://www.nasa.gov/sites/default/files/atoms/files/2023_slhandbook_508.pdf
