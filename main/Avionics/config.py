@@ -6,8 +6,17 @@ import adafruit_bmp3xx
 
 def init_avionics():
     i2c = board.I2C()
-    bno055 = adafruit_bno055.BNO055_I2C(i2c)
-    bmp388 = adafruit_bmp3xx.BMP3XX_I2C(i2c)
+    try:
+        bno055 = adafruit_bno055.BNO055_I2C(i2c)
+    except:
+        print("WARNING: BNO055 NOT INITIALIZED")
+        bno055 = None
+    
+    try:
+        bmp388 = adafruit_bmp3xx.BMP3XX_I2C(i2c)
+    except:
+        print("WARNING: BMP388 NOT INITIALIZED")
+        bmp388 = None
 
     
     __config_BNO055(bno055, adafruit_bno055.NDOF_MODE)

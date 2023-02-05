@@ -13,6 +13,8 @@ from enum import Enum
 import time
 import sys
 
+import Imaging
+
 # sys.path.append('../')
 # from Imaging import filter_image
 # from Imaging import take_picture
@@ -125,6 +127,15 @@ def FSM(state, sequence, sequenceBuffer):
 
 
 def main():
+	print("MAIN HERE")
+	deltaTime = 0
+	start = time.time_ns()
+	Imaging.take_picture()
+	end = time.time_ns()
+	elasped = end - start
+	print(elasped)
+
+	'''
 	sequenceBuffer = [] 		# Queue to hold all other signals
 	currentState = State.WAIT	# Initial start state
 	currentSequence = []		# Initial start sequence
@@ -145,10 +156,17 @@ def main():
 	for _ in range(9*n):
 		print("FSM State:", currentState)
 		currentState, currentSequence = FSM(currentState, currentSequence, sequenceBuffer)
-		
+	'''	
 
 if __name__ == '__main__':
-        main()
+	
+	main()
+	print("RAN MAIN")
+
+
+
+
+
 
 '''
 WAIT = 0
