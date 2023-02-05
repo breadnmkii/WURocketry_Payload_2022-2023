@@ -38,7 +38,7 @@ def rotate():
     rotated = cv2.rotate(img, cv2.ROTATE_180)
     file_path = str(latest_file+'_rotated')
     #cv2.imwrite(file_path, rotated)
-    cv2.imwrite('./', rotated)
+    cv2.imwrite('./new.jpg', rotated)
     return rotated 
 
 # E5: change camera mode back from grayscale to color 
