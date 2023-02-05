@@ -9,7 +9,7 @@ import config
 import glob
 import os
 
-camera = config.init_camera()
+#camera = config.init_camera()
 # write each function for each RAFCO command that is camera related 
 
  
