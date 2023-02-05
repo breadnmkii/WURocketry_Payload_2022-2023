@@ -17,13 +17,17 @@ def get_angpos_helper(read_dc):
 
 #set a custom angle position
 def set_angpos(servo, angle):
-    servo.set_speed(0.1)
+    if angle < get_angpos():
+        servo.set_speed(-0.2)
+    else:
+        servo.set_speed(0.1)
     curr_pos = math.floor(get_angpos_helper(reader.read()/10))
     while (curr_pos > angle+2 or curr_pos < angle-2):
         #print(curr_pos)
         curr_pos = math.floor(get_angpos(reader.read()/10))
 
     servo.stop()
+
 
     
 #return the current angular position
