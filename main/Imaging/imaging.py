@@ -6,6 +6,8 @@ from datetime import datetime
 from pytz import timezone
 from datetime import date
 import config
+import glob
+import os
 
 camera = config.init_camera()
 # write each function for each RAFCO command that is camera related 
@@ -28,14 +30,22 @@ F6: rotate camera 180 degrees
 input: image, 
 return its 180 degree rotation
 '''
-def rotate(img):
+def rotate():
+    list_of_files = glob.glob('./image_results/*.jpg') # * means all if need specific format then *.csv
+    latest_file = max(list_of_files, key=os.path.getctime)
+    img = cv2.imread(latest_file)
     rotated = cv2.rotate(img, cv2.ROTATE_180)
+    file_path = str('./image_results/'+latest_file+'_rotated')
+    cv2.imwrite(file_path, rotated)
     return rotated 
 
 # E5: change camera mode back from grayscale to color 
 # H8: remove all filters 
 def get_original():
-    return img
+    camera.color_effects = None
+    return camera
+
+
 
 '''
 G7: special effects filter to the image 
@@ -43,7 +53,12 @@ input: image
 output: image with color space switched from RGB to BGR
 '''
 def rgb2bgr(img):
+    list_of_files = glob.glob('./image_results/*.jpg') # * means all if need specific format then *.csv
+    latest_file = max(list_of_files, key=os.path.getctime)
+    img = cv2.imread(latest_file)
     rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    file_path = str('./image_results/'+latest_file+'_special')
+    cv2.imwrite(file_path, rgb)
     return rgb
 
 # C3: take picture
