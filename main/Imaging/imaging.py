@@ -58,6 +58,8 @@ def remove_filter():
 G7: special effects filter to the image 
 input: image
 output: image with color space switched from RGB to BGR
+other options for special effect: 
+https://projects.raspberrypi.org/en/projects/getting-started-with-picamera/7
 '''
 def rgb2bgr(img):
     camera.image_effect = 'colorswap'
@@ -91,6 +93,7 @@ def take_picture():
     annotation = str(today_date)+'_'+local_time
     print("full annotation: ", annotation)
     #camera.start_preview()
+    #camera.close() 
     camera.annotate_text = annotation
     sleep(5)
     #store image
