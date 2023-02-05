@@ -5,12 +5,9 @@ from time import sleep
 from datetime import datetime
 from pytz import timezone
 from datetime import date
+import config
 
-#create object for PiCamera class
-camera = picamera.PiCamera()
-#set resolution
-camera.resolution = (1024, 768)
-camera.brightness = 60
+camera = config.init_camera()
 # write each function for each RAFCO command that is camera related 
 
  
@@ -18,13 +15,13 @@ camera.brightness = 60
 # no input -> find the photo most recently taken, then perform modifications as needed 
 '''
 D4: change camera mode from color to grayscale
-input: image, 
-return its grayscale version
+input: camera object from PiCamera, 
+return camera object set to grayscale
 '''
-def greyscale2rgb(img):
+def greyscale2rgb(camera):
     camera.color_effects = (128,128) # turn camera to black and white
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    return gray
+    #gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    return camera
 
 '''
 F6: rotate camera 180 degrees
@@ -51,13 +48,14 @@ def rgb2bgr(img):
 
 # C3: take picture
 def take_picture():
+    '''
+    code moved to config.;y
     #create object for PiCamera class
     camera = picamera.PiCamera()
     #set resolution
     camera.resolution = (1024, 768)
     camera.brightness = 60
-
-
+    '''
     # Get the timezone object for Chicago
     tz_cst = timezone('America/Chicago') 
     # Get the current time in CST
@@ -74,6 +72,7 @@ def take_picture():
     sleep(5)
     #store image
     camera.capture(annotation+'.jpeg')
+    return camera
 
 
 if __name__ == '__main__':
