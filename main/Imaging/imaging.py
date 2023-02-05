@@ -107,7 +107,7 @@ if __name__ == '__main__':
     #path = "./image_results/bgr_transform.jpg"
     #img_transformed = rgb2bgr(img)
     #cv2.imwrite(path, img_transformed)
-    take_picture()
+    rotate()
     #cv2.imshow('RGB2BGR', img_transformed)
     #cv2.waitKey(0) 
     #cv2.destroyAllWindows() 
