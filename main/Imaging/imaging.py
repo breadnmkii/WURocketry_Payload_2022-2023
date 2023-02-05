@@ -70,7 +70,8 @@ def rgb2bgr(img):
     latest_file = max(list_of_files, key=os.path.getctime)
     img = cv2.imread(latest_file)
     rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    file_path = str('./image_results/'+latest_file+'_special')
+    file_path = latest_file.replace('.jpg','_special.jpg')
+    #file_path = str('./image_results/'+latest_file+'_special')
     cv2.imwrite(file_path, rgb)
     return rgb
 
