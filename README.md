@@ -69,8 +69,10 @@ Enables processing of RAFCO via a finite state machine for execution of Payload 
 
 ## Imaging
 - picamera			(pip)
-- nstall python3-opencv 	(apt)
+- opencv-python			(pip)
 - numpy				(pip)
+- pytz				(pip)
+
 
 ## Motive
 (Servo)
