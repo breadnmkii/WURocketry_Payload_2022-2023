@@ -4,6 +4,7 @@ import picamera
 from time import sleep
 from datetime import datetime
 from pytz import timezone
+#from PIL import Image
 from datetime import date
 import config
 import glob
@@ -35,12 +36,25 @@ def rotate():
     list_of_files = glob.glob('./image_results/*.jpg') # * means all if need specific format then *.csv
     latest_file = max(list_of_files, key=os.path.getctime)
     print(latest_file)
-    img = cv2.imread(latest_file)    
+    
+    img = cv2.imread(latest_file) 
     rotated = cv2.rotate(img, cv2.ROTATE_180)
     file_path = latest_file.replace('.jpg','_rotated.jpg')
     cv2.imwrite(file_path, rotated)
     print(file_path)
     cv2.imwrite('./new.jpg', rotated)
+    
+    
+    # using Pillow
+    '''
+    #read the image, not using OpenCV
+    img = Image.open(latest_file)
+    #rotate image
+    angle = 45
+    rotated = img.rotate(angle)
+    file_path = latest_file.replace('.jpg','_rotated.jpg')
+    rotated.save(file_path)
+    '''
     return rotated 
 
 # E5: change camera mode back from grayscale to color 
