@@ -9,6 +9,7 @@ import config
 import glob
 import os
 
+print("before entering config.init_camera()")
 camera = config.init_camera()
 # write each function for each RAFCO command that is camera related 
 
@@ -103,6 +104,7 @@ def take_picture():
     sleep(5)
     #store image
     camera.capture('./image_results'+annotation+'.jpeg')
+    print("picture just captured")
     return camera
 
 

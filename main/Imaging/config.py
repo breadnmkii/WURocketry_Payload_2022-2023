@@ -4,7 +4,7 @@ camera = picamera.PiCamera()
 #set resolution
 camera.resolution = (1024, 768)
 camera.brightness = 60
-
+print("in config.py")
 
 
 def init_camera():
