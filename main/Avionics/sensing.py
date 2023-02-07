@@ -105,6 +105,7 @@ if __name__ == '__main__':
     last_sample_t = time.monotonic_ns()
 
     # start_sample_T = time.monotonic_ns()
+    isUpright()
 
     # Test loop
     while True:
