@@ -83,8 +83,7 @@ def detectLaunch(acc_accumulator, gps):
 
 def isUpright():
     if(bno.calibrated):
-        print("Upright")
-
+        print("Euler angle: {}".format(bno.euler))
 
 
 
