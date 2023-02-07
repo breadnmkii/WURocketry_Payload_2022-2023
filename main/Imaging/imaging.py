@@ -9,7 +9,7 @@ import config
 import glob
 import os
 
-#camera = config.init_camera()
+camera = config.init_camera()
 # write each function for each RAFCO command that is camera related 
 
  
@@ -20,7 +20,7 @@ D4: change camera mode from color to grayscale
 input: camera object from PiCamera, 
 return camera object set to grayscale
 '''
-def greyscale2rgb(camera):
+def greyscale2rgb():
     camera.color_effects = (128,128) # turn camera to black and white
     #gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     return camera
@@ -43,7 +43,7 @@ def rotate():
     return rotated 
 
 # E5: change camera mode back from grayscale to color 
-def get_original():
+def to_color_mode():
     camera.color_effects = None
     return camera
 
@@ -102,7 +102,7 @@ def take_picture():
     camera.annotate_text = annotation
     sleep(5)
     #store image
-    camera.capture(annotation+'.jpeg')
+    camera.capture('./image_results'+annotation+'.jpeg')
     return camera
 
 
