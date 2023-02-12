@@ -1,5 +1,6 @@
-import cv2
+# import cv2 # stay away from opencv that can not be downloaded onto the pi
 import numpy as np
+from PIL import Image
 import picamera
 from time import sleep
 from datetime import datetime
@@ -36,25 +37,24 @@ def rotate():
     list_of_files = glob.glob('./image_results/*.jpg') # * means all if need specific format then *.csv
     latest_file = max(list_of_files, key=os.path.getctime)
     print(latest_file)
-    
+    file_path = latest_file.replace('.jpg','_rotated.jpg')
+    print(file_path)
+    ''' opencv can't be downloaded onto pi
     img = cv2.imread(latest_file) 
     rotated = cv2.rotate(img, cv2.ROTATE_180)
-    file_path = latest_file.replace('.jpg','_rotated.jpg')
     cv2.imwrite(file_path, rotated)
-    print(file_path)
     cv2.imwrite('./new.jpg', rotated)
-    
-    
-    # using Pillow
     '''
+    # using Pillow
+    
     #read the image, not using OpenCV
     img = Image.open(latest_file)
     #rotate image
-    angle = 45
+    angle = 90
     rotated = img.rotate(angle)
     file_path = latest_file.replace('.jpg','_rotated.jpg')
     rotated.save(file_path)
-    '''
+    rotated.save('./new.jpg') # to be deleted
     return rotated 
 
 # E5: change camera mode back from grayscale to color 
@@ -83,12 +83,19 @@ def rgb2bgr(img):
     camera.image_effect = 'colorswap'
     list_of_files = glob.glob('./image_results/*.jpg') # * means all if need specific format then *.csv
     latest_file = max(list_of_files, key=os.path.getctime)
+    file_path = latest_file.replace('.jpg','_special.jpg')
+    '''
     img = cv2.imread(latest_file)
     rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    file_path = latest_file.replace('.jpg','_special.jpg')
-    #file_path = str('./image_results/'+latest_file+'_special')
     cv2.imwrite(file_path, rgb)
-    return rgb
+    '''
+    #file_path = str('./image_results/'+latest_file+'_special')
+    
+    img = Image.open(latest_file)
+    img = img[:,:,::-1]
+    img.save('./new.jpg') # to be deleted
+    img.save(file_path)
+    return img
 
 # move picture taken to image_results
 # C3: take picture
