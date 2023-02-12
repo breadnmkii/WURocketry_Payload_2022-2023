@@ -35,7 +35,7 @@ return its 180 degree rotation
 '''
 def rotate():
     camera.rotation = 180
-    list_of_files = glob.glob('./image_results/*.jpg') # * means all if need specific format then *.csv
+    list_of_files = glob.glob('/home/pi/WURocketry_Payload_2022-2023/main/Imaging/image_results/*.jpeg') # * means all if need specific format then *.csv
     ''' opencv can't be downloaded onto pi
     img = cv2.imread(latest_file) 
     rotated = cv2.rotate(img, cv2.ROTATE_180)
@@ -47,7 +47,7 @@ def rotate():
     
     latest_file = max(list_of_files, key=os.path.getctime)
     print(latest_file)
-    file_path = latest_file.replace('.jpg','_rotated.jpg')
+    file_path = latest_file.replace('.jpeg','_rotated.jpeg')
     print(file_path)
 
     # using Pillow
@@ -77,7 +77,7 @@ def remove_filter():
     camera.color_effects = None
     camera.rotation=0
 
-    list_of_files = glob.glob('./image_results/*.jpg') # * means all if need specific format then *.csv
+    list_of_files = glob.glob('/home/pi/WURocketry_Payload_2022-2023/main/Imaging/image_results/*.jpg') # * means all if need specific format then *.csv
     if not list_of_files:
         return camera
    
@@ -95,7 +95,7 @@ https://projects.raspberrypi.org/en/projects/getting-started-with-picamera/7
 '''
 def rgb2bgr():
     camera.image_effect = 'colorswap'
-    list_of_files = glob.glob('./image_results/*.jpg') # * means all if need specific format then *.csv
+    list_of_files = glob.glob('/home/pi/WURocketry_Payload_2022-2023/main/Imaging/image_results/*.jpeg') # * means all if need specific format then *.csv
     '''
     img = cv2.imread(latest_file)
     rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -105,7 +105,7 @@ def rgb2bgr():
         return camera
   
     latest_file = max(list_of_files, key=os.path.getctime)
-    file_path = latest_file.replace('.jpg','_special.jpg')
+    file_path = latest_file.replace('.jpeg','_special.jpeg')
     img = Image.open(latest_file)
     b, g, r = img.split()
     switched = Image.merge("RGB", (r, g, b))
@@ -143,7 +143,7 @@ def take_picture():
     camera.annotate_text = annotation
     sleep(5)
     #store image
-    camera.capture('./image_results/'+annotation+'.jpeg')
+    camera.capture('/home/pi/WURocketry_Payload_2022-2023/main/Imaging/image_results/'+annotation+'.jpeg')
     print("picture just captured")
     return camera
 
