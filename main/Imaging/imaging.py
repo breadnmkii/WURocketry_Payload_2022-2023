@@ -71,7 +71,7 @@ def remove_filter():
     # reset color space
     camera.color_effects = None
     camera.rotation=0
-    
+
     list_of_files = glob.glob('./image_results/*.jpg') # * means all if need specific format then *.csv
     list_of_files.sort(key=os.path.getctime)
     print(list_of_files)
@@ -132,7 +132,7 @@ def take_picture():
     camera.annotate_text = annotation
     sleep(5)
     #store image
-    camera.capture('./image_results'+annotation+'.jpeg')
+    camera.capture('./image_results/'+annotation+'.jpeg')
     print("picture just captured")
     return camera
 
