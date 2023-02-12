@@ -23,7 +23,7 @@ D4: change camera mode from color to grayscale
 input: camera object from PiCamera, 
 return camera object set to grayscale
 '''
-def greyscale2rgb():
+def to_grayscale():
     camera.color_effects = (128,128) # turn camera to black and white
     return camera
 
@@ -126,7 +126,7 @@ def take_picture():
 if __name__ == '__main__':
     take_picture()
     rgb2bgr()
-    greyscale2rgb()
+    to_grayscale()
     take_picture()
     rotate()
     to_color_mode()
