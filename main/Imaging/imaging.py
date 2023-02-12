@@ -34,6 +34,7 @@ input: image,
 return its 180 degree rotation
 '''
 def rotate():
+    camera.rotation = 180
     list_of_files = glob.glob('./image_results/*.jpg') # * means all if need specific format then *.csv
     latest_file = max(list_of_files, key=os.path.getctime)
     print(latest_file)
@@ -59,13 +60,18 @@ def rotate():
 
 # E5: change camera mode back from grayscale to color 
 def to_color_mode():
-    camera.color_effects = 'none'
+    camera.color_effects = None
     return camera
 
 # H8: remove all filters 
 # remove filter on taking pictures
 def remove_filter():
-    camera.image_effect = None
+    # remove special filter
+    camera.image_effect = 'none'
+    # reset color space
+    camera.color_effects = None
+    camera.rotation=0
+    
     list_of_files = glob.glob('./image_results/*.jpg') # * means all if need specific format then *.csv
     list_of_files.sort(key=os.path.getctime)
     print(list_of_files)
