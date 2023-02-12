@@ -79,7 +79,7 @@ output: image with color space switched from RGB to BGR
 other options for special effect: 
 https://projects.raspberrypi.org/en/projects/getting-started-with-picamera/7
 '''
-def rgb2bgr(img):
+def rgb2bgr():
     camera.image_effect = 'colorswap'
     list_of_files = glob.glob('./image_results/*.jpg') # * means all if need specific format then *.csv
     latest_file = max(list_of_files, key=os.path.getctime)
