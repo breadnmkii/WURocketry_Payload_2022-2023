@@ -36,10 +36,11 @@ return its 180 degree rotation
 def rotate():
     camera.rotation = 180
     list_of_files = glob.glob('./image_results/*.jpg') # * means all if need specific format then *.csv
-    latest_file = max(list_of_files, key=os.path.getctime)
-    print(latest_file)
-    file_path = latest_file.replace('.jpg','_rotated.jpg')
-    print(file_path)
+    if (list_of_files):
+        latest_file = max(list_of_files, key=os.path.getctime)
+        print(latest_file)
+        file_path = latest_file.replace('.jpg','_rotated.jpg')
+        print(file_path)
     ''' opencv can't be downloaded onto pi
     img = cv2.imread(latest_file) 
     rotated = cv2.rotate(img, cv2.ROTATE_180)
@@ -73,8 +74,9 @@ def remove_filter():
     camera.rotation=0
 
     list_of_files = glob.glob('./image_results/*.jpg') # * means all if need specific format then *.csv
-    list_of_files.sort(key=os.path.getctime)
-    print(list_of_files)
+    if list_of_files:
+        list_of_files.sort(key=os.path.getctime)
+        print(list_of_files)
     return camera
 
 
@@ -88,21 +90,22 @@ https://projects.raspberrypi.org/en/projects/getting-started-with-picamera/7
 def rgb2bgr():
     camera.image_effect = 'colorswap'
     list_of_files = glob.glob('./image_results/*.jpg') # * means all if need specific format then *.csv
-    latest_file = max(list_of_files, key=os.path.getctime)
-    file_path = latest_file.replace('.jpg','_special.jpg')
     '''
     img = cv2.imread(latest_file)
     rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     cv2.imwrite(file_path, rgb)
     '''
+    if list_of_files:
+        latest_file = max(list_of_files, key=os.path.getctime)
+        file_path = latest_file.replace('.jpg','_special.jpg')
+        img = Image.open(latest_file)
+        b, g, r = img.split()
+        switched = Image.merge("RGB", (r, g, b))
+        # img = img[:,:,::-1]  this throw error
+        switched.save('./new.jpg') # to be deleted
+        switched.save(file_path)
     #file_path = str('./image_results/'+latest_file+'_special')
     
-    img = Image.open(latest_file)
-    b, g, r = img.split()
-    switched = Image.merge("RGB", (r, g, b))
-    # img = img[:,:,::-1]  this throw error
-    switched.save('./new.jpg') # to be deleted
-    switched.save(file_path)
     return switched
 
 # move picture taken to image_results
