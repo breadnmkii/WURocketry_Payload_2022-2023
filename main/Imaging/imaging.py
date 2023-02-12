@@ -23,9 +23,8 @@ D4: change camera mode from color to grayscale
 input: camera object from PiCamera, 
 return camera object set to grayscale
 '''
-def greyscale2rgb():
+def to_grayscale():
     camera.color_effects = (128,128) # turn camera to black and white
-    #gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     return camera
 
 '''
@@ -35,30 +34,26 @@ return its 180 degree rotation
 '''
 def rotate():
     camera.rotation = 180
-    list_of_files = glob.glob('./image_results/*.jpg') # * means all if need specific format then *.csv
-    ''' opencv can't be downloaded onto pi
-    img = cv2.imread(latest_file) 
-    rotated = cv2.rotate(img, cv2.ROTATE_180)
-    cv2.imwrite(file_path, rotated)
-    cv2.imwrite('./new.jpg', rotated)
-    '''
-    if (list_of_files):
-        latest_file = max(list_of_files, key=os.path.getctime)
-        print(latest_file)
-        file_path = latest_file.replace('.jpg','_rotated.jpg')
-        print(file_path)
-
-        # using Pillow
+    list_of_files = glob.glob('/home/pi/WURocketry_Payload_2022-2023/main/Imaging/image_results/*.jpeg') # * means all if need specific format then *.csv
+    if not list_of_files:
+        return camera
     
-        #read the image, not using OpenCV
-        img = Image.open(latest_file)
-        #rotate image
-        angle = 90
-        rotated = img.rotate(angle)
-        file_path = latest_file.replace('.jpg','_rotated.jpg')
-        rotated.save(file_path)
-        rotated.save('./new.jpg') # to be deleted
-    return camera 
+    latest_file = max(list_of_files, key=os.path.getctime)
+    print(latest_file)
+    file_path = latest_file.replace('.jpeg','_rotated.jpeg')
+    print(file_path)
+
+    # using Pillow
+    
+    #read the image, not using OpenCV
+    img = Image.open(latest_file)
+    #rotate image
+    angle = 90
+    rotated = img.rotate(angle)
+    file_path = latest_file.replace('.jpg','_rotated.jpg')
+    rotated.save(file_path)
+
+    return rotated 
 
 # E5: change camera mode back from grayscale to color 
 def to_color_mode():
@@ -74,10 +69,12 @@ def remove_filter():
     camera.color_effects = None
     camera.rotation=0
 
-    list_of_files = glob.glob('./image_results/*.jpg') # * means all if need specific format then *.csv
-    if list_of_files:
-        list_of_files.sort(key=os.path.getctime)
-        print(list_of_files)
+    list_of_files = glob.glob('/home/pi/WURocketry_Payload_2022-2023/main/Imaging/image_results/*.jpg') # * means all if need specific format then *.csv
+    if not list_of_files:
+        return camera
+   
+    list_of_files.sort(key=os.path.getctime)
+    print(list_of_files)
     return camera
 
 
@@ -90,21 +87,16 @@ https://projects.raspberrypi.org/en/projects/getting-started-with-picamera/7
 '''
 def rgb2bgr():
     camera.image_effect = 'colorswap'
-    list_of_files = glob.glob('./image_results/*.jpg') # * means all if need specific format then *.csv
-    '''
-    img = cv2.imread(latest_file)
-    rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    cv2.imwrite(file_path, rgb)
-    '''
-    if list_of_files:
-        latest_file = max(list_of_files, key=os.path.getctime)
-        file_path = latest_file.replace('.jpg','_special.jpg')
-        img = Image.open(latest_file)
-        b, g, r = img.split()
-        switched = Image.merge("RGB", (r, g, b))
-        # img = img[:,:,::-1]  this throw error
-        switched.save('./new.jpg') # to be deleted
-        switched.save(file_path)
+    list_of_files = glob.glob('/home/pi/WURocketry_Payload_2022-2023/main/Imaging/image_results/*.jpeg') # * means all if need specific format then *.csv
+    if not list_of_files:
+        return camera
+  
+    latest_file = max(list_of_files, key=os.path.getctime)
+    file_path = latest_file.replace('.jpeg','_special.jpeg')
+    img = Image.open(latest_file)
+    b, g, r = img.split()
+    switched = Image.merge("RGB", (r, g, b))
+    switched.save(file_path)
     #file_path = str('./image_results/'+latest_file+'_special')
     
     return switched
@@ -112,14 +104,6 @@ def rgb2bgr():
 # move picture taken to image_results
 # C3: take picture
 def take_picture():
-    '''
-    code moved to config.;y
-    #create object for PiCamera class
-    camera = picamera.PiCamera()
-    #set resolution
-    camera.resolution = (1024, 768)
-    camera.brightness = 60
-    '''
     # Get the timezone object for Chicago
     tz_cst = timezone('America/Chicago') 
     # Get the current time in CST
@@ -131,34 +115,24 @@ def take_picture():
     #print("Today's date:", today_date, type(today_date))
     annotation = str(today_date)+'_'+local_time
     print("full annotation: ", annotation)
-    #camera.start_preview()
-    #camera.close() 
     camera.annotate_text = annotation
     sleep(5)
     #store image
-    camera.capture('./image_results/'+annotation+'.jpeg')
+    camera.capture('/home/pi/WURocketry_Payload_2022-2023/main/Imaging/image_results/'+annotation+'.jpeg')
     print("picture just captured")
     return camera
 
 
 if __name__ == '__main__':
-    # RGB to BGR Image Transformation Demo
-    #img = cv2.imread("../../")
-    #path = "./image_results/bgr_transform.jpg"
-    #img_transformed = rgb2bgr(img)
-    #cv2.imwrite(path, img_transformed)
     take_picture()
     rgb2bgr()
-    greyscale2rgb()
+    to_grayscale()
     take_picture()
     rotate()
     to_color_mode()
     take_picture()
     remove_filter()
     take_picture()
-    #cv2.imshow('RGB2BGR', img_transformed)
-    #cv2.waitKey(0) 
-    #cv2.destroyAllWindows() 
     print("executing tasks in imaging.py")
     
 
