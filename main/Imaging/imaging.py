@@ -59,7 +59,7 @@ def rotate():
 
 # E5: change camera mode back from grayscale to color 
 def to_color_mode():
-    camera.color_effects = None
+    camera.color_effects = 'none'
     return camera
 
 # H8: remove all filters 
