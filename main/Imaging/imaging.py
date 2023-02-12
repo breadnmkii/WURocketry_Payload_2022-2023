@@ -1,5 +1,5 @@
 # import cv2 # stay away from opencv that can not be downloaded onto the pi
-import numpy as np
+#import numpy as np
 from PIL import Image
 import picamera
 from time import sleep
