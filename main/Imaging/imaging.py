@@ -19,7 +19,8 @@ camera = config.init_camera()
 # no input -> find the photo most recently taken, then perform modifications as needed 
 '''
 D4: change camera mode from color to grayscale
-input: camera object from PiCamera, 
+input: void
+camera object from PiCamera, 
 return camera object set to grayscale
 '''
 def to_grayscale():
@@ -28,8 +29,9 @@ def to_grayscale():
 
 '''
 F6: rotate camera 180 degrees
-input: image, 
-return its 180 degree rotation
+input: void
+currently the method also outputs a jpeg of rotated picture from the most recently picture taken
+return camera with 180 degree rotation
 '''
 def rotate():
     camera.rotation = 180
@@ -59,8 +61,10 @@ def to_color_mode():
     camera.color_effects = None
     return camera
 
-# H8: remove all filters 
-# remove filter on taking pictures
+'''
+H8: remove all filters 
+remove filter on taking pictures
+'''
 def remove_filter():
     # remove special filter
     camera.image_effect = 'none'
@@ -79,7 +83,8 @@ def remove_filter():
 
 '''
 G7: special effects filter to the image 
-input: image
+input: void
+currently the method also outputs a jpeg of picture whose color space are switched from the most recently picture taken
 output: image with color space switched from RGB to BGR
 other options for special effect: 
 https://projects.raspberrypi.org/en/projects/getting-started-with-picamera/7
