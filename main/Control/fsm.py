@@ -128,15 +128,18 @@ def FSM(state, sequence, sequenceBuffer):
 
 def main():
 	print("MAIN HERE")
-	deltaTime = 0
+	imaging.take_picture()
+	# deltaTime = 0
 	
-	while(deltaTime < 10):
-		start = time.time_ns()
-		imaging.rotate()
-		end = time.time_ns()
-		elasped = end - start
-		print(f'Elasped time: {elasped}')
-		deltaTime += 1
+	# while(deltaTime < 10):
+	# 	start = time.time_ns()
+	# 	imaging.rotate()
+	# 	end = time.time_ns()
+	# 	elasped = end - start
+	# 	print(f'Elasped time: {elasped}')
+	# 	deltaTime += 1
+	
+	
 
 	'''
 		imaging.greyscale2rgb()
