@@ -92,10 +92,12 @@ def rgb2bgr():
     #file_path = str('./image_results/'+latest_file+'_special')
     
     img = Image.open(latest_file)
-    img = img[:,:,::-1]
-    img.save('./new.jpg') # to be deleted
-    img.save(file_path)
-    return img
+    b, g, r = img.split()
+    switched = Image.merge("RGB", (r, g, b))
+    # img = img[:,:,::-1]  this throw error
+    switched.save('./new.jpg') # to be deleted
+    switched.save(file_path)
+    return switched
 
 # move picture taken to image_results
 # C3: take picture
