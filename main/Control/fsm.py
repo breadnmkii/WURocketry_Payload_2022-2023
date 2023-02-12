@@ -133,21 +133,22 @@ def main():
 	
 	while(deltaTime < 10):
 		start = time.time_ns()
-		imaging.get_original()
-		end = time.time_ns()
-		elaspedOriginal = end - start
-		print(f'Get original time: {elaspedOriginal}')
-
-
 		imaging.rotate()
+		end = time.time_ns()
+		elasped = end - start
+		print(f'Elasped time: {elasped}')
+		deltaTime += 1
+
+	'''
+		imaging.get_original()
 		imaging.greyscale2rgb()
 		imaging.remove_filter()
-		imaing.rgb2bgr()
+		imaging.rgb2bgr()
 		imaging.take_picture()
 		end6 = time.time_ns()
 		elasped = end - start
 		print(elasped)
-		deltaTime += 1
+	'''
 
 	'''
 	sequenceBuffer = [] 		# Queue to hold all other signals
