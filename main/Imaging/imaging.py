@@ -36,28 +36,29 @@ return its 180 degree rotation
 def rotate():
     camera.rotation = 180
     list_of_files = glob.glob('./image_results/*.jpg') # * means all if need specific format then *.csv
-    if (list_of_files):
-        latest_file = max(list_of_files, key=os.path.getctime)
-        print(latest_file)
-        file_path = latest_file.replace('.jpg','_rotated.jpg')
-        print(file_path)
     ''' opencv can't be downloaded onto pi
     img = cv2.imread(latest_file) 
     rotated = cv2.rotate(img, cv2.ROTATE_180)
     cv2.imwrite(file_path, rotated)
     cv2.imwrite('./new.jpg', rotated)
     '''
-    # using Pillow
+    if (list_of_files):
+        latest_file = max(list_of_files, key=os.path.getctime)
+        print(latest_file)
+        file_path = latest_file.replace('.jpg','_rotated.jpg')
+        print(file_path)
+
+        # using Pillow
     
-    #read the image, not using OpenCV
-    img = Image.open(latest_file)
-    #rotate image
-    angle = 90
-    rotated = img.rotate(angle)
-    file_path = latest_file.replace('.jpg','_rotated.jpg')
-    rotated.save(file_path)
-    rotated.save('./new.jpg') # to be deleted
-    return rotated 
+        #read the image, not using OpenCV
+        img = Image.open(latest_file)
+        #rotate image
+        angle = 90
+        rotated = img.rotate(angle)
+        file_path = latest_file.replace('.jpg','_rotated.jpg')
+        rotated.save(file_path)
+        rotated.save('./new.jpg') # to be deleted
+    return camera 
 
 # E5: change camera mode back from grayscale to color 
 def to_color_mode():
