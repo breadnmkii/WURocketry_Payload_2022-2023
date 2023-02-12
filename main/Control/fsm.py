@@ -100,7 +100,6 @@ def FSM(state, sequence, sequenceBuffer):
 				print("G7: special effects filter")
 				
 			elif (RAFCO == "H8"):
-				# filter_image.get_original()
 				print("H8: remove all filters")
 			
 			else:
@@ -140,7 +139,6 @@ def main():
 		deltaTime += 1
 
 	'''
-		imaging.get_original()
 		imaging.greyscale2rgb()
 		imaging.remove_filter()
 		imaging.rgb2bgr()
