@@ -2,6 +2,7 @@ import config
 import time
 import mathlib
 import board
+import math 
 
 import adafruit_bno055 as a_bno
 
@@ -46,15 +47,6 @@ def isMoving(window):
     else:
         print("Moving")
 
-def acquire_gps(gps, timeout):
-    timecount = 0
-    while not gps.has_fix:
-        gps.update()
-        timecount += 1
-        if(timecount >= timeout):
-            return None
-    return (gps.latitude, gps.longitude)
-
 def average_window(list, window):
     if(not list):
         return 0
@@ -77,9 +69,14 @@ def detectLaunch(acc_accumulator, gps):
     ACC_WINDOW = 50                  # Range of values to apply rolling average in 'acc_accumulator'
     if(average_window(acc_accumulator, ACC_WINDOW) > MOTION_SENSITIVITY + MOTION_LAUNCH_SENSITIVITY):
         print("Launch detected!")
-        LAUNCH_COORD = acquire_gps(gps, 10)
         hasLaunched = True
     return hasLaunched
+
+def vertical():
+    quat = bno.getQuat()
+    roll = math.atan2(2 * (quat.w() * quat.x() + quat.y() * quat.z()), 1 - 2*(quat.x() * quat.x() + yy))
+    pitch = math.asin(2 * quat.w() * quat.y() - quat.x() * quat.z())
+    yaw = math.atan2(2 * (quat.w() * quat.z() + quat.x() * quat.y()), 1 - 2*(yy+quat.z() * quat.z()))
 
 def isUpright():
     if(bno.calibrated):
