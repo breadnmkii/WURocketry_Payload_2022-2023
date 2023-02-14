@@ -31,14 +31,17 @@ return: (accel(3), mag(3), gyro(3))
 """
 def read_bno():
     quat = bno.getQuat()
-    yy = quat.y() * quat.y() # 2 Uses below
-    roll = math.atan2(2 * (quat.w() * quat.x() + quat.y() * quat.z()), 1 - 2*(quat.x() * quat.x() + yy))
-    pitch = math.asin(2 * quat.w() * quat.y() - quat.x() * quat.z())
-    yaw = math.atan2(2 * (quat.w() * quat.z() + quat.x() * quat.y()), 1 - 2*(yy+quat.z() * quat.z()))
-    three_ele = [roll, pitch, yaw]
-    quaternion_buffer.append(three_ele)
-    
-    acceleration_buffer.append(bno.linear_acceleration)
+    if None not in quat:
+        yy = quat.y() * quat.y() # 2 Uses below
+        roll = math.atan2(2 * (quat.w() * quat.x() + quat.y() * quat.z()), 1 - 2*(quat.x() * quat.x() + yy))
+        pitch = math.asin(2 * quat.w() * quat.y() - quat.x() * quat.z())
+        yaw = math.atan2(2 * (quat.w() * quat.z() + quat.x() * quat.y()), 1 - 2*(yy+quat.z() * quat.z()))
+        three_ele = [roll, pitch, yaw]
+        quaternion_buffer.append(three_ele)
+        # convert to euler, then tell from vertical
+    acceleration = bno.linear_acceleration
+    if None not in acceleration:
+        acceleration_buffer.append(acceleration)
     return (bno.acceleration, bno.magnetic, bno.gyro)
 
 
@@ -96,6 +99,9 @@ def vertical(quaternion_accumulator):
         print("Camera is vertical from horizontal")
         is_vertical = True
     return is_vertical
+
+def hit_apogee():
+    pass
 
 def isUpright():
     if(bno.calibrated):
