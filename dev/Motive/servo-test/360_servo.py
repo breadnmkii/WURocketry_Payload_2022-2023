@@ -2,7 +2,8 @@ import lib_para_360_servo
 import pigpio
 import time
 import math
-
+import atexit
+    
 
 
 # Calculate angular position (degrees)
@@ -17,29 +18,33 @@ def get_angpos_helper(read_dc):
 
 #set a custom angle position
 def set_angpos(servo, angle):
-    if angle < get_angpos():
-        servo.set_speed(-0.2)
-    else:
-        servo.set_speed(0.1)
-    curr_pos = math.floor(get_angpos_helper(reader.read()/10))
-    while (curr_pos > angle+2 or curr_pos < angle-2):
-        #print(curr_pos)
-        curr_pos = math.floor(get_angpos(reader.read()/10))
+    curr_pos = get_angpos()
+    angle = angle % 360
 
+    if angle < curr_pos:
+        servo.set_speed(-0.15)
+    else:
+        servo.set_speed(0.09)
+
+    while (curr_pos > angle+margin or curr_pos < angle-margin):
+        curr_pos = get_angpos()
     servo.stop()
 
 
     
 #return the current angular position
 def get_angpos():
-    return math.floor(get_angpos_helper(reader.read()/10))
+    position = round((get_angpos_helper(reader.read()/10)), 2)
+
+    print("Current Position ", position)
+
+    return position
 
 
 #set angular position to zero    
 def set_zero(servo):
     set_angpos(servo, 0)
     print("Set 360 Position to Zero Sucessfully")
-
     
     
 def left_60(servo):
@@ -47,33 +52,111 @@ def left_60(servo):
     current = current - 60
     if current < 0:
         current = current + 360
+    print("Moving Left!")
     set_angpos(servo, current)
     
 
 def right_60(servo):
     current = get_angpos()
     current = current + 60
+    print("Moving Right!")
     set_angpos(servo, current)
+
+def exit_handler():
+    
+    servo.stop()
+    pi.stop()
+    print('Finished!')
   
 
 if __name__ == '__main__':
-    #define GPIO for each servo to read from
-    gpio_r_r = 24
-    #define GPIO for each servo to write to
-    gpio_r_w = 23
+
+    #Define GPIO pins that we will read and write to (Using GPIO numbers NOT pin numbers)
+    WHITE_CABLE_SIGNAL = 23
+    YELLOW_CABLE_FEEDBACK = 24
+
+    #define margin of error
+    margin = 2
+
+
+    #init pigpio to access GPIO pins with PWM
     pi = pigpio.pi()
 
-    #### Create servo write_pwm class from library
-    servo = lib_para_360_servo.write_pwm(pi = pi, gpio = gpio_r_w)
-    reader = lib_para_360_servo.read_pwm(pi = pi, gpio = gpio_r_r)
+    #init servo and servo position reader from lib_para_360_servo
+    servo = lib_para_360_servo.write_pwm(pi = pi, gpio = WHITE_CABLE_SIGNAL)
+    reader = lib_para_360_servo.read_pwm(pi = pi, gpio = YELLOW_CABLE_FEEDBACK)
 
-    # Buffer time for initializing library servo
+    print(servo)
+    print(reader)
+    print(reader.read())
+
+    #create a handler to run exit requirements
+    atexit.register(exit_handler)
+
+   # print("Pi Servo Controller | Enter speed range:")
+   # while (True):
+   #     control = input(" : ")
+   #     if (control == "exit"):
+   #         servo.stop()
+   #         break
+   #     servo.set_speed(float(control))
+
+
+
+    #Buffer time for initializing library servo
+    time.sleep(2)
+    print("INIT")
+
+    servo.set_speed(1)
+    time.sleep(4)
+    servo.stop()
+    
+    set_zero(servo)
     time.sleep(1)
-    servo.stop()
+    right_60(servo)
+    time.sleep(1)
+    right_60(servo)
+    time.sleep(1)
+    # right_60(servo)
+    # time.sleep(1)
+    # right_60(servo)
+    # time.sleep(1)
+    # right_60(servo)
+    # time.sleep(1)
+    # right_60(servo)
+    # time.sleep(1)
+    # right_60(servo)
+    # time.sleep(1)
+    # right_60(servo)
+    # time.sleep(1)
+    # right_60(servo)
+    # time.sleep(1)
+    # right_60(servo)
+    # time.sleep(1)
+    # left_60(servo)
+    # time.sleep(1)
+    # left_60(servo)
+    # time.sleep(1)
+    # left_60(servo)
+    # time.sleep(1)
+    # left_60(servo)
+    # time.sleep(1)
+    # left_60(servo)
+    # time.sleep(1)
+    # left_60(servo)
+    # time.sleep(1)
+    # left_60(servo)
+    # time.sleep(1)
+    
+    #while(1):
+     #   val = int(input("Enter your value: "))
+        
+     #   set_angpos(servo, val)
+     #   print(val)
+      #  atexit.register(exit_handler)
 
 
-
-    servo.stop()
-    pi.stop()
-
+    
+    
+    
 
