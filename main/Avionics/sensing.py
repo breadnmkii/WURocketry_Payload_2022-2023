@@ -18,14 +18,27 @@ Main components
 (bno, bmp) = config.init_avionics()
 bno_buf = []
 bmp_buf = []
-
+acceleration_buffer = []
+quaternion_buffer = []
 
 
 """
 Function returning raw bno data
+functionality: 
+    push linear acceleration values into acceleration_buffer
+    push displacement from vertical orientation values into quaternion_buffer
 return: (accel(3), mag(3), gyro(3))
 """
 def read_bno():
+    quat = bno.getQuat()
+    yy = quat.y() * quat.y() # 2 Uses below
+    roll = math.atan2(2 * (quat.w() * quat.x() + quat.y() * quat.z()), 1 - 2*(quat.x() * quat.x() + yy))
+    pitch = math.asin(2 * quat.w() * quat.y() - quat.x() * quat.z())
+    yaw = math.atan2(2 * (quat.w() * quat.z() + quat.x() * quat.y()), 1 - 2*(yy+quat.z() * quat.z()))
+    three_ele = [roll, pitch, yaw]
+    quaternion_buffer.append(three_ele)
+    
+    acceleration_buffer.append(bno.linear_acceleration)
     return (bno.acceleration, bno.magnetic, bno.gyro)
 
 
@@ -62,7 +75,7 @@ return:
     True if rocket has launched and is moving
     False if payload is relatively static right now
 '''
-def detectLaunch(acc_accumulator, gps):
+def detectLaunch(acc_accumulator):
     MOTION_SENSITIVITY = 3           # Amount of 3-axis acceleration needed to be read to trigger "movement" detection
     MOTION_LAUNCH_SENSITIVITY = 13   # Amount of accel added to offset for stronger initial launch accel
     hasLaunched = False
@@ -71,12 +84,18 @@ def detectLaunch(acc_accumulator, gps):
         print("Launch detected!")
         hasLaunched = True
     return hasLaunched
-
-def vertical():
-    quat = bno.getQuat()
-    roll = math.atan2(2 * (quat.w() * quat.x() + quat.y() * quat.z()), 1 - 2*(quat.x() * quat.x() + yy))
-    pitch = math.asin(2 * quat.w() * quat.y() - quat.x() * quat.z())
-    yaw = math.atan2(2 * (quat.w() * quat.z() + quat.x() * quat.y()), 1 - 2*(yy+quat.z() * quat.z()))
+    
+'''
+functionality: detect whether the camera has reached vertical position or not
+'''
+def vertical(quaternion_accumulator):
+    is_vertical = False
+    quarternion_window = 50
+    threshold = 2 # NEED TESTING
+    if (average_window(quaternion_accumulator, quarternion_window) > threshold):
+        print("Camera is vertical from horizontal")
+        is_vertical = True
+    return is_vertical
 
 def isUpright():
     if(bno.calibrated):
