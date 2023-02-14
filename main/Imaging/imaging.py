@@ -115,7 +115,9 @@ def take_picture():
     # Format the time as a string 
     local_time = datetime_cst.strftime("%H:%M:%S")
     # get date 
-    today_date = date.today()
+    local_date = datetime.now(timezone('US/Central'))  # use datetime here
+    today_date=local_date.date()  
+    #today_date = date.today()
     #print("Today's date:", today_date, type(today_date))
     annotation = str(today_date)+'_'+local_time
     print("full annotation: ", annotation)
