@@ -46,10 +46,44 @@ def isMoving(window):
     else:
         print("Moving")
 
+def acquire_gps(gps, timeout):
+    timecount = 0
+    while not gps.has_fix:
+        gps.update()
+        timecount += 1
+        if(timecount >= timeout):
+            return None
+    return (gps.latitude, gps.longitude)
+
+def average_window(list, window):
+    if(not list):
+        return 0
+    return sum(map(lambda acc: abs(acc), list[-window:]))/window
+
+'''
+from previous year's code
+functionality: detect whether the payload has launched or not
+input: 
+    acc_accumulator: array of acceleration values
+    gps: gps object from adafruit_gps
+return:
+    True if rocket has launched and is moving
+    False if payload is relatively static right now
+'''
+def detectLaunch(acc_accumulator, gps):
+    MOTION_SENSITIVITY = 3           # Amount of 3-axis acceleration needed to be read to trigger "movement" detection
+    MOTION_LAUNCH_SENSITIVITY = 13   # Amount of accel added to offset for stronger initial launch accel
+    hasLaunched = False
+    ACC_WINDOW = 50                  # Range of values to apply rolling average in 'acc_accumulator'
+    if(average_window(acc_accumulator, ACC_WINDOW) > MOTION_SENSITIVITY + MOTION_LAUNCH_SENSITIVITY):
+        print("Launch detected!")
+        LAUNCH_COORD = acquire_gps(gps, 10)
+        hasLaunched = True
+    return hasLaunched
+
 def isUpright():
     if(bno.calibrated):
-        print("Upright")
-
+        print("Euler angle: {}".format(bno.euler))
 
 
 
@@ -71,6 +105,7 @@ if __name__ == '__main__':
     last_sample_t = time.monotonic_ns()
 
     # start_sample_T = time.monotonic_ns()
+    isUpright()
 
     # Test loop
     while True:
