@@ -19,7 +19,7 @@ Main components
 bno_buf = []
 bmp_buf = []
 acceleration_buffer = []
-quaternion_buffer = []
+euler_buffer = []
 
 
 """
@@ -33,12 +33,13 @@ def read_bno():
     quat = bno.getQuat()
     if None not in quat:
         yy = quat.y() * quat.y() # 2 Uses below
+        # convert to euler, then tell from vertical -- roll and pitch
         roll = math.atan2(2 * (quat.w() * quat.x() + quat.y() * quat.z()), 1 - 2*(quat.x() * quat.x() + yy))
         pitch = math.asin(2 * quat.w() * quat.y() - quat.x() * quat.z())
         yaw = math.atan2(2 * (quat.w() * quat.z() + quat.x() * quat.y()), 1 - 2*(yy+quat.z() * quat.z()))
         three_ele = [roll, pitch, yaw]
-        quaternion_buffer.append(three_ele)
-        # convert to euler, then tell from vertical
+        euler_buffer.append(three_ele)
+       
     acceleration = bno.linear_acceleration
     if None not in acceleration:
         acceleration_buffer.append(acceleration)
@@ -94,8 +95,11 @@ functionality: detect whether the camera has reached vertical position or not
 def vertical(quaternion_accumulator):
     is_vertical = False
     quarternion_window = 50
-    threshold = 2 # NEED TESTING
-    if (average_window(quaternion_accumulator, quarternion_window) > threshold):
+    threshold = 0.5 # NEED TESTING
+    rolls = [item[0] for item in quaternion_accumulator]
+    pitches = [item[1] for item in quaternion_accumulator]
+    if (abs(average_window(rolls, quarternion_window)) < threshold and 
+    abs(average_window(pitches, quarternion_window)) < threshold):
         print("Camera is vertical from horizontal")
         is_vertical = True
     return is_vertical
