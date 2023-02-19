@@ -3,7 +3,12 @@ import pigpio
 import time
 import math
 import atexit
-    
+
+#Define GPIO pins that we will read and write to (Using GPIO numbers NOT pin numbers)
+WHITE_CABLE_SIGNAL = 23
+YELLOW_CABLE_FEEDBACK = 24
+MARGIN = 3
+COUNT = 0
 
 
 # Calculate angular position (degrees)
@@ -22,11 +27,11 @@ def set_angpos(servo, angle):
     angle = angle % 360
 
     if angle < curr_pos:
-        servo.set_speed(-0.15)
+        servo.set_speed(-0.2)   # @6v -0.15
     else:
-        servo.set_speed(0.09)
+        servo.set_speed(0.1)    # @6v 0.09
 
-    while (curr_pos > angle+margin or curr_pos < angle-margin):
+    while (curr_pos > angle+MARGIN or curr_pos < angle-MARGIN):
         curr_pos = get_angpos()
     servo.stop()
 
@@ -35,8 +40,11 @@ def set_angpos(servo, angle):
 #return the current angular position
 def get_angpos():
     position = round((get_angpos_helper(reader.read()/10)), 2)
+    global COUNT
 
-    print("Current Position ", position)
+    #if COUNT % 20000 == 0:
+       # print("Current Position ", position)
+   # COUNT +=1
 
     return position
 
@@ -52,14 +60,16 @@ def left_60(servo):
     current = current - 60
     if current < 0:
         current = current + 360
-    print("Moving Left!")
+    current = current % 360
+    print("Moving Left! to ", current)
     set_angpos(servo, current)
     
 
 def right_60(servo):
     current = get_angpos()
     current = current + 60
-    print("Moving Right!")
+    current = current % 360
+    print("Moving Right! to ", current)
     set_angpos(servo, current)
 
 def exit_handler():
@@ -71,13 +81,6 @@ def exit_handler():
 
 if __name__ == '__main__':
 
-    #Define GPIO pins that we will read and write to (Using GPIO numbers NOT pin numbers)
-    WHITE_CABLE_SIGNAL = 23
-    YELLOW_CABLE_FEEDBACK = 24
-
-    #define margin of error
-    margin = 2
-
 
     #init pigpio to access GPIO pins with PWM
     pi = pigpio.pi()
@@ -85,10 +88,6 @@ if __name__ == '__main__':
     #init servo and servo position reader from lib_para_360_servo
     servo = lib_para_360_servo.write_pwm(pi = pi, gpio = WHITE_CABLE_SIGNAL)
     reader = lib_para_360_servo.read_pwm(pi = pi, gpio = YELLOW_CABLE_FEEDBACK)
-
-    print(servo)
-    print(reader)
-    print(reader.read())
 
     #create a handler to run exit requirements
     atexit.register(exit_handler)
@@ -106,57 +105,26 @@ if __name__ == '__main__':
     #Buffer time for initializing library servo
     time.sleep(2)
     print("INIT")
-
-    servo.set_speed(1)
-    time.sleep(4)
     servo.stop()
+
+    time.sleep(1)
     
     set_zero(servo)
+
+    time.sleep(1)
+    print("60")
+    right_60(servo)
+    
+    time.sleep(1)
+    print("0")
+    left_60(servo)
+    
+    time.sleep(1)
+    left_60(servo)
+
     time.sleep(1)
     right_60(servo)
+
     time.sleep(1)
     right_60(servo)
-    time.sleep(1)
-    # right_60(servo)
-    # time.sleep(1)
-    # right_60(servo)
-    # time.sleep(1)
-    # right_60(servo)
-    # time.sleep(1)
-    # right_60(servo)
-    # time.sleep(1)
-    # right_60(servo)
-    # time.sleep(1)
-    # right_60(servo)
-    # time.sleep(1)
-    # right_60(servo)
-    # time.sleep(1)
-    # right_60(servo)
-    # time.sleep(1)
-    # left_60(servo)
-    # time.sleep(1)
-    # left_60(servo)
-    # time.sleep(1)
-    # left_60(servo)
-    # time.sleep(1)
-    # left_60(servo)
-    # time.sleep(1)
-    # left_60(servo)
-    # time.sleep(1)
-    # left_60(servo)
-    # time.sleep(1)
-    # left_60(servo)
-    # time.sleep(1)
     
-    #while(1):
-     #   val = int(input("Enter your value: "))
-        
-     #   set_angpos(servo, val)
-     #   print(val)
-      #  atexit.register(exit_handler)
-
-
-    
-    
-    
-
