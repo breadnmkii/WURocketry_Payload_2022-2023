@@ -52,14 +52,12 @@ Payload mission has 3 stages of execution
 Transition Factors:
 1->2
 - Detects motion
-- Altitude increases (detect apogee)
-- Lower pressure
+- Altitude increases (detect apogee) + Lower pressure -- from the same sensor
 
 2->3
 - Detects no motion (need to determine amount of sensitivity to motion)
 - Is upright
-- Ground level altitude 
-- Sea level pressure
+- Ground level altitude + Sea level pressure -- from the same sensor
 
 '''
 
