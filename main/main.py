@@ -1,7 +1,7 @@
 # FILE FOR MAIN PAYLOAD MISSION ROUTINE
 
 ## Imports
-
+from Control import fsm
 
 ## Globals
 # SYS ARRAY: [isMoving, hitApogee, hasDeployed]
@@ -33,10 +33,16 @@ def telemetryRoutine(stage):
     # data we send back to base station
     telemtery.transmit("data")
 
+def FSM(stage):
+    rfRecieved = True
+    while(stage == 3):
+        if fsm.receiveRF():
+            fsm.FSM(State.CALL, )
+
+    pass
 
 
-
-"""
+'''
 NOTES:
 Payload mission has 3 stages of execution
 1. Awaiting launch
@@ -55,7 +61,7 @@ Transition Factors:
 - Ground level altitude 
 - Sea level pressure
 
-"""
+'''
 
 
 
