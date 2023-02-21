@@ -128,12 +128,13 @@ def altitude_status(altitude_accumulator, pressure_accumulator):
     ascent_pressure =  -2
     if (differential_window(altitude_accumulator, rolling_window) < descent_altitude and differential_window(pressure_accumulator, rolling_window) > descent_pressure):
         print('BMP -- payload is moving up')
-        is_vertical = True
+        return 'up'
     elif (differential_window(altitude_accumulator, rolling_window) > ascent_altitude and differential_window(pressure_accumulator, rolling_window) < ascent_pressure):
         print('BMP -- payload is moving down')
+        return 'down'
     else:
-        print('BMP -- indeterminant')        
-    return is_vertical
+        print('BMP -- indeterminant')  
+        return 'not_sure'      
 
 def isUpright():
     if(bno.calibrated):
@@ -147,7 +148,15 @@ def isAboveAltitude(altitude):
     else:
         return False
 
-
+def ground_level(altitude_accumulator, pressure_accumulator, groud_presure, ground_altitude):
+    rolling_window = 50
+    ground_altitude_sensitivity = 0.5 # NEED TESTING 
+    ground_pressure_sensitivity = 0.5 # NEED TESTING 
+    if ((abs(average_window(altitude_accumulator, rolling_window), ground_altitude) < ground_altitude_sensitivity) and
+        (abs(average_window(pressure_accumulator, rolling_window), groud_presure)) < ground_pressure_sensitivity):
+        return True
+    else:
+        return False
 
 
 if __name__ == '__main__':
