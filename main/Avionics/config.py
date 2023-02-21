@@ -7,8 +7,10 @@ import adafruit_bmp3xx
 def init_avionics():
     i2c = board.I2C()
     try:
+        print('enetered the try case')
         bno055 = adafruit_bno055.BNO055_I2C(i2c)
     except:
+        print('enetered the except case')
         print("WARNING: BNO055 NOT INITIALIZED")
         bno055 = None
     
