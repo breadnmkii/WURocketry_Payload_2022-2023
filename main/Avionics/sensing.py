@@ -176,6 +176,7 @@ if __name__ == '__main__':
 
 
 if __name__ == '__main__':
+    # for testing purposes
     print(read_bmp())
     print(read_bno())
 
