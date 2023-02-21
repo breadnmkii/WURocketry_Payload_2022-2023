@@ -23,7 +23,16 @@ acceleration_buffer = []
 euler_buffer = []
 altitude_buffer = []
 pressure_buffer = []
+buffer_length = 200
 
+'''
+TODO manage array size
+    100 samples per second --> definitely overflow 
+solution
+    write file to disk
+    ring buffer -- manage pointer, slice list itself
+    
+'''
 
 """
 Function returning raw bno data
@@ -44,6 +53,11 @@ def read_bno():
         print('roll: ', roll)
         three_ele = [roll, pitch, yaw]
         euler_buffer.append(three_ele)
+        '''
+        WRITE TO FILE
+        file1 = open("MyFile1.txt","a")
+        '''
+        
        
     acceleration = bno.linear_acceleration
     if None not in acceleration:
@@ -58,6 +72,10 @@ return: (temp, pres, alt)
 def read_bmp():
     altitude_buffer.append(bmp.altitude)
     pressure_buffer.append(bmp.pressure)
+    '''
+    WRITE TO FILE
+    file1 = open("MyFile1.txt","a")
+    '''
     return (bmp.temperature, bmp.pressure, bmp.altitude)
 
 
@@ -154,6 +172,14 @@ def ground_level(altitude_accumulator, pressure_accumulator, groud_presure, grou
     ground_pressure_sensitivity = 0.5 # NEED TESTING 
     if ((abs(average_window(altitude_accumulator, rolling_window), ground_altitude) < ground_altitude_sensitivity) and
         (abs(average_window(pressure_accumulator, rolling_window), groud_presure)) < ground_pressure_sensitivity):
+        return True
+    else:
+        return False
+
+def remain_still(acc_accumulator):
+    rolling_window = 50
+    acceleration_sensitivity = 0.5 # NEED TESTING 
+    if (abs(average_window(acc_accumulator, rolling_window), 0) < acceleration_sensitivity):
         return True
     else:
         return False
