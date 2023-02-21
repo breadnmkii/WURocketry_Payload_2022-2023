@@ -18,11 +18,12 @@ if __name__ == '__main__':
     hat = MotorKit(i2c = board.I2C())
 
     print("Starting...")
-    time.sleep(15)
-
+    time.sleep(5)
+    print("Running")
     #throttleLoop(hat, 0, 1.1, 0.1)
     hat.motor1.throttle = 1
     time.sleep(5)
+    print("Done!")
     hat.motor1.throttle = 0
     """
 
