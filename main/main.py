@@ -82,7 +82,7 @@ def main():
     ### Stage 3
 
 
-""" ALTERNATIVE """
+    """ ALTERNATIVE """
 
     stage = 1
     ### Main delta timing loop
