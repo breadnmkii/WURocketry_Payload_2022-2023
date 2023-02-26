@@ -231,7 +231,7 @@ if __name__ == '__main__':
     
     # start_sample_T = time.monotonic_ns()
     print('entering main')
-    read_bmp()
+    print(read_bmp())
     print('exiting avionics testing for read_bmp')
 
     ''' old code that didn't work
