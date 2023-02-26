@@ -24,9 +24,9 @@ acceleration_buffer = [None]*BNO_BUFFER_LEN
 euler_buffer = [None]*BNO_BUFFER_LEN
 altitude_buffer = [None]*BMP_BUFFER_LEN
 pressure_buffer = [None]*BMP_BUFFER_LEN
-global bmp_pointer
+#global bmp_pointer
 bmp_pointer = 0 # pointer for a ring buffer for altitudes and pressures from BMP
-global bno_pointer
+#global bno_pointer
 bno_pointer = 0 # pointer for a ring buffer for euler orientations and linear accelerations from BNO
 
 '''
@@ -47,6 +47,7 @@ return: (accel(3), mag(3), gyro(3))
 """
 def read_bno():
     quat = bno.getQuat()
+    global bno_pointer
     bno_pointer = bno_pointer % BNO_BUFFER_LEN
     if None not in quat:
         yy = quat.y() * quat.y() # 2 Uses below
@@ -82,6 +83,7 @@ return: (temp, pres, alt)
 def read_bmp():
     #print(bmp_pointer)
     print(BMP_BUFFER_LEN)
+    global bmp_pointer
     bmp_pointer = bmp_pointer % BMP_BUFFER_LEN
     altitude = bmp.altitude
     pressure = bmp.pressure
