@@ -4,7 +4,7 @@ import mathlib
 import board
 import math 
 
-import adafruit_bno055 as a_bno
+#import adafruit_bno055 as a_bno
 
 """
 Constants
@@ -202,12 +202,12 @@ def isAboveAltitude(altitude):
     else:
         return False
 
-def ground_level(altitude_accumulator, pressure_accumulator, groud_presure, ground_altitude):
+def ground_level(altitude_accumulator, pressure_accumulator):
     rolling_window = 50
     ground_altitude_sensitivity = 0.5 # NEED TESTING 
     ground_pressure_sensitivity = 0.5 # NEED TESTING 
-    if ((abs(average_window(altitude_accumulator, rolling_window), ground_altitude) < ground_altitude_sensitivity) and
-        (abs(average_window(pressure_accumulator, rolling_window), groud_presure)) < ground_pressure_sensitivity):
+    if ((abs(average_window(altitude_accumulator, rolling_window), bmp.sea_level_altitude) < ground_altitude_sensitivity) and
+        (abs(average_window(pressure_accumulator, rolling_window), bmp.sea_level_pressure)) < ground_pressure_sensitivity):
         return True
     else:
         return False
