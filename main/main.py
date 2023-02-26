@@ -5,6 +5,7 @@ from Control import fsm
 from Avionics import config as avionics_config
 from Avionics import sensing
 from Imaging import imaging
+from Radio import APRS
 
 ## Globals
 '''
@@ -14,6 +15,21 @@ at index 1: 0 means not moving, 1 means moving, 2 conflicting decisions
 at index 2: 0 means moving up, 1 means moving down, 2 indeterminant 
 '''
 sys_flags = []
+
+
+def update_imageCommands():
+    with open("/Users/loganfarrow/Documents/data.txt") as file:
+        imageCommands = []
+
+        data = file.readlines()
+
+        for line in data:
+            cleanLine = line.strip("\n,;").split(" ")
+            cleanLine = list(filter(None, cleanLine))
+            
+            imageCommands.append(cleanLine)
+            
+        return imageCommands
 
 
 
@@ -86,13 +102,25 @@ def telemetryRoutine(stage):
 def FSM(stage):
     rfRecieved = True
     while(stage == 3):
-        fsm.FSM(fsm.State.WAIT, fsm.seque)
-        '''
-        if fsm.receiveRF():
-            fsm.FSM(fsm.State.CALL, fsm.sequence, fsm.sqeuenceBuffer)
-        else:
-            fsm.FSM(fsm.State.WAIT, fsm.sequence, fsm.sqeuenceBuffer)
-        '''
+    
+    
+        currentState = fsm.State.WAIT #Initial waiting condition
+
+        while True:
+            call = "XD71" #Brief outline of the call that we will recieve from our call variable
+            data = APRS.update_imageCommands() #Put in that call into this function
+            currentState = fsm.State.CALL #Changes currentState when call recieved
+
+            if(data == teamRF(call)): #Checks to see if the call is ours
+                currentState = fsm.State.EXEC 
+                FSM(currentState) #Will make currentState to execute condition, follows FSM function (see lines 15-20)
+                currentState = fsm.State.WAIT #Back to wait condition once it's done, restarting the cycle
+
+            else:
+                currentState = fsm.State.WAIT #Goes back to wait condition if call is not ours
+        
+            fsm.FSM(currentState, fsm.sequence, fsm.sequenceBuffer)
+   
 
     pass
 
@@ -147,6 +175,7 @@ def main():
 
     stage = 1
     ### Main delta timing loop
+    aprs_begin = False
     while(True):
         avionicRoutine(stage)
 
@@ -159,6 +188,8 @@ def main():
         if (hasLanded):
             stage = 3
 
-
+        if(stage == 3 and aprs_begin == False):
+            aprs_subprocess = APRS.begin_APRS_recieve()
+            aprs_begin = True
 
     # Delta timing loop
