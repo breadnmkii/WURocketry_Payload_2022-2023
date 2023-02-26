@@ -7,6 +7,9 @@ from Control import fsm
 # SYS ARRAY: [isMoving, hitApogee, hasDeployed]
 sys_flags = []
 
+imageCommands = []
+
+
 # Payload mission functions (base on payload mission execution flowchart??)
 def avionicRoutine(stage):
     if(stage == 1):
