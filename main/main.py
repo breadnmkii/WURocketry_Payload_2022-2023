@@ -7,7 +7,12 @@ from Avionics import sensing
 from Imaging import imaging
 
 ## Globals
-# SYS ARRAY: [isMoving, hitApogee, hasDeployed]
+'''
+SYS ARRAY: [isMoving, hitApogee, hasDeployed]
+sys_flags index 0: stage information, index 1: movement_decision, index 2: altitude_status
+at index 1: 0 means not moving, 1 means moving, 2 conflicting decisions
+at index 2: 0 means moving up, 1 means moving down, 2 indeterminant 
+'''
 sys_flags = []
 
 
@@ -27,7 +32,24 @@ sys_flags = []
 
 # Payload mission functions (base on payload mission execution flowchart??)
 def avionicRoutine(stage):
-    stage_control(stage)
+    has_launched = sensing.detectMovement(acc_accumulator) # true means movement detected, false means movement not detected
+    is_still = sensing.remain_still(acc_accumulator) # true means still, false means not still
+    if has_launched and not is_still:
+        sys_flags[1] = 1
+    elif not has_launched and  is_still:
+        sys_flags[1] = 0
+    else:
+        sys_flags[1] = 2
+        print('ATTENTION: linear acceleration and quarternion info not enough to determine the presence/absence of movement ')
+    
+    bmp_values_status = sensing.altitude_status(altitude_accumulator, pressure_accumulator)
+    if sys_flags[1] == 1 and bmp_values_status == 'up':
+        sys_flags[2] = 0     
+    elif sys_flags[1] == 1 and bmp_values_status == 'down':
+        sys_flags[2] = 1
+    else:
+        sys_flags[2] = 2
+
     if(stage == 1):
         sys_flags[0] = 1
         pass
@@ -39,12 +61,14 @@ def avionicRoutine(stage):
         pass
         # check for upright (orientation sensor)
 
-def stage_control(stage):
+    # Update sys flags (related to avionics)
     # switch stages
     if (stage == 1 and sensing.detectMovement(acc_accumulator) and sensing.altitude_status(altitude_accumulator, pressure_accumulator) == 'up'):
         stage = 2
     if (stage == 2 and sensing.remain_still(acc_accumulator) and sensing.ground_level(altitude_accumulator, pressure_accumulator)):
         stage = 3
+
+    if 
 
 def controlRoutine():
     pass
