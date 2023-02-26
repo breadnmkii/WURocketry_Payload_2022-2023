@@ -152,7 +152,7 @@ def main():
             stage = 3
 
         if(stage == 3 and aprs_begin == False):
-            APRS.begin_APRS_recieve()
+            aprs_subprocess = APRS.begin_APRS_recieve()
             aprs_begin = True
 
     # Delta timing loop
