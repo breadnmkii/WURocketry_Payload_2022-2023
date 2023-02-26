@@ -51,9 +51,8 @@ def receiveRF():
 def FSM(state, sequence, sequenceBuffer): 
 	
 	if state == State.WAIT:
-		# if sequenceBuffer has awaiting signals
-		if (len(sequenceBuffer) > 0):
-			sequence = sequenceBuffer.pop(0)
+		# if sequence is a command
+		if (len(sequence) > 0):
 			state = State.CALL
 		else:
 			state = State.WAIT

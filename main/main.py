@@ -36,8 +36,25 @@ def telemetryRoutine(stage):
 def FSM(stage):
     rfRecieved = True
     while(stage == 3):
-        if fsm.receiveRF():
-            fsm.FSM(State.CALL, )
+    
+    
+        currentState = fsm.State.WAIT #Initial waiting condition
+
+        while True:
+            call = "XD71" #Brief outline of the call that we will recieve from our call variable
+            data = APRS.update_imageCommands() #Put in that call into this function
+            currentState = fsm.State.CALL #Changes currentState when call recieved
+
+            if(data == teamRF(call)): #Checks to see if the call is ours
+                currentState = fsm.State.EXEC 
+                FSM(currentState) #Will make currentState to execute condition, follows FSM function (see lines 15-20)
+                currentState = fsm.State.WAIT #Back to wait condition once it's done, restarting the cycle
+
+            else:
+                currentState = fsm.State.WAIT #Goes back to wait condition if call is not ours
+        
+            fsm.FSM(currentState, fsm.sequence, fsm.sequenceBuffer)
+   
 
     pass
 
