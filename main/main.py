@@ -7,7 +7,19 @@ from Control import fsm
 # SYS ARRAY: [isMoving, hitApogee, hasDeployed]
 sys_flags = []
 
-imageCommands = []
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # Payload mission functions (base on payload mission execution flowchart??)
@@ -39,8 +51,13 @@ def telemetryRoutine(stage):
 def FSM(stage):
     rfRecieved = True
     while(stage == 3):
+        fsm.FSM(fsm.State.WAIT, fsm.seque)
+        '''
         if fsm.receiveRF():
-            fsm.FSM(State.CALL, )
+            fsm.FSM(fsm.State.CALL, fsm.sequence, fsm.sqeuenceBuffer)
+        else:
+            fsm.FSM(fsm.State.WAIT, fsm.sequence, fsm.sqeuenceBuffer)
+        '''
 
     pass
 
