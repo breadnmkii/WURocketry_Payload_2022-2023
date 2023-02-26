@@ -5,10 +5,25 @@ from Control import fsm
 from Avionics import config as avionics_config
 from Avionics import sensing
 from Imaging import imaging
+from Radio import APRS
 
 ## Globals
 # SYS ARRAY: [isMoving, hitApogee, hasDeployed]
 sys_flags = []
+
+imageCommands = []
+
+def update_imageCommands():
+    with open("/Users/loganfarrow/Documents/data.txt") as file:
+        global imageCommands
+
+        data = file.readlines()
+
+        for line in data:
+            cleanLine = line.strip("\n,;").split(" ")
+            cleanLine = list(filter(None, cleanLine))
+            
+            imageCommands.append(cleanLine)
 
 
 
@@ -123,6 +138,7 @@ def main():
 
     stage = 1
     ### Main delta timing loop
+    aprs_begin = False
     while(True):
         avionicRoutine(stage)
 
@@ -135,6 +151,8 @@ def main():
         if (hasLanded):
             stage = 3
 
-
+        if(stage == 3 and aprs_begin == False):
+            APRS.begin_APRS_recieve()
+            aprs_begin = True
 
     # Delta timing loop
