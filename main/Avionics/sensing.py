@@ -229,9 +229,8 @@ if __name__ == '__main__':
     isUpright()
     print('entering main')
     read_bmp()
-    read_bno()
     isUpright()
-    print('exiting testing for read_bmp, read_bno, isUpright')
+    print('exiting testing for read_bmp, isUpright')
 
     # Test loop
     while True:

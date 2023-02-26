@@ -28,6 +28,9 @@ def init_avionics():
 def __config_BNO055(sensor, mode):
     print("Configuring bno055...")
 
+    if sensor == None:
+        print('unable to create bno object')
+        return
     # Change to configuration mode
     sensor.mode = adafruit_bno055.CONFIG_MODE
     ## Accelerometer Config
