@@ -11,11 +11,10 @@ from Radio import APRS
 # SYS ARRAY: [isMoving, hitApogee, hasDeployed]
 sys_flags = []
 
-imageCommands = []
 
 def update_imageCommands():
     with open("/Users/loganfarrow/Documents/data.txt") as file:
-        global imageCommands
+        imageCommands = []
 
         data = file.readlines()
 
@@ -24,6 +23,8 @@ def update_imageCommands():
             cleanLine = list(filter(None, cleanLine))
             
             imageCommands.append(cleanLine)
+            
+        return imageCommands
 
 
 
