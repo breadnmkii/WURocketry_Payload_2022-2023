@@ -78,7 +78,6 @@ def telemetryRoutine(stage):
 def FSM(stage):
     rfRecieved = True
     while(stage == 3):
-<<<<<<< HEAD
     
     
         currentState = fsm.State.WAIT #Initial waiting condition
@@ -98,15 +97,6 @@ def FSM(stage):
         
             fsm.FSM(currentState, fsm.sequence, fsm.sequenceBuffer)
    
-=======
-        fsm.FSM(fsm.State.WAIT, fsm.seque)
-        '''
-        if fsm.receiveRF():
-            fsm.FSM(fsm.State.CALL, fsm.sequence, fsm.sqeuenceBuffer)
-        else:
-            fsm.FSM(fsm.State.WAIT, fsm.sequence, fsm.sqeuenceBuffer)
-        '''
->>>>>>> df1586aa9ad493cef6dced5fa1d9fba4517c21b5
 
     pass
 
