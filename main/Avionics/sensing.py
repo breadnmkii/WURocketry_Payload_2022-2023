@@ -78,6 +78,8 @@ Function returning raw bmp data
 return: (temp, pres, alt)
 """
 def read_bmp():
+    print(bmp_pointer)
+    print(BMP_BUFFER_LEN)
     bmp_pointer = bmp_pointer % BMP_BUFFER_LEN
     altitude = bmp.altitude
     pressure = bmp.pressure
