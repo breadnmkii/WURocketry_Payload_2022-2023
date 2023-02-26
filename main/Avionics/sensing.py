@@ -81,8 +81,6 @@ Function returning raw bmp data
 return: (temp, pres, alt)
 """
 def read_bmp():
-    #print(bmp_pointer)
-    print(BMP_BUFFER_LEN)
     global bmp_pointer
     bmp_pointer = bmp_pointer % BMP_BUFFER_LEN
     altitude = bmp.altitude
@@ -234,7 +232,7 @@ if __name__ == '__main__':
     # start_sample_T = time.monotonic_ns()
     print('entering main')
     read_bmp()
-    print('exiting testing for read_bmp, isUpright')
+    print('exiting avionics testing for read_bmp')
 
     ''' old code that didn't work
     # Test loop
