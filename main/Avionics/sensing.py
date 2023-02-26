@@ -24,7 +24,9 @@ acceleration_buffer = [None]*BNO_BUFFER_LEN
 euler_buffer = [None]*BNO_BUFFER_LEN
 altitude_buffer = [None]*BMP_BUFFER_LEN
 pressure_buffer = [None]*BMP_BUFFER_LEN
+global bmp_pointer
 bmp_pointer = 0 # pointer for a ring buffer for altitudes and pressures from BMP
+global bno_pointer
 bno_pointer = 0 # pointer for a ring buffer for euler orientations and linear accelerations from BNO
 
 '''
