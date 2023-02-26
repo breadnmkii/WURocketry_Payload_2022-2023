@@ -236,6 +236,7 @@ if __name__ == '__main__':
     read_bmp()
     print('exiting testing for read_bmp, isUpright')
 
+    ''' old code that didn't work
     # Test loop
     while True:
         this_sample_t = time.monotonic_ns()
@@ -249,3 +250,6 @@ if __name__ == '__main__':
 
             last_sample_t = this_sample_t
 
+
+    
+    '''
