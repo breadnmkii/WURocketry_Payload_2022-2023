@@ -229,8 +229,8 @@ if __name__ == '__main__':
     NUM_READINGS = 25
     SAMPLE_FREQUENCY = 100   # in Hz
     DELTA_T = SECOND_NS/SAMPLE_FREQUENCY
-    last_sample_t = time.monotonic_ns()
-
+    last_sample_t = time.monotonic_ns() # TODO reminder: need to time everything right now
+    
     # start_sample_T = time.monotonic_ns()
     print('entering main')
     read_bmp()
