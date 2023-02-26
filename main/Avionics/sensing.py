@@ -4,12 +4,13 @@ import mathlib
 import board
 import math 
 
-import adafruit_bno055 as a_bno
+#import adafruit_bno055 as a_bno
 
 """
 Constants
 """
-BUFFER_LEN = 25     # Length of sensor reading buffer
+BMP_BUFFER_LEN = 200     # Length of sensor reading buffer
+BNO_BUFFER_LEN = 200 
 
 
 """
@@ -19,11 +20,14 @@ Main components
 # delete any values from the front???
 bno_buf = []
 bmp_buf = []
-acceleration_buffer = []
-euler_buffer = []
-altitude_buffer = []
-pressure_buffer = []
-buffer_length = 200
+acceleration_buffer = [None]*BNO_BUFFER_LEN
+euler_buffer = [None]*BNO_BUFFER_LEN
+altitude_buffer = [None]*BMP_BUFFER_LEN
+pressure_buffer = [None]*BMP_BUFFER_LEN
+#global bmp_pointer
+bmp_pointer = 0 # pointer for a ring buffer for altitudes and pressures from BMP
+#global bno_pointer
+bno_pointer = 0 # pointer for a ring buffer for euler orientations and linear accelerations from BNO
 
 '''
 TODO manage array size
@@ -43,6 +47,8 @@ return: (accel(3), mag(3), gyro(3))
 """
 def read_bno():
     quat = bno.getQuat()
+    global bno_pointer
+    bno_pointer = bno_pointer % BNO_BUFFER_LEN
     if None not in quat:
         yy = quat.y() * quat.y() # 2 Uses below
         # convert to euler, then tell from vertical -- roll and pitch
@@ -52,16 +58,21 @@ def read_bno():
         print('pitch: ', pitch)
         print('roll: ', roll)
         three_ele = [roll, pitch, yaw]
-        euler_buffer.append(three_ele)
-        '''
-        WRITE TO FILE
-        file1 = open("MyFile1.txt","a")
-        '''
+        # euler_buffer.append(three_ele) trying ring buffer right now
+        euler_buffer[bno_pointer] = [roll, pitch, yaw]
+        if bno_pointer % BNO_BUFFER_LEN == 0:
+            with open('eulers.txt', 'a') as the_file:
+                the_file.write(euler_buffer)
         
        
     acceleration = bno.linear_acceleration
     if None not in acceleration:
-        acceleration_buffer.append(acceleration)
+        # acceleration_buffer.append(acceleration) trying ring buffer right now
+        acceleration_buffer[bno_pointer] = acceleration
+        if bno_pointer == BNO_BUFFER_LEN-1:
+            with open('accelerations.txt', 'a') as the_file:
+                the_file.write(acceleration_buffer)
+    bno_pointer = bno_pointer+1
     return (bno.acceleration, bno.magnetic, bno.gyro)
 
 
@@ -70,12 +81,25 @@ Function returning raw bmp data
 return: (temp, pres, alt)
 """
 def read_bmp():
-    altitude_buffer.append(bmp.altitude)
-    pressure_buffer.append(bmp.pressure)
+    global bmp_pointer
+    bmp_pointer = bmp_pointer % BMP_BUFFER_LEN
+    altitude = bmp.altitude
+    pressure = bmp.pressure
     '''
-    WRITE TO FILE
-    file1 = open("MyFile1.txt","a")
+    transfering to ring buffer idea
+    altitude_buffer.append(altitude)
+    pressure_buffer.append(pressure)
     '''
+    altitude_buffer[bmp_pointer] = altitude
+    pressure_buffer[bmp_pointer] = pressure
+    if bmp_pointer == BMP_BUFFER_LEN-1:
+        with open('altitudes.txt', 'a') as the_file:
+            #the_file.write(altitude)
+            the_file.write(altitude_buffer)
+        with open('pressures.txt', 'a') as the_file:
+            #the_file.write(pressure)
+             the_file.write(pressure_buffer)
+    bmp_pointer = bmp_pointer+1
     return (bmp.temperature, bmp.pressure, bmp.altitude)
 
 
@@ -94,10 +118,22 @@ def average_window(list, window):
         return 0
     return sum(map(lambda acc: abs(acc), list[-window:]))/window
 
+# for BMP readings only 
 def differential_window(list, window):
     if (not list):
         return 0
-    diff = [list[i+1] - list[i] for i in range(len(list)-1-window, len(list)-1)]
+    most_recent = bmp_pointer
+    least_recent = bmp_pointer-window
+    diff = 0 # will be turned into a ternary if
+    diff = []
+    if least_recent < 0:
+        least_recent = BMP_BUFFER_LEN-1-abs(least_recent)
+        diff = [list[i+1] - list[i] for i in range(0, most_recent)]
+        diff.append([list[i+1] - list[i] for i in range(least_recent, BMP_BUFFER_LEN-1)])
+    else:
+        # when least_recent >= 0
+        diff = [list[i+1] - list[i] for i in range(least_recent, most_recent)]
+    
     return sum(diff)/window
 
 
@@ -166,12 +202,12 @@ def isAboveAltitude(altitude):
     else:
         return False
 
-def ground_level(altitude_accumulator, pressure_accumulator, groud_presure, ground_altitude):
+def ground_level(altitude_accumulator, pressure_accumulator):
     rolling_window = 50
     ground_altitude_sensitivity = 0.5 # NEED TESTING 
     ground_pressure_sensitivity = 0.5 # NEED TESTING 
-    if ((abs(average_window(altitude_accumulator, rolling_window), ground_altitude) < ground_altitude_sensitivity) and
-        (abs(average_window(pressure_accumulator, rolling_window), groud_presure)) < ground_pressure_sensitivity):
+    if ((abs(average_window(altitude_accumulator, rolling_window), bmp.sea_level_altitude) < ground_altitude_sensitivity) and
+        (abs(average_window(pressure_accumulator, rolling_window), bmp.sea_level_pressure)) < ground_pressure_sensitivity):
         return True
     else:
         return False
@@ -191,11 +227,14 @@ if __name__ == '__main__':
     NUM_READINGS = 25
     SAMPLE_FREQUENCY = 100   # in Hz
     DELTA_T = SECOND_NS/SAMPLE_FREQUENCY
-    last_sample_t = time.monotonic_ns()
-
+    last_sample_t = time.monotonic_ns() # TODO reminder: need to time everything right now
+    
     # start_sample_T = time.monotonic_ns()
-    isUpright()
+    print('entering main')
+    print(read_bmp())
+    print('exiting avionics testing for read_bmp')
 
+    ''' old code that didn't work
     # Test loop
     while True:
         this_sample_t = time.monotonic_ns()
@@ -210,8 +249,5 @@ if __name__ == '__main__':
             last_sample_t = this_sample_t
 
 
-if __name__ == '__main__':
-    # for testing purposes
-    print(read_bmp())
-    print(read_bno())
-
+    
+    '''

@@ -28,6 +28,9 @@ def init_avionics():
 def __config_BNO055(sensor, mode):
     print("Configuring bno055...")
 
+    if sensor == None:
+        print('unable to create bno object')
+        return
     # Change to configuration mode
     sensor.mode = adafruit_bno055.CONFIG_MODE
     ## Accelerometer Config
@@ -63,6 +66,8 @@ def __config_BMP388(sensor, avg_iter):
 
     avg = sum([sensor.pressure for _ in range(avg_iter)])/avg_iter
     sensor.sea_level_pressure = avg
+    avg = sum([sensor.altitude for _ in range(avg_iter)])/avg_iter
+    sensor.sea_level_altitude = avg
     
     print("...set base MSL pressure to", avg)
 

@@ -2,13 +2,48 @@
 
 ## Imports
 from Control import fsm
+from Avionics import config as avionics_config
+from Avionics import sensing
+from Imaging import imaging
+from Radio import APRS
 
 ## Globals
 # SYS ARRAY: [isMoving, hitApogee, hasDeployed]
 sys_flags = []
 
+
+def update_imageCommands():
+    with open("/Users/loganfarrow/Documents/data.txt") as file:
+        imageCommands = []
+
+        data = file.readlines()
+
+        for line in data:
+            cleanLine = line.strip("\n,;").split(" ")
+            cleanLine = list(filter(None, cleanLine))
+            
+            imageCommands.append(cleanLine)
+            
+        return imageCommands
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Payload mission functions (base on payload mission execution flowchart??)
 def avionicRoutine(stage):
+    stage_control(stage)
     if(stage == 1):
         sys_flags[0] = 1
         pass
@@ -19,6 +54,13 @@ def avionicRoutine(stage):
     elif (stage == 3):
         pass
         # check for upright (orientation sensor)
+
+def stage_control(stage):
+    # switch stages
+    if (stage == 1 and sensing.detectMovement(acc_accumulator) and sensing.altitude_status(altitude_accumulator, pressure_accumulator) == 'up'):
+        stage = 2
+    if (stage == 2 and sensing.remain_still(acc_accumulator) and sensing.ground_level(altitude_accumulator, pressure_accumulator)):
+        stage = 3
 
 def controlRoutine():
     pass
@@ -36,6 +78,7 @@ def telemetryRoutine(stage):
 def FSM(stage):
     rfRecieved = True
     while(stage == 3):
+<<<<<<< HEAD
     
     
         currentState = fsm.State.WAIT #Initial waiting condition
@@ -55,6 +98,15 @@ def FSM(stage):
         
             fsm.FSM(currentState, fsm.sequence, fsm.sequenceBuffer)
    
+=======
+        fsm.FSM(fsm.State.WAIT, fsm.seque)
+        '''
+        if fsm.receiveRF():
+            fsm.FSM(fsm.State.CALL, fsm.sequence, fsm.sqeuenceBuffer)
+        else:
+            fsm.FSM(fsm.State.WAIT, fsm.sequence, fsm.sqeuenceBuffer)
+        '''
+>>>>>>> df1586aa9ad493cef6dced5fa1d9fba4517c21b5
 
     pass
 
@@ -83,9 +135,9 @@ Transition Factors:
 
 def main():
     # Component config and init
-    bno055 = 1
-    init = 2
+    (bno, bmp) = avionics_config.init_avionics()
     
+    '''
     ### Stage 1
     while(hasNotLaunched):
         routines()
@@ -93,20 +145,23 @@ def main():
         if(hasLaunched):
             break
 
-    ### Stage 2
-    while(hasNotLanded):
+    ### Stage 2 -- motion detected
+    while(sensing.detectMovement(acc_accumulator)):
         rotunines()
 
         if(landed):
             break
 
     ### Stage 3
-
+    while(sensing.remain_still(acc_accumulator)):
+        pass
+    '''
 
     """ ALTERNATIVE """
 
     stage = 1
     ### Main delta timing loop
+    aprs_begin = False
     while(True):
         avionicRoutine(stage)
 
@@ -119,6 +174,8 @@ def main():
         if (hasLanded):
             stage = 3
 
-
+        if(stage == 3 and aprs_begin == False):
+            aprs_subprocess = APRS.begin_APRS_recieve()
+            aprs_begin = True
 
     # Delta timing loop
