@@ -226,10 +226,8 @@ if __name__ == '__main__':
     last_sample_t = time.monotonic_ns()
 
     # start_sample_T = time.monotonic_ns()
-    isUpright()
     print('entering main')
     read_bmp()
-    isUpright()
     print('exiting testing for read_bmp, isUpright')
 
     # Test loop
