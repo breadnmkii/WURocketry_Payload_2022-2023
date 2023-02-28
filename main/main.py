@@ -197,7 +197,7 @@ def main():
     if camera == None:
         sys_flags[7] = 1
     # right now, only BNO frequency used, ask whether two machines sampled at different rate
-    BNO_FREQUENCY = 100 # bno frequncy per second
+    BNO_FREQUENCY = 100 # bno frequncy per second -- check documentations
     BMP_FREQUENCY = 100 # bmp frequncy per second    
     '''
     ### Stage 1
@@ -231,7 +231,7 @@ def main():
         if(time_this_sample - time_last_sample >= BNO_FREQUENCY):
             time_last_sample = time_this_sample
             avionicRoutine(stage)
-
+        time_this_sample = time.time()
         imageRoutine(stage)
         
         if (sys_flags[0]):
