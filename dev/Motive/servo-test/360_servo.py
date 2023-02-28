@@ -4,15 +4,28 @@ import time
 import math
 import atexit
 
-#Define GPIO pins that we will read and write to (Using GPIO numbers NOT pin numbers)
-WHITE_CABLE_SIGNAL = 23
-YELLOW_CABLE_FEEDBACK = 24
-
 #Define the margin of error
 MARGIN = 2
 
 #global current angular position variable
 current = 0
+
+
+def extend(servo):
+    servo.set_speed(0.1)
+    
+    while(True):
+        postion1 = get_angpos()
+
+        time.sleep(.5)
+
+        postion2 = get_angpos()
+
+        if(abs(postion1-postion2) < 5):
+            servo.stop()
+            break
+
+    print("Stalled!")
 
 
 # Calculate angular position (degrees)
@@ -45,7 +58,7 @@ def set_angpos(servo, moveto_angle):
 
     
 #return the current angular position
-def get_angpos():
+def get_angpos(reader):
     position = round((get_angpos_helper(reader.read()/10)), 2)
 
 
@@ -101,73 +114,3 @@ def exit_handler():
   
 
 
-
-
-
-
-if __name__ == '__main__':
-
-
-    #init pigpio to access GPIO pins with PWM
-    pi = pigpio.pi()
-
-    #init servo and servo position reader from lib_para_360_servo
-    servo = lib_para_360_servo.write_pwm(pi = pi, gpio = WHITE_CABLE_SIGNAL)
-    reader = lib_para_360_servo.read_pwm(pi = pi, gpio = YELLOW_CABLE_FEEDBACK)
-
-    #create a handler to run exit requirements
-    atexit.register(exit_handler)
-
-
-    #Buffer time for initializing library servo
-    time.sleep(2)
-    print("INIT")
-    servo.stop()
-
-    time.sleep(1)
-    
-    #if(get_angpos() > 5):
-    set_zero(servo)
-
-    time.sleep(1)
-    print("60")
-    left_60(servo)
-    
-    time.sleep(1)
-    print("0")
-    left_60(servo)
-    
-    time.sleep(1)
-    left_60(servo)
-
-    time.sleep(1)
-    left_60(servo)
-
-    time.sleep(1)
-    left_60(servo)
-
-    time.sleep(1)
-    left_60(servo)
-
-    time.sleep(1)
-    left_60(servo)
-    
-    time.sleep(1)
-    print("60")
-    right_60(servo)
-    
-    time.sleep(1)
-    print("0")
-    right_60(servo)
-    
-    time.sleep(1)
-    right_60(servo)
-
-    time.sleep(1)
-    right_60(servo)
-
-    time.sleep(1)
-    right_60(servo)
-
-    time.sleep(1)
-    right_60(servo)    
