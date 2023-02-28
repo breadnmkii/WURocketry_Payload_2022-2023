@@ -139,25 +139,23 @@ def telemetryRoutine(stage):
     # data we send back to base station
     telemtery.transmit("data")
 
-def FSM(stage):
-    rfRecieved = True
+def fsmRoutine(stage, currentState):
     while(stage == 3):
-    
-    
-        currentState = fsm.State.WAIT #Initial waiting condition
+        
+        call = "XD71" #Brief outline of the call that we will recieve from our call variable
+        data = APRS.update_imageCommands() #Put in that call into this function
+        currentState = fsm.State.CALL #Changes currentState when call recieved
 
-        while True:
-            call = "XD71" #Brief outline of the call that we will recieve from our call variable
-            data = APRS.update_imageCommands() #Put in that call into this function
-            currentState = fsm.State.CALL #Changes currentState when call recieved
+        rafCall = data[0]
 
-            if(data == call): #Checks to see if the call is ours
-                currentState = fsm.State.EXEC 
-                fsm.FSM(currentState, data) #Will make currentState to execute condition, follows FSM function (see lines 15-20)
-                currentState = fsm.State.WAIT #Back to wait condition once it's done, restarting the cycle
 
-            else:
-                currentState = fsm.State.WAIT #Goes back to wait condition if call is not ours
+        if(data == call): #Checks to see if the call is ours
+            currentState = fsm.State.EXEC 
+            fsm.FSM(currentState, rafCall) #Will make currentState to execute condition, follows FSM function (see lines 15-20)
+            currentState = fsm.State.WAIT #Back to wait condition once it's done, restarting the cycle
+
+        else:
+            currentState = fsm.State.WAIT #Goes back to wait condition if call is not ours
         
    
 
@@ -187,6 +185,8 @@ Transition Factors:
 
 
 def main():
+    # Init FSM starting state
+    currentState = fsm.State.WAIT
     # Component config and init
     (bno, bmp) = avionics_config.init_avionics()
     camera = camera_config.init_avionics()
@@ -244,5 +244,6 @@ def main():
         if(stage == 3 and aprs_begin == False):
             aprs_subprocess = APRS.begin_APRS_recieve()
             aprs_begin = True
+            currentState = fsmRoutine(stage, currentState)
 
     # Delta timing loop
