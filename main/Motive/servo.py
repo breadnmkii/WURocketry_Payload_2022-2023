@@ -1,8 +1,11 @@
 import time
+import config
 MARGIN = 2
 
+## Init servo components
+servo, reader = config.servo_config()
 
-def extend(servo):
+def extend():
     servo.set_speed(0.1)
     
     while(True):
@@ -29,7 +32,7 @@ def get_angpos_helper(read_dc):
 
 
 #set a custom angle position
-def set_angpos(servo, moveto_angle):
+def set_angpos(moveto_angle):
     
     global current
     
@@ -49,7 +52,7 @@ def set_angpos(servo, moveto_angle):
 
     
 #return the current angular position
-def get_angpos(reader):
+def get_angpos():
     position = round((get_angpos_helper(reader.read()/10)), 2)
 
 
@@ -57,7 +60,7 @@ def get_angpos(reader):
 
 
 #set angular position to zero    
-def set_zero(servo):
+def set_zero():
     set_angpos(servo, 0)
     print("Set 360 Position to Zero Sucessfully")
     
