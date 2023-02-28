@@ -61,7 +61,7 @@ def update_imageCommands():
 
 # Payload mission functions (base on payload mission execution flowchart??)
 def avionicRoutine(stage):
-    # TODO: confirm design decision
+    # TODO: confirm design decision, add comments
     acceleration_accumulator = []
     # initialize values
     has_launched = None # sensing.detectMovement(acc_accumulator) # true means movement detected, false means movement not detected
@@ -196,7 +196,7 @@ def main():
     # PiCamera hardware fault
     if camera == None:
         sys_flags[7] = 1
-
+    # right now, only BNO frequency used, ask whether two machines sampled at different rate
     BNO_FREQUENCY = 100 # bno frequncy per second
     BMP_FREQUENCY = 100 # bmp frequncy per second    
     '''
