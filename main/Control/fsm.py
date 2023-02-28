@@ -6,17 +6,14 @@
 # 			formatted as list headed with team's CALLSIGN and a sequence of 
 # 			2-char RAFCO character data. (made possible by Logan's Py wrapper)
 
-# DEBUG NOTE: assume team CALLSIGN is WU22RC
+# DEBUG NOTE: assume team CALLSIGN is XD71
 
 import random
 from enum import Enum
 import time
 import sys
 from Imaging import imaging
-
-# sys.path.append('../')
-# from Imaging import filter_image
-# from Imaging import take_picture
+from Motive import servo
 
 CALLSIGN = "XD71"
 
@@ -56,12 +53,13 @@ def FSM(state, sequence):
 			RAFCO = sequence.pop(0)
 
 			# Execute RAFCO
-			# st = time.time()
 			if (RAFCO == "A1"):
 				print("A1: servo 60 degrees right")
+				servo.right_60()
 				
 			elif (RAFCO == "B2"):
 				print("B2: servo 60 degrees left")
+				servo.left_60()
 				
 			elif (RAFCO == "C3"):
 				# take_picture.camera_time()
@@ -93,12 +91,6 @@ def FSM(state, sequence):
 			
 			else:
 				print("Corrupted RAFCO: Could not execute")
-				
-			# et = time.time_ns()
-			# elasped = time.time() - st #Prints the time between th
-			# print(f'Elapsed time (RAFCO): {elasped}')
-			# print(f'Start time (RAFCO): {st}')
-			# print(f'End time (RAFCO): {et}')
 
 			# Save FSM cycle for checking empty sequence (optimization)
 			if (len(sequence) <= 0):

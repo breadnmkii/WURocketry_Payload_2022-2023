@@ -84,7 +84,6 @@ def avionicRoutine(stage):
     if (stage == 2 and sensing.remain_still(acc_accumulator) and sensing.ground_level(altitude_accumulator, pressure_accumulator)):
         stage = 3
 
-    if 
 
 def controlRoutine():
     pass
@@ -113,13 +112,12 @@ def FSM(stage):
 
             if(data == call): #Checks to see if the call is ours
                 currentState = fsm.State.EXEC 
-                FSM(currentState, data) #Will make currentState to execute condition, follows FSM function (see lines 15-20)
+                fsm.FSM(currentState, data) #Will make currentState to execute condition, follows FSM function (see lines 15-20)
                 currentState = fsm.State.WAIT #Back to wait condition once it's done, restarting the cycle
 
             else:
                 currentState = fsm.State.WAIT #Goes back to wait condition if call is not ours
         
-            fsm.FSM(currentState, fsm.sequence, fsm.sequenceBuffer)
    
 
     pass
