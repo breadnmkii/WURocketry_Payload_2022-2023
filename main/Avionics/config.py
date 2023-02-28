@@ -67,7 +67,7 @@ def __config_BMP388(sensor, avg_iter):
     avg = sum([sensor.pressure for _ in range(avg_iter)])/avg_iter
     sensor.sea_level_pressure = avg
     avg = sum([sensor.altitude for _ in range(avg_iter)])/avg_iter
-    sensor.sea_level_altitude = avg
+    sensor.sea_level_altitude = avg # COULD BE BUGGY
     
     print("...set base MSL pressure to", avg)
 
