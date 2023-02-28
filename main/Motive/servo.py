@@ -3,17 +3,20 @@ import config
 MARGIN = 2
 
 ## Init servo components
-servo, reader = config.servo_config()
+# servo_config takes two params, GPIO for (r,w) respectively
+
+servo, reader = config.servo_config(23,24)
+lift_servo, lift_reader = config.servo_config(13,14)
 
 def extend():
-    servo.set_speed(0.1)
+    lift_servo.set_speed(0.1)
     
     while(True):
-        postion1 = get_angpos()
+        postion1 = get_angpos(lift_reader)
 
         time.sleep(.5)
 
-        postion2 = get_angpos()
+        postion2 = get_angpos(lift_reader)
 
         if(abs(postion1-postion2) < 5):
             servo.stop()
@@ -52,7 +55,7 @@ def set_angpos(moveto_angle):
 
     
 #return the current angular position
-def get_angpos():
+def get_angpos(reader):
     position = round((get_angpos_helper(reader.read()/10)), 2)
 
 

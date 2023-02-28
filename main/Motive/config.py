@@ -3,11 +3,11 @@ import pigpio
 import time
 
 
-def servo_config():
+def servo_config(x,y):
 
     #Define GPIO pins that we will read and write to (Using GPIO numbers NOT pin numbers)
-    WHITE_CABLE_SIGNAL = 23
-    YELLOW_CABLE_FEEDBACK = 24  
+    WHITE_CABLE_SIGNAL = x #23
+    YELLOW_CABLE_FEEDBACK = y #24  
 
     #init pigpio to access GPIO pins with PWM
     pi = pigpio.pi()

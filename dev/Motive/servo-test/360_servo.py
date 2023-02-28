@@ -45,11 +45,13 @@ def get_angpos_helper(read_dc):
 def set_angpos(servo, moveto_angle):
     
     global current
-    
-    if moveto_angle < current:
-        servo.set_speed(-0.2)   # @6v -0.15
+    if(moveto_angle == 0):
+        servo.set_speed(-0.15)
+
+    elif moveto_angle < current:
+        servo.set_speed(-0.15)   # @6v -0.15
     else:
-        servo.set_speed(0.1)    # @6v 0.09
+        servo.set_speed(0.09)    # @6v 0.09
 
 
     curr_pos = get_angpos()
@@ -62,7 +64,7 @@ def set_angpos(servo, moveto_angle):
 
     
 #return the current angular position
-def get_angpos(reader):
+def get_angpos():
     position = round((get_angpos_helper(reader.read()/10)), 2)
 
 
@@ -70,7 +72,7 @@ def get_angpos(reader):
 
 
 #set angular position to zero    
-def set_zero(servo):
+def set_zero():
     set_angpos(servo, 0)
     print("Set 360 Position to Zero Sucessfully")
     
@@ -81,7 +83,7 @@ def set_zero(servo):
 
 
     
-def left_60(servo):
+def left_60():
     global current
 
     moveto_angle = current - 60
@@ -97,7 +99,7 @@ def left_60(servo):
 
 
 
-def right_60(servo):
+def right_60():
     global current
 
     moveto_angle = current + 60
@@ -133,7 +135,22 @@ if __name__ == '__main__':
     #Buffer time for initializing library servo
     time.sleep(2)
     print("INIT")
-    servo.stop()   
+    servo.stop()
+
+
+
+    set_zero()
+    time.sleep(1)
+    right_60()
+    time.sleep(1)
+    right_60()
+    time.sleep(1)
+    right_60()
+    
+
+
+
+
   
 
 
