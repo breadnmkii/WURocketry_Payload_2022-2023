@@ -24,6 +24,7 @@ acceleration_buffer = [None]*BNO_BUFFER_LEN
 euler_buffer = [None]*BNO_BUFFER_LEN
 altitude_buffer = [None]*BMP_BUFFER_LEN
 pressure_buffer = [None]*BMP_BUFFER_LEN
+temperature_buffer = [None]*BMP_BUFFER_LEN
 #global bmp_pointer
 bmp_pointer = 0 # pointer for a ring buffer for altitudes and pressures from BMP
 #global bno_pointer
@@ -60,20 +61,28 @@ def read_bno():
         three_ele = [roll, pitch, yaw]
         # euler_buffer.append(three_ele) trying ring buffer right now
         euler_buffer[bno_pointer] = [roll, pitch, yaw]
-        if bno_pointer % BNO_BUFFER_LEN == 0:
-            with open('eulers.txt', 'a') as the_file:
-                the_file.write(euler_buffer)
         
-       
+    # thinking about splitting into two functions not sure how to deal with the pointer though 
     acceleration = bno.linear_acceleration
     if None not in acceleration:
         # acceleration_buffer.append(acceleration) trying ring buffer right now
         acceleration_buffer[bno_pointer] = acceleration
-        if bno_pointer == BNO_BUFFER_LEN-1:
-            with open('accelerations.txt', 'a') as the_file:
-                the_file.write(acceleration_buffer)
+    
+    # write data to file 
+    if bno_pointer == BNO_BUFFER_LEN-1:
+        with open('accelerations.txt', 'a') as the_file:
+            the_file.write(acceleration_buffer)
+        with open('eulers.txt', 'a') as the_file:
+            '''
+            # may need to format txt files
+            data_f.write(f"{time_thisSample-time_launchStart}")
+            data_f.write(f"{acc[0]}\t{acc[1]}\t{acc[2]}\t")
+            data_f.write(f"{qua[0]}\t{qua[1]}\t{qua[2]}\t{qua[3]}\n")
+            '''
+            the_file.write(euler_buffer)
+    
     bno_pointer = bno_pointer+1
-    return (bno.acceleration, bno.magnetic, bno.gyro)
+    return (bno.magnetic, bno.gyro, euler_buffer, acceleration_buffer)
 
 
 """
@@ -85,13 +94,21 @@ def read_bmp():
     bmp_pointer = bmp_pointer % BMP_BUFFER_LEN
     altitude = bmp.altitude
     pressure = bmp.pressure
+    temperature = bmp.temperature
     '''
     transfering to ring buffer idea
     altitude_buffer.append(altitude)
     pressure_buffer.append(pressure)
     '''
-    altitude_buffer[bmp_pointer] = altitude
-    pressure_buffer[bmp_pointer] = pressure
+    if None not in altitude:
+        altitude_buffer[bmp_pointer] = altitude
+    
+    if None not in pressure:
+        pressure_buffer[bmp_pointer] = pressure
+    
+    if None not in temperature:
+        temperature_buffer[bmp_pointer] = temperature
+    
     if bmp_pointer == BMP_BUFFER_LEN-1:
         with open('altitudes.txt', 'a') as the_file:
             #the_file.write(altitude)
@@ -99,8 +116,9 @@ def read_bmp():
         with open('pressures.txt', 'a') as the_file:
             #the_file.write(pressure)
              the_file.write(pressure_buffer)
+
     bmp_pointer = bmp_pointer+1
-    return (bmp.temperature, bmp.pressure, bmp.altitude)
+    return (temperature_buffer, pressure_buffer, altitude_buffer)
 
 
 """ 
@@ -220,6 +238,14 @@ def remain_still(acc_accumulator):
     else:
         return False
 
+# for heat warning
+def check_heat(temperature_accumulator):
+    rolling_window = 50
+    # if averaged temperature exceeds 83 Celcius, raspberry Pi may die
+    if (average_window(temperature_accumulator, rolling_window) > 83):
+        return True
+    else:
+        return False
 
 if __name__ == '__main__':
     
