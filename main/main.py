@@ -18,7 +18,7 @@ sys_flags = []
 
 
 def update_imageCommands():
-    with open("/Users/loganfarrow/Documents/data.txt") as file:
+    with open("data") as file:
         imageCommands = []
 
         data = file.readlines()
