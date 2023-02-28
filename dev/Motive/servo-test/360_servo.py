@@ -6,13 +6,30 @@ import atexit
 
 #Define GPIO pins that we will read and write to (Using GPIO numbers NOT pin numbers)
 WHITE_CABLE_SIGNAL = 23
-YELLOW_CABLE_FEEDBACK = 24
+YELLOW_CABLE_FEEDBACK = 24  
 
 #Define the margin of error
 MARGIN = 2
 
 #global current angular position variable
 current = 0
+
+
+def extend(servo):
+    servo.set_speed(0.1)
+    
+    while(True):
+        postion1 = get_angpos()
+
+        time.sleep(.5)
+
+        postion2 = get_angpos()
+
+        if(abs(postion1-postion2) < 5):
+            servo.stop()
+            break
+
+    print("Stalled!")
 
 
 # Calculate angular position (degrees)
@@ -28,11 +45,13 @@ def get_angpos_helper(read_dc):
 def set_angpos(servo, moveto_angle):
     
     global current
-    
-    if moveto_angle < current:
-        servo.set_speed(-0.2)   # @6v -0.15
+    if(moveto_angle == 0):
+        servo.set_speed(-0.15)
+
+    elif moveto_angle < current:
+        servo.set_speed(-0.15)   # @6v -0.15
     else:
-        servo.set_speed(0.1)    # @6v 0.09
+        servo.set_speed(0.09)    # @6v 0.09
 
 
     curr_pos = get_angpos()
@@ -53,7 +72,7 @@ def get_angpos():
 
 
 #set angular position to zero    
-def set_zero(servo):
+def set_zero():
     set_angpos(servo, 0)
     print("Set 360 Position to Zero Sucessfully")
     
@@ -64,7 +83,7 @@ def set_zero(servo):
 
 
     
-def left_60(servo):
+def left_60():
     global current
 
     moveto_angle = current - 60
@@ -80,7 +99,7 @@ def left_60(servo):
 
 
 
-def right_60(servo):
+def right_60():
     global current
 
     moveto_angle = current + 60
@@ -91,21 +110,15 @@ def right_60(servo):
 
 
 
-
-
 def exit_handler():
     
     servo.stop()
     pi.stop()
     print('Finished!')
-  
-
-
-
-
 
 
 if __name__ == '__main__':
+
 
 
     #init pigpio to access GPIO pins with PWM
@@ -124,50 +137,20 @@ if __name__ == '__main__':
     print("INIT")
     servo.stop()
 
+
+
+    set_zero()
     time.sleep(1)
+    right_60()
+    time.sleep(1)
+    right_60()
+    time.sleep(1)
+    right_60()
     
-    #if(get_angpos() > 5):
-    set_zero(servo)
 
-    time.sleep(1)
-    print("60")
-    left_60(servo)
-    
-    time.sleep(1)
-    print("0")
-    left_60(servo)
-    
-    time.sleep(1)
-    left_60(servo)
 
-    time.sleep(1)
-    left_60(servo)
 
-    time.sleep(1)
-    left_60(servo)
 
-    time.sleep(1)
-    left_60(servo)
+  
 
-    time.sleep(1)
-    left_60(servo)
-    
-    time.sleep(1)
-    print("60")
-    right_60(servo)
-    
-    time.sleep(1)
-    print("0")
-    right_60(servo)
-    
-    time.sleep(1)
-    right_60(servo)
 
-    time.sleep(1)
-    right_60(servo)
-
-    time.sleep(1)
-    right_60(servo)
-
-    time.sleep(1)
-    right_60(servo)    
