@@ -108,8 +108,6 @@ def right_60(servo):
 
 
 
-
-
 def exit_handler():
     
     servo.stop()
