@@ -111,9 +111,9 @@ def FSM(stage):
             data = APRS.update_imageCommands() #Put in that call into this function
             currentState = fsm.State.CALL #Changes currentState when call recieved
 
-            if(data == teamRF(call)): #Checks to see if the call is ours
+            if(data == call): #Checks to see if the call is ours
                 currentState = fsm.State.EXEC 
-                FSM(currentState) #Will make currentState to execute condition, follows FSM function (see lines 15-20)
+                FSM(currentState, data) #Will make currentState to execute condition, follows FSM function (see lines 15-20)
                 currentState = fsm.State.WAIT #Back to wait condition once it's done, restarting the cycle
 
             else:
