@@ -4,6 +4,10 @@ import time
 import math
 import atexit
 
+#Define GPIO pins that we will read and write to (Using GPIO numbers NOT pin numbers)
+WHITE_CABLE_SIGNAL = 23
+YELLOW_CABLE_FEEDBACK = 24  
+
 #Define the margin of error
 MARGIN = 2
 
@@ -111,6 +115,27 @@ def exit_handler():
     servo.stop()
     pi.stop()
     print('Finished!')
+
+
+if __name__ == '__main__':
+
+
+
+    #init pigpio to access GPIO pins with PWM
+    pi = pigpio.pi()
+
+    #init servo and servo position reader from lib_para_360_servo
+    servo = lib_para_360_servo.write_pwm(pi = pi, gpio = WHITE_CABLE_SIGNAL)
+    reader = lib_para_360_servo.read_pwm(pi = pi, gpio = YELLOW_CABLE_FEEDBACK)
+
+    #create a handler to run exit requirements
+    atexit.register(exit_handler)
+
+
+    #Buffer time for initializing library servo
+    time.sleep(2)
+    print("INIT")
+    servo.stop()   
   
 
 
