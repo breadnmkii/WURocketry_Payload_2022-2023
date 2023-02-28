@@ -4,3 +4,4 @@ imaging-venv
 __pycache__
 image_results
 .txt
+.vscode
