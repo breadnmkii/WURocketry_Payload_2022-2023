@@ -200,13 +200,30 @@ def average_window(list, window, pointer):
         least_recent = buf_len-1-abs(least_recent)
         print('almost error: ', least_recent)
         print('inspect this:', list)
-        summing = sum(map(lambda acc: abs(acc), list[0, most_recent]))
-        summing.append(sum(map(lambda acc: abs(acc), list[least_recent:, buf_len])))
+        #inspecting = list[0, most_recent]
+        #first_non_none_index = next((i for i, value in enumerate(inspecting) if value is not None), None)
+        #last_non_none_index =  max((i for i, x in enumerate(inspecting) if x is not None), default=None)
+        (sum_left, total_left) = average_sum_abs_range(list, 0, most_recent)
+        (sum_right, total_right) = average_sum_abs_range(list, least_recent, buf_len)
+        summing = sum_left+sum_right
+        window = total_left+total_right
+        #summing = sum(map(lambda acc: abs(acc), list[0, most_recent]))
+        #summing.append(sum(map(lambda acc: abs(acc), list[least_recent:, buf_len])))
     else:
         # when least_recent >= 0
-        summing = sum(map(lambda acc: abs(acc), list[least_recent, most_recent]))
+        (summing, window) =  average_sum_abs_range(list, least_recent, most_recent)
+        #summing = sum(map(lambda acc: abs(acc), list[least_recent, most_recent]))
     return summing/window
 
+def average_sum_abs_range(list, least_recent, most_recent):
+    start_idx = next((i for i, x in enumerate(list[least_recent:most_recent+1]) if x is not None), None)
+    end_idx = next((i for i, x in enumerate(reversed(list[most_recent:least_recent+1])) if x is not None), None)
+    if start_idx is None or end_idx is None:
+        return 0
+    start_idx += most_recent
+    end_idx = least_recent - end_idx
+    summing = sum(abs(x) for x in list[start_idx:end_idx])
+    return (summing, end_idx-start_idx)
 
 # for BMP readings only 
 def differential_window(list, window):
