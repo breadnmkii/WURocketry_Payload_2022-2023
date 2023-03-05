@@ -316,9 +316,13 @@ if __name__ == '__main__':
     #print(read_bmp())
     euler_acc = read_euler_buffer()
     read_acceleration_buffer()
-    print(vertical(euler_acc))
+    print('is it vertical?', vertical(euler_acc))
     print('exiting avionics testing for read_bno')
 
+    while True:
+        euler_acc = read_euler_buffer()
+        read_acceleration_buffer()
+        print('is it vertical?', vertical(euler_acc))
     ''' old code that didn't work
     # Test loop
     while True:
