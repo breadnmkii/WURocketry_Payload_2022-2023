@@ -29,6 +29,20 @@ WARN AVIONIC  index 8
 WARN MOTIVE   index 9
 '''
 sys_flags = []
+from enum import Enum
+class System_Flags(Enum):
+    STAGE_INFO = 0
+    MOVMENT = 1
+    DIRECTION = 2
+    VERTICALITY = 3
+    SEPARTED = 4
+    DEPLOYED = 5
+    WARN_HEAT = 6
+    WARN_CAMERA = 7
+    WARN_AVIONICS = 8
+    WAR_MOTIVE = 9
+
+
 
 
 def update_imageCommands():

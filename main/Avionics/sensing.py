@@ -49,7 +49,7 @@ functionality:
 return: (accel(3), mag(3), gyro(3))
 """
 def read_bno():
-    quat = bno.getQuat()
+    quat = bno.quaternion
     global bno_pointer
     global euler_orient_pointer
     #bno_pointer = bno_pointer % BNO_BUFFER_LEN
@@ -99,7 +99,7 @@ def read_bno():
     return (bno.magnetic, bno.gyro)
 
 def read_euler_buffer():
-    quat = bno.getQuat()
+    quat = bno.quaternion
     global euler_orient_pointer
     euler_orient_pointer = euler_orient_pointer % BNO_BUFFER_LEN
 
