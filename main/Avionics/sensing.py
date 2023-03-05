@@ -253,8 +253,10 @@ def vertical(euler_accumulator):
     global euler_orient_pointer
     is_vertical = False
     rolling_window = 50
-    threshold = 0.5 # NEED TESTING
+    threshold = 0.02 # NEED TESTING
     print('really error:', euler_accumulator[0])
+    for item in euler_accumulator:
+        print('item:', item, 'specific', item[0])
     rolls = [item[0] for item in euler_accumulator]
     pitches = [item[1] for item in euler_accumulator]
     if (abs(average_window(rolls, rolling_window, euler_orient_pointer)) < threshold and abs(average_window(pitches, rolling_window, euler_orient_pointer)) < threshold):
