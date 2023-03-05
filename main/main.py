@@ -13,6 +13,7 @@ import time
 '''
 SYS ARRAY: [isMoving, hitApogee, hasDeployed]
 sys_flags index 0: stage information, index 1: movement_decision, index 2: altitude_status
+at index 0: 0 means prelaunch standby stage, 1 means payload midair, 2 means payload landed
 at index 1: 0 means not moving, 1 means moving, 2 conflicting decisions
 at index 2: 0 means moving up, 1 means moving down, 2 indeterminant 
 at index 3: 0 means not upright, 1 means vertical position for camera
@@ -62,7 +63,7 @@ def update_imageCommands():
 # Payload mission functions (base on payload mission execution flowchart??)
 def avionicRoutine(stage):
     # TODO: confirm design decision, add comments
-    acceleration_accumulator = []
+    #acceleration_accumulator = []
     # initialize values
     has_launched = None # sensing.detectMovement(acc_accumulator) # true means movement detected, false means movement not detected
     is_still = None # sensing.remain_still(acc_accumulator) # true means still, false means not still
@@ -71,47 +72,17 @@ def avionicRoutine(stage):
     heat = None
     bmp_values_status = None # sensing.altitude_status(altitude_accumulator, pressure_accumulator)
     ground_steady = None
-    # moving_status = None
 
     ### PRE-LAUNCH STANDBY ###
-    if(sys_flags[0] == 1):
+    if(stage == 0):
         (has_launched, is_still) = avionics_prelaunch()
-        '''
-        #(magnetic, gyro, euler_buffer, acceleration_buffer) = sensing.read_bno()
-        acceleration_buffer = sensing.read_acceleration_buffer()
-        #acceleration_accumulator.append(sum(acceleration_buffer))
-        #moving_status = sensing.detectMovement(acceleration_accumulator)
-        has_launched = sensing.detectMovement(acceleration_buffer)
-        is_still = sensing.remain_still(acceleration_buffer)
-        '''
-    elif (sys_flags[0] == 2):
+    elif (stage == 1):
         # sample for movement (if launched)
         (has_launched, heat, is_still, ground_steady, bmp_values_status) = avionics_midair()
-        '''
-        #(magnetic, gyro, euler_buffer, acceleration_buffer) = sensing.read_bno()
-        acceleration_buffer = sensing.read_acceleration_buffer()
-        has_launched = sensing.detectMovement(acceleration_buffer)
-        (temperature_buffer, pressure_buffer, altitude_buffer) = sensing.read_bmp()
-        bmp_values_status = sensing.altitude_status(altitude_buffer, pressure_buffer)
-        heat = sensing.check_heat(temperature_buffer)
-        is_still = sensing.remain_still(acceleration_buffer)
-        ground_steady = sensing.ground_level(altitude_buffer, pressure_buffer)
-        '''
-    elif (sys_flags[0] == 3):
+    elif (stage == 2):
         # check for no movement (if landed)
         # check for upright (orientation sensor)
         (heat, is_still, is_upright) = avionics_landed()
-        '''
-        #(magnetic, gyro, euler_buffer, acceleration_buffer) = sensing.read_bno()
-
-        euler_buffer = sensing.read_euler_buffer()
-        acceleration_buffer = sensing.read_acceleration_buffer()
-        (temperature_buffer, pressure_buffer, altitude_buffer) = sensing.read_bmp()
-        heat = sensing.check_heat(temperature_buffer)
-        is_still = sensing.remain_still(acceleration_buffer)
-        is_upright = sensing.vertical(euler_buffer)
-        '''
-        
 
     # update system flags -- specifics (related to avionics)
     update_system_flags(is_upright,heat, bmp_values_status, has_launched, is_still, ground_steady)
@@ -264,7 +235,8 @@ def main():
 
     """ ALTERNATIVE """
 
-    stage = 1
+    #stage = 1
+    sys_flags[0] = 0
     ### Main delta timing loop
     aprs_begin = False
 
@@ -273,9 +245,9 @@ def main():
         time_this_sample = time.time()
         if(time_this_sample - time_last_sample >= BNO_FREQUENCY):
             time_last_sample = time_this_sample
-            avionicRoutine(stage)
+            avionicRoutine(sys_flags[0])
         time_this_sample = time.time()
-        imageRoutine(stage)
+        imageRoutine(sys_flags[0])
         
         if (sys_flags[0]):
             stage = 2

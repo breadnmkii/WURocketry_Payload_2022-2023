@@ -311,8 +311,11 @@ if __name__ == '__main__':
     
     # start_sample_T = time.monotonic_ns()
     print('entering main')
-    print(read_bmp())
-    print('exiting avionics testing for read_bmp')
+    #print(read_bmp())
+    euler_acc = read_euler_buffer()
+    read_acceleration_buffer()
+    print(vertical(euler_acc))
+    print('exiting avionics testing for read_bno')
 
     ''' old code that didn't work
     # Test loop
