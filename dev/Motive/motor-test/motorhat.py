@@ -21,7 +21,8 @@ if __name__ == '__main__':
     time.sleep(5)
     print("Running")
     #throttleLoop(hat, 0, 1.1, 0.1)
-    hat.motor1.throttle = 1
+    hat.motor1.throttle = 1 #Forward
+    #hat.motor1.throttle = -1: reverse
     time.sleep(5)
     print("Done!")
     hat.motor1.throttle = 0

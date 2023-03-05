@@ -7,7 +7,9 @@ from Avionics import sensing
 from Imaging import imaging
 from Imaging import config as camera_config
 from Radio import APRS
+from adafruit_motorkit import MotorKit
 import time
+import board
 
 ## Globals -- look into enums/dictionary for this 
 '''
@@ -153,6 +155,38 @@ def update_system_flags(is_upright,heat, bmp_values_status, has_launched, is_sti
         stage = 2
     if (stage == 2 and is_still and ground_steady):
         stage = 3
+
+
+hat = MotorKit(i2c = board.I2C()) #motor1 = separation motor, motor2 = cylnoid1, motor3 = cylnoid2
+hasMovedForward = False
+halfSeparationTime = 1
+def deployRountine(stage):
+    if (stage == 3):
+        ##### REALIGN (New phase, need to "pull" nosecone back a bit to release retention)
+
+        # Brendan's code, ill look at this later if its needed
+        
+        ##### RETENTION RELEASE PHASE
+
+        # Logans code here (no conditions, release solenoids as soon as reached)
+
+
+        ##### SEPARATION PHASE
+        if(sys_flags[1] == 0): #The motorhat function will run once it detects it is not moving
+            hat.motor1.throttle = 0.5 #Motorhat will separate forward by half once it's not moving
+            time.sleep(halfSeparationTime) #TEMPORARY, NEED DELTA TIMING 
+            hat.motor1.throttle = 0
+
+        while((sys_flags[1] == 1) or (sys_flags[3] == 0)):
+            continue
+
+        hat.motor1.throttle = 0.5
+        time.sleep(halfSeparationTime) #TEMPORARY, NEED DELTA TIMING 
+        hat.motor1.throttle = 0
+
+        ##### EXTEND CAMERA PHASE
+
+        # Logans code here (determine if not moving and upright, extend arm)
 
 def controlRoutine():
     pass
