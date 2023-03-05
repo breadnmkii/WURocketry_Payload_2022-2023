@@ -57,11 +57,12 @@ def read_bno():
     linear_acc_pointer = linear_acc_pointer % BNO_BUFFER_LEN
 
     if None not in quat:
-        yy = quat.y() * quat.y() # 2 Uses below
+        [x, y, z, w] = quat
+        yy = y * y # 2 Uses below
         # convert to euler, then tell from vertical -- roll and pitch
-        roll = math.atan2(2 * (quat.w() * quat.x() + quat.y() * quat.z()), 1 - 2*(quat.x() * quat.x() + yy))
-        pitch = math.asin(2 * quat.w() * quat.y() - quat.x() * quat.z())
-        yaw = math.atan2(2 * (quat.w() * quat.z() + quat.x() * quat.y()), 1 - 2*(yy+quat.z() * quat.z()))
+        roll = math.atan2(2 * (w* x + y * z), 1 - 2*(x * x + yy))
+        pitch = math.asin(2 * w* y - x * z)
+        yaw = math.atan2(2 * (w* z + x * y), 1 - 2*(yy+z * z))
         print('pitch: ', pitch)
         print('roll: ', roll)
         three_ele = [roll, pitch, yaw]
@@ -104,11 +105,12 @@ def read_euler_buffer():
     euler_orient_pointer = euler_orient_pointer % BNO_BUFFER_LEN
 
     if None not in quat:
-        yy = quat.y() * quat.y() # 2 Uses below
+        [x, y, z, w] = quat 
+        yy = y * y # 2 Uses below
         # convert to euler, then tell from vertical -- roll and pitch
-        roll = math.atan2(2 * (quat.w() * quat.x() + quat.y() * quat.z()), 1 - 2*(quat.x() * quat.x() + yy))
-        pitch = math.asin(2 * quat.w() * quat.y() - quat.x() * quat.z())
-        yaw = math.atan2(2 * (quat.w() * quat.z() + quat.x() * quat.y()), 1 - 2*(yy+quat.z() * quat.z()))
+        roll = math.atan2(2 * (w* x + y * z), 1 - 2*(x * x + yy))
+        pitch = math.asin(2 * w* y - x * z)
+        yaw = math.atan2(2 * (w* z + x * y), 1 - 2*(yy+z * z))
         print('pitch: ', pitch)
         print('roll: ', roll)
         euler_buffer[euler_orient_pointer] = [roll, pitch, yaw]
