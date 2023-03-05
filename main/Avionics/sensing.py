@@ -199,6 +199,7 @@ def average_window(list, window, pointer):
     if least_recent < 0:
         buf_len = len(list)
         least_recent = buf_len-1-abs(least_recent)
+        print('almost error: ', most_recent)
         summing = sum(map(lambda acc: abs(acc), list[0, most_recent]))
         summing.append(sum(map(lambda acc: abs(acc), list[least_recent:, buf_len])))
     else:
@@ -255,10 +256,6 @@ def vertical(euler_accumulator):
     is_vertical = False
     rolling_window = 50
     threshold = 0.02 # NEED TESTING
-    print('really error:', euler_accumulator[0])
-    for item in euler_accumulator:
-        print('item:', item, 'specific')
-    print(euler_accumulator)
     rolls = [item[0] for item in euler_accumulator]
     pitches = [item[1] for item in euler_accumulator]
     if (abs(average_window(rolls, rolling_window, euler_orient_pointer)) < threshold and abs(average_window(pitches, rolling_window, euler_orient_pointer)) < threshold):
