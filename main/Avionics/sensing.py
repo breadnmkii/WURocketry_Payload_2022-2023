@@ -188,10 +188,23 @@ def isMoving(window):
     else:
         print("Moving")
 
-def average_window(list, window):
+def average_window(list, window, pointer):
     if(not list):
         return 0
-    return sum(map(lambda acc: abs(acc), list[-window:]))/window
+    summing = 0
+    most_recent = pointer
+    least_recent = pointer-window
+    #summing = sum(map(lambda acc: abs(acc), list[-window:]))
+    if least_recent < 0:
+        buf_len = len(list)
+        least_recent = buf_len-1-abs(least_recent)
+        summing = sum(map(lambda acc: abs(acc), list[0, most_recent]))
+        summing.append(sum(map(lambda acc: abs(acc), list[least_recent:, buf_len])))
+    else:
+        # when least_recent >= 0
+        summing = sum(map(lambda acc: abs(acc), list[least_recent, most_recent]))
+    return summing/window
+
 
 # for BMP readings only 
 def differential_window(list, window):
@@ -223,11 +236,12 @@ return:
     False if payload is relatively static right now
 '''
 def detectMovement(acc_accumulator):
+    global linear_acc_pointer
     MOTION_SENSITIVITY = 3           # Amount of 3-axis acceleration needed to be read to trigger "movement" detection
     MOTION_LAUNCH_SENSITIVITY = 13   # Amount of accel added to offset for stronger initial launch accel
     hasLaunched = False
     ACC_WINDOW = 50                  # Range of values to apply rolling average in 'acc_accumulator'
-    if(average_window(acc_accumulator, ACC_WINDOW) > MOTION_SENSITIVITY + MOTION_LAUNCH_SENSITIVITY):
+    if(average_window(acc_accumulator, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY + MOTION_LAUNCH_SENSITIVITY):
         print("Launch detected!")
         hasLaunched = True
     return hasLaunched
@@ -236,13 +250,14 @@ def detectMovement(acc_accumulator):
 functionality: detect whether the camera has reached vertical position or not
 '''
 def vertical(euler_accumulator):
+    global euler_orient_pointer
     is_vertical = False
     rolling_window = 50
     threshold = 0.5 # NEED TESTING
     print('really error:', euler_accumulator[0])
     rolls = [item[0] for item in euler_accumulator]
     pitches = [item[1] for item in euler_accumulator]
-    if (abs(average_window(rolls, rolling_window)) < threshold and abs(average_window(pitches, rolling_window)) < threshold):
+    if (abs(average_window(rolls, rolling_window, euler_orient_pointer)) < threshold and abs(average_window(pitches, rolling_window, euler_orient_pointer)) < threshold):
         print("Camera is vertical from horizontal")
         is_vertical = True
     return is_vertical
@@ -282,8 +297,8 @@ def ground_level(altitude_accumulator, pressure_accumulator):
     rolling_window = 50
     ground_altitude_sensitivity = 0.5 # NEED TESTING 
     ground_pressure_sensitivity = 0.5 # NEED TESTING 
-    if ((abs(average_window(altitude_accumulator, rolling_window), bmp.sea_level_altitude) < ground_altitude_sensitivity) and
-        (abs(average_window(pressure_accumulator, rolling_window), bmp.sea_level_pressure)) < ground_pressure_sensitivity):
+    if ((abs(average_window(altitude_accumulator, rolling_window, bmp_pointer), bmp.sea_level_altitude) < ground_altitude_sensitivity) and
+        (abs(average_window(pressure_accumulator, rolling_window, bmp_pointer), bmp.sea_level_pressure)) < ground_pressure_sensitivity):
         return True
     else:
         return False
@@ -291,7 +306,7 @@ def ground_level(altitude_accumulator, pressure_accumulator):
 def remain_still(acc_accumulator):
     rolling_window = 50
     acceleration_sensitivity = 0.5 # NEED TESTING 
-    if (abs(average_window(acc_accumulator, rolling_window), 0) < acceleration_sensitivity):
+    if (abs(average_window(acc_accumulator, rolling_window, linear_acc_pointer), 0) < acceleration_sensitivity):
         return True
     else:
         return False
@@ -300,7 +315,7 @@ def remain_still(acc_accumulator):
 def check_heat(temperature_accumulator):
     rolling_window = 50
     # if averaged temperature exceeds 83 Celcius, raspberry Pi may die
-    if (average_window(temperature_accumulator, rolling_window) > 83):
+    if (average_window(temperature_accumulator, rolling_window, bmp_pointer) > 83):
         return True
     else:
         return False
