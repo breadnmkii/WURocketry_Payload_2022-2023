@@ -198,7 +198,7 @@ def average_window(list, window, pointer):
     if least_recent < 0:
         buf_len = len(list)
         least_recent = buf_len-1-abs(least_recent)
-        print('almost error: ', most_recent)
+        print('almost error: ', least_recent)
         print('inspect this:', list)
         summing = sum(map(lambda acc: abs(acc), list[0, most_recent]))
         summing.append(sum(map(lambda acc: abs(acc), list[least_recent:, buf_len])))
