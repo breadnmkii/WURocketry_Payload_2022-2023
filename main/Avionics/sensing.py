@@ -114,7 +114,6 @@ def read_euler_buffer():
         yaw = math.atan2(2 * (w* z + x * y), 1 - 2*(yy+z * z))
         print('pitch: ', pitch)
         print('roll: ', roll)
-        print('almost error', len(euler_buffer), euler_orient_pointer)
         euler_buffer[euler_orient_pointer] = [roll, pitch, yaw]
         euler_orient_pointer = euler_orient_pointer+1
     
@@ -200,6 +199,7 @@ def average_window(list, window, pointer):
         buf_len = len(list)
         least_recent = buf_len-1-abs(least_recent)
         print('almost error: ', most_recent)
+        print('inspect this:', list)
         summing = sum(map(lambda acc: abs(acc), list[0, most_recent]))
         summing.append(sum(map(lambda acc: abs(acc), list[least_recent:, buf_len])))
     else:
