@@ -239,6 +239,7 @@ def vertical(euler_accumulator):
     is_vertical = False
     rolling_window = 50
     threshold = 0.5 # NEED TESTING
+    print('really error:', euler_accumulator[0])
     rolls = [item[0] for item in euler_accumulator]
     pitches = [item[1] for item in euler_accumulator]
     if (abs(average_window(rolls, rolling_window)) < threshold and abs(average_window(pitches, rolling_window)) < threshold):
