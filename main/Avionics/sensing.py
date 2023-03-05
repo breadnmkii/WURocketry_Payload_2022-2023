@@ -113,6 +113,7 @@ def read_euler_buffer():
         yaw = math.atan2(2 * (w* z + x * y), 1 - 2*(yy+z * z))
         print('pitch: ', pitch)
         print('roll: ', roll)
+        print('almost error', len(euler_buffer), euler_orient_pointer)
         euler_buffer[euler_orient_pointer] = [roll, pitch, yaw]
         euler_orient_pointer = euler_orient_pointer+1
     
