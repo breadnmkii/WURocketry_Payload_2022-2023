@@ -21,7 +21,7 @@ Main components
 bno_buf = []
 bmp_buf = []
 acceleration_buffer = [None]*BNO_BUFFER_LEN
-euler_buffer = [None]*BNO_BUFFER_LEN
+euler_buffer = [[None, None, None]*BNO_BUFFER_LEN]
 altitude_buffer = [None]*BMP_BUFFER_LEN
 pressure_buffer = [None]*BMP_BUFFER_LEN
 temperature_buffer = [None]*BMP_BUFFER_LEN
