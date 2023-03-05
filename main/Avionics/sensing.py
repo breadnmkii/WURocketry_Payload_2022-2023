@@ -256,7 +256,8 @@ def vertical(euler_accumulator):
     threshold = 0.02 # NEED TESTING
     print('really error:', euler_accumulator[0])
     for item in euler_accumulator:
-        print('item:', item, 'specific', item[0])
+        print('item:', item, 'specific')
+    print(euler_accumulator)
     rolls = [item[0] for item in euler_accumulator]
     pitches = [item[1] for item in euler_accumulator]
     if (abs(average_window(rolls, rolling_window, euler_orient_pointer)) < threshold and abs(average_window(pitches, rolling_window, euler_orient_pointer)) < threshold):
@@ -342,20 +343,3 @@ if __name__ == '__main__':
         euler_acc = read_euler_buffer()
         read_acceleration_buffer()
         print('is it vertical?', vertical(euler_acc))
-    ''' old code that didn't work
-    # Test loop
-    while True:
-        this_sample_t = time.monotonic_ns()
-        if (this_sample_t - last_sample_t >= DELTA_T):
-
-            # Sample BMP388
-            if (isAboveAltitude(0)):
-                print("BMP is above!")
-                print(bmp.pressure)
-            
-
-            last_sample_t = this_sample_t
-
-
-    
-    '''
