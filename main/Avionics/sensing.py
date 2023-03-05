@@ -29,6 +29,8 @@ temperature_buffer = [None]*BMP_BUFFER_LEN
 bmp_pointer = 0 # pointer for a ring buffer for altitudes and pressures from BMP
 #global bno_pointer
 bno_pointer = 0 # pointer for a ring buffer for euler orientations and linear accelerations from BNO
+euler_orient_pointer = 0
+linear_acc_pointer = 0
 
 '''
 TODO manage array size
@@ -49,7 +51,11 @@ return: (accel(3), mag(3), gyro(3))
 def read_bno():
     quat = bno.getQuat()
     global bno_pointer
-    bno_pointer = bno_pointer % BNO_BUFFER_LEN
+    global euler_orient_pointer
+    #bno_pointer = bno_pointer % BNO_BUFFER_LEN
+    euler_orient_pointer = euler_orient_pointer % BNO_BUFFER_LEN
+    linear_acc_pointer = linear_acc_pointer % BNO_BUFFER_LEN
+
     if None not in quat:
         yy = quat.y() * quat.y() # 2 Uses below
         # convert to euler, then tell from vertical -- roll and pitch
@@ -60,18 +66,25 @@ def read_bno():
         print('roll: ', roll)
         three_ele = [roll, pitch, yaw]
         # euler_buffer.append(three_ele) trying ring buffer right now
-        euler_buffer[bno_pointer] = [roll, pitch, yaw]
+        #euler_buffer[bno_pointer] = [roll, pitch, yaw]
+        euler_buffer[euler_orient_pointer] = [roll, pitch, yaw]
+        euler_orient_pointer = euler_orient_pointer+1
+
         
     # thinking about splitting into two functions not sure how to deal with the pointer though 
     acceleration = bno.linear_acceleration
     if None not in acceleration:
         # acceleration_buffer.append(acceleration) trying ring buffer right now
-        acceleration_buffer[bno_pointer] = acceleration
+        #acceleration_buffer[bno_pointer] = acceleration
+        acceleration_buffer[linear_acc_pointer] = acceleration
+        linear_acc_pointer = linear_acc_pointer+1
     
     # write data to file 
-    if bno_pointer == BNO_BUFFER_LEN-1:
+    # if bno_pointer == BNO_BUFFER_LEN-1:
+    if linear_acc_pointer == BNO_BUFFER_LEN-1:
         with open('accelerations.txt', 'a') as the_file:
             the_file.write(acceleration_buffer)
+    if euler_orient_pointer == BNO_BUFFER_LEN-1:
         with open('eulers.txt', 'a') as the_file:
             '''
             # may need to format txt files
@@ -81,8 +94,53 @@ def read_bno():
             '''
             the_file.write(euler_buffer)
     
-    bno_pointer = bno_pointer+1
-    return (bno.magnetic, bno.gyro, euler_buffer, acceleration_buffer)
+    #bno_pointer = bno_pointer+1
+        
+    return (bno.magnetic, bno.gyro)
+
+def read_euler_buffer():
+    quat = bno.getQuat()
+    global euler_orient_pointer
+    euler_orient_pointer = euler_orient_pointer % BNO_BUFFER_LEN
+
+    if None not in quat:
+        yy = quat.y() * quat.y() # 2 Uses below
+        # convert to euler, then tell from vertical -- roll and pitch
+        roll = math.atan2(2 * (quat.w() * quat.x() + quat.y() * quat.z()), 1 - 2*(quat.x() * quat.x() + yy))
+        pitch = math.asin(2 * quat.w() * quat.y() - quat.x() * quat.z())
+        yaw = math.atan2(2 * (quat.w() * quat.z() + quat.x() * quat.y()), 1 - 2*(yy+quat.z() * quat.z()))
+        print('pitch: ', pitch)
+        print('roll: ', roll)
+        euler_buffer[euler_orient_pointer] = [roll, pitch, yaw]
+        euler_orient_pointer = euler_orient_pointer+1
+    
+    if euler_orient_pointer == BNO_BUFFER_LEN-1:
+        with open('eulers.txt', 'a') as the_file:
+            '''
+            # may need to format txt files
+            data_f.write(f"{time_thisSample-time_launchStart}")
+            data_f.write(f"{acc[0]}\t{acc[1]}\t{acc[2]}\t")
+            data_f.write(f"{qua[0]}\t{qua[1]}\t{qua[2]}\t{qua[3]}\n")
+            '''
+            the_file.write(euler_buffer)
+    
+    return euler_buffer
+
+def read_acceleration_buffer():
+    global linear_acc_pointer
+    linear_acc_pointer = linear_acc_pointer % BNO_BUFFER_LEN
+    acceleration = bno.linear_acceleration
+    if None not in acceleration:
+        acceleration_buffer[linear_acc_pointer] = acceleration
+        linear_acc_pointer = linear_acc_pointer+1
+    
+    # write data to file 
+    # if bno_pointer == BNO_BUFFER_LEN-1:
+    if linear_acc_pointer == BNO_BUFFER_LEN-1:
+        with open('accelerations.txt', 'a') as the_file:
+            the_file.write(acceleration_buffer)
+    
+    return acceleration_buffer
 
 
 """
@@ -100,14 +158,11 @@ def read_bmp():
     altitude_buffer.append(altitude)
     pressure_buffer.append(pressure)
     '''
-    if None not in altitude:
+    if None not in altitude and None not in pressure and None not in temperature:
         altitude_buffer[bmp_pointer] = altitude
-    
-    if None not in pressure:
         pressure_buffer[bmp_pointer] = pressure
-    
-    if None not in temperature:
         temperature_buffer[bmp_pointer] = temperature
+        bmp_pointer = bmp_pointer+1
     
     if bmp_pointer == BMP_BUFFER_LEN-1:
         with open('altitudes.txt', 'a') as the_file:
@@ -117,7 +172,6 @@ def read_bmp():
             #the_file.write(pressure)
              the_file.write(pressure_buffer)
 
-    bmp_pointer = bmp_pointer+1
     return (temperature_buffer, pressure_buffer, altitude_buffer)
 
 

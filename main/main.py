@@ -72,31 +72,76 @@ def avionicRoutine(stage):
     bmp_values_status = None # sensing.altitude_status(altitude_accumulator, pressure_accumulator)
     ground_steady = None
     # moving_status = None
+
     ### PRE-LAUNCH STANDBY ###
     if(sys_flags[0] == 1):
-        (magnetic, gyro, euler_buffer, acceleration_buffer) = sensing.read_bno()
+        (has_launched, is_still) = avionics_prelaunch()
+        '''
+        #(magnetic, gyro, euler_buffer, acceleration_buffer) = sensing.read_bno()
+        acceleration_buffer = sensing.read_acceleration_buffer()
         #acceleration_accumulator.append(sum(acceleration_buffer))
         #moving_status = sensing.detectMovement(acceleration_accumulator)
         has_launched = sensing.detectMovement(acceleration_buffer)
         is_still = sensing.remain_still(acceleration_buffer)
+        '''
     elif (sys_flags[0] == 2):
         # sample for movement (if launched)
-        (magnetic, gyro, euler_buffer, acceleration_buffer) = sensing.read_bno()
+        (has_launched, heat, is_still, ground_steady, bmp_values_status) = avionics_midair()
+        '''
+        #(magnetic, gyro, euler_buffer, acceleration_buffer) = sensing.read_bno()
+        acceleration_buffer = sensing.read_acceleration_buffer()
         has_launched = sensing.detectMovement(acceleration_buffer)
         (temperature_buffer, pressure_buffer, altitude_buffer) = sensing.read_bmp()
         bmp_values_status = sensing.altitude_status(altitude_buffer, pressure_buffer)
         heat = sensing.check_heat(temperature_buffer)
         is_still = sensing.remain_still(acceleration_buffer)
         ground_steady = sensing.ground_level(altitude_buffer, pressure_buffer)
+        '''
     elif (sys_flags[0] == 3):
         # check for no movement (if landed)
         # check for upright (orientation sensor)
-        (magnetic, gyro, euler_buffer, acceleration_buffer) = sensing.read_bno()
+        (heat, is_still, is_upright) = avionics_landed()
+        '''
+        #(magnetic, gyro, euler_buffer, acceleration_buffer) = sensing.read_bno()
+
+        euler_buffer = sensing.read_euler_buffer()
+        acceleration_buffer = sensing.read_acceleration_buffer()
+        (temperature_buffer, pressure_buffer, altitude_buffer) = sensing.read_bmp()
         heat = sensing.check_heat(temperature_buffer)
         is_still = sensing.remain_still(acceleration_buffer)
         is_upright = sensing.vertical(euler_buffer)
+        '''
+        
 
-    # update system flags -- specifics
+    # update system flags -- specifics (related to avionics)
+    update_system_flags(is_upright,heat, bmp_values_status, has_launched, is_still, ground_steady)
+
+def avionics_prelaunch():
+    acceleration_buffer = sensing.read_acceleration_buffer()
+    has_launched = sensing.detectMovement(acceleration_buffer)
+    is_still = sensing.remain_still(acceleration_buffer)
+    return (has_launched, is_still)
+
+def avionics_midair():
+    acceleration_buffer = sensing.read_acceleration_buffer()
+    has_launched = sensing.detectMovement(acceleration_buffer)
+    (temperature_buffer, pressure_buffer, altitude_buffer) = sensing.read_bmp()
+    bmp_values_status = sensing.altitude_status(altitude_buffer, pressure_buffer)
+    heat = sensing.check_heat(temperature_buffer)
+    is_still = sensing.remain_still(acceleration_buffer)
+    ground_steady = sensing.ground_level(altitude_buffer, pressure_buffer)
+    return (has_launched, heat, is_still, ground_steady, bmp_values_status)
+
+def avionics_landed():
+    euler_buffer = sensing.read_euler_buffer()
+    acceleration_buffer = sensing.read_acceleration_buffer()
+    (temperature_buffer, pressure_buffer, altitude_buffer) = sensing.read_bmp()
+    heat = sensing.check_heat(temperature_buffer)
+    is_still = sensing.remain_still(acceleration_buffer)
+    is_upright = sensing.vertical(euler_buffer)
+    return (heat, is_still, is_upright)
+
+def update_system_flags(is_upright,heat, bmp_values_status, has_launched, is_still, ground_steady):
     if is_upright:
         sys_flags[3] = int(is_upright == True) 
     if heat:
@@ -117,14 +162,12 @@ def avionicRoutine(stage):
         else:
             sys_flags[1] = 2
             print('ATTENTION: linear acceleration and quarternion info not enough to determine the presence/absence of movement ')
-
-    # Update sys flags (related to avionics)
+    # Update sys flags
     # switch stages
     if (stage == 1 and has_launched and bmp_values_status == 'up'):
         stage = 2
     if (stage == 2 and is_still and ground_steady):
         stage = 3
-
 
 def controlRoutine():
     pass
