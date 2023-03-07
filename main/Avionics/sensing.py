@@ -62,8 +62,9 @@ def read_bno():
         yy = y * y # 2 Uses below
         # convert to euler, then tell from vertical -- roll and pitch
         roll = math.atan2(2 * (w* x + y * z), 1 - 2*(x * x + yy))
-        pitch = math.asin(2 * w* y - x * z)
-        yaw = math.atan2(2 * (w* z + x * y), 1 - 2*(yy+z * z))
+        # clamping asin values
+        yaw = math.asin(max(-1, min(2 * w * y - x * z, 1)))
+        pitch = math.atan2(2 * (w* z + x * y), 1 - 2*(yy+z * z))
         print('pitch: ', pitch)
         print('roll: ', roll)
         three_ele = [roll, pitch, yaw]
@@ -274,11 +275,10 @@ def vertical(euler_accumulator):
     global euler_orient_pointer
     is_vertical = False
     rolling_window = 50
-    pitch_threshold = 0.1 # NEED TESTING -- tested 3/6
-    row_threshold = 0.1 # NEED TESTING -- tested 3/6
+    threshold = 0.15 # NEED TESTING -- tested 3/6
     rolls = [item[0] for item in euler_accumulator]
     pitches = [item[1] for item in euler_accumulator]
-    if (abs(average_window(rolls, rolling_window, euler_orient_pointer)) < threshold and abs(average_window(pitches, rolling_window, euler_orient_pointer)) < pitch_threshold):
+    if (abs(average_window(rolls, rolling_window, euler_orient_pointer)) < threshold and abs(average_window(pitches, rolling_window, euler_orient_pointer)) < threshold):
         print("Camera is vertical from horizontal")
         is_vertical = True
     return is_vertical

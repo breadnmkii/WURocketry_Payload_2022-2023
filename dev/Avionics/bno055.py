@@ -56,8 +56,8 @@ if __name__ == '__main__':
                     #print('almost asin domain error:', 2 * w* y - x * z)
                     #pitch = math.asin(2 * w* y - x * z)
                     # clamping asin values
-                    pitch = math.asin(max(-1, min(2 * w * y - x * z, 1)))
-                    yaw = math.atan2(2 * (w* z + x * y), 1 - 2*(yy+z * z))
+                    yaw = math.asin(max(-1, min(2 * w * y - x * z, 1)))
+                    pitch = math.atan2(2 * (w* z + x * y), 1 - 2*(yy+z * z))
 
                     print('pitch, row, yaw:', pitch, roll, yaw)
                 NUM_READINGS -= 1
