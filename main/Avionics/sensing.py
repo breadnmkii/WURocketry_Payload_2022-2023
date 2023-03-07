@@ -274,10 +274,11 @@ def vertical(euler_accumulator):
     global euler_orient_pointer
     is_vertical = False
     rolling_window = 50
-    threshold = 0.02 # NEED TESTING
+    pitch_threshold = 0.1 # NEED TESTING -- tested 3/6
+    row_threshold = 0.1 # NEED TESTING -- tested 3/6
     rolls = [item[0] for item in euler_accumulator]
     pitches = [item[1] for item in euler_accumulator]
-    if (abs(average_window(rolls, rolling_window, euler_orient_pointer)) < threshold and abs(average_window(pitches, rolling_window, euler_orient_pointer)) < threshold):
+    if (abs(average_window(rolls, rolling_window, euler_orient_pointer)) < threshold and abs(average_window(pitches, rolling_window, euler_orient_pointer)) < pitch_threshold):
         print("Camera is vertical from horizontal")
         is_vertical = True
     return is_vertical
