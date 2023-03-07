@@ -20,12 +20,12 @@ class Verticality(Enum):
     UPRIGHT = 1
 
 class Separated(Enum):
-    # John
-    pass
+    NOT_SEPARATED = 0
+    SEPARATED = 1
 
 class Deployed(Enum):
-    # Logan
-    pass
+    NOT_DEPLOYED = 0
+    DEPLOYED = 1
 
 class Warn_Heat(Enum):
     NORMAL = 0
@@ -52,9 +52,9 @@ class System_Flags(Enum):
     FLIGHT_DIRECTION = (Flight_Direction.MOVING_UP, Flight_Direction.MOVING_DOWN, Flight_Direction.INDETERMINENT)
     VERTICALITY = (Verticality.NOT_UPRIGHT, Verticality.UPRIGHT)
     # John
-    SEPARATED = None
+    SEPARATED = (Separated.SEPARATED, Separated.NOT_SEPARATED)
     # Logan
-    DEPLOYED = None
+    DEPLOYED = (Deployed.DEPLOYED, Deployed.NOT_DEPLOYED)
 
     WARN_HEAT = (Warn_Heat.NORMAL, Warn_Heat.WARNING_HEAT)
     WARN_CAMERA = (Warn_Camera.NORMAL, Warn_Camera.WARNING_CAMERA)
