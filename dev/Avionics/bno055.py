@@ -46,7 +46,7 @@ if __name__ == '__main__':
 
             if (bno055.calibrated):
                 # Read bno055 data
-                print(f"time:{this_sample_T-start_sample_T}\tgyro:{bno055.gyro}\taccl:{bno055.linear_accelearation}\tmagn:{bno055.magnetic}")
+                print(f"time:{this_sample_T-start_sample_T}\tgyro:{bno055.gyro}\taccl:{bno055.linear_acceleration}\tmagn:{bno055.magnetic}")
 
                 quat = bno055.quaternion
                 [x, y, z, w] = quat
