@@ -111,8 +111,9 @@ def read_euler_buffer():
         yy = y * y # 2 Uses below
         # convert to euler, then tell from vertical -- roll and pitch
         roll = math.atan2(2 * (w* x + y * z), 1 - 2*(x * x + yy))
-        pitch = math.asin(2 * w* y - x * z)
-        yaw = math.atan2(2 * (w* z + x * y), 1 - 2*(yy+z * z))
+        # clamping asin values
+        yaw = math.asin(max(-1, min(2 * w * y - x * z, 1)))
+        pitch = math.atan2(2 * (w* z + x * y), 1 - 2*(yy+z * z))
         print('pitch: ', pitch)
         print('roll: ', roll)
         euler_buffer[euler_orient_pointer] = [roll, pitch, yaw]
