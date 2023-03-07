@@ -33,7 +33,7 @@ if __name__ == '__main__':
     # bno055.mode = a_bno.AMG_MODE
 
     SECOND_NS = 1_000_000_000
-    NUM_READINGS = 100
+    NUM_READINGS = 1000000
     SAMPLE_FREQUENCY = 100   # in Hz
     DELTA_T = SECOND_NS/SAMPLE_FREQUENCY
     last_sample_T = time.monotonic_ns()
