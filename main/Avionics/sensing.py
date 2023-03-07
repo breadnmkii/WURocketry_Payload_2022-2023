@@ -199,10 +199,12 @@ def average_window(list, window, pointer):
         buf_len = len(list)
         least_recent = buf_len-1-abs(least_recent)
         print('almost error: ', least_recent)
-        print('inspect this:', list)
+        #print('inspect this:', list)
         #inspecting = list[0, most_recent]
         #first_non_none_index = next((i for i, value in enumerate(inspecting) if value is not None), None)
         #last_non_none_index =  max((i for i, x in enumerate(inspecting) if x is not None), default=None)
+
+        print('checking', type(most_recent))
         (sum_left, total_left) = average_sum_abs_range(list, 0, most_recent)
         (sum_right, total_right) = average_sum_abs_range(list, least_recent, buf_len)
         summing = sum_left+sum_right
