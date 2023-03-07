@@ -147,10 +147,11 @@ def update_system_flags(is_upright,heat, bmp_values_status, has_launched, is_sti
         #sys_flags[6]  = int(heat == True) 
         sys_flags.WARN_HEAT = int(heat == True) 
     if bmp_values_status:
-        if sys_flags[1] == 1 and bmp_values_status == 'up':
+        # sys_flags[1] == 1
+        if sys_flags.MOVEMENT == Movement.MOVING and bmp_values_status == 'up':
             #sys_flags[2] = 0     
             sys_flags.FLIGHT_DIRECTION = Flight_Direction.MOVING_UP
-        elif sys_flags[1] == 1 and bmp_values_status == 'down':
+        elif sys_flags.MOVEMENT == Movement.MOVING and bmp_values_status == 'down':
             #sys_flags[2] = 1
             sys_flags.FLIGHT_DIRECTION = Flight_Direction.MOVING_DOWN
         else:
