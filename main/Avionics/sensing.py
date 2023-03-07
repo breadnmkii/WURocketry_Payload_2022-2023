@@ -95,7 +95,7 @@ def read_bno():
             data_f.write(f"{acc[0]}\t{acc[1]}\t{acc[2]}\t")
             data_f.write(f"{qua[0]}\t{qua[1]}\t{qua[2]}\t{qua[3]}\n")
             '''
-            the_file.write(euler_buffer)
+            the_file.write(str(euler_buffer))
     
     #bno_pointer = bno_pointer+1
         
@@ -126,7 +126,7 @@ def read_euler_buffer():
             data_f.write(f"{acc[0]}\t{acc[1]}\t{acc[2]}\t")
             data_f.write(f"{qua[0]}\t{qua[1]}\t{qua[2]}\t{qua[3]}\n")
             '''
-            the_file.write(euler_buffer)
+            the_file.write(str(euler_buffer))
     
     return euler_buffer
 
@@ -142,7 +142,7 @@ def read_acceleration_buffer():
     # if bno_pointer == BNO_BUFFER_LEN-1:
     if linear_acc_pointer == BNO_BUFFER_LEN-1:
         with open('accelerations.txt', 'a') as the_file:
-            the_file.write(acceleration_buffer)
+            the_file.write(str(acceleration_buffer))
     
     return acceleration_buffer
 
@@ -171,10 +171,10 @@ def read_bmp():
     if bmp_pointer == BMP_BUFFER_LEN-1:
         with open('altitudes.txt', 'a') as the_file:
             #the_file.write(altitude)
-            the_file.write(altitude_buffer)
+            the_file.write(str(altitude_buffer))
         with open('pressures.txt', 'a') as the_file:
             #the_file.write(pressure)
-             the_file.write(pressure_buffer)
+             the_file.write(str(pressure_buffer))
 
     return (temperature_buffer, pressure_buffer, altitude_buffer)
 
