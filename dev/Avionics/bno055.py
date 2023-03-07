@@ -1,7 +1,7 @@
 import time
 import mathlib
 import board
-
+import math
 import adafruit_bno055 as a_bno
 
 ## Units
