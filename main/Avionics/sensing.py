@@ -196,27 +196,16 @@ def average_window(list, window, pointer):
     summing = 0
     most_recent = pointer
     least_recent = pointer-window
-    #summing = sum(map(lambda acc: abs(acc), list[-window:]))
     if least_recent < 0:
         buf_len = len(list)
         least_recent = buf_len-1-abs(least_recent)
-        print('almost error: ', least_recent)
-        #print('inspect this:', list)
-        #inspecting = list[0, most_recent]
-        #first_non_none_index = next((i for i, value in enumerate(inspecting) if value is not None), None)
-        #last_non_none_index =  max((i for i, x in enumerate(inspecting) if x is not None), default=None)
-
-        print('checking', type(most_recent))
         (sum_left, total_left) = average_sum_abs_range(list, 0, most_recent)
         (sum_right, total_right) = average_sum_abs_range(list, least_recent, buf_len)
         summing = sum_left+sum_right
         window = total_left+total_right
-        #summing = sum(map(lambda acc: abs(acc), list[0, most_recent]))
-        #summing.append(sum(map(lambda acc: abs(acc), list[least_recent:, buf_len])))
     else:
         # when least_recent >= 0
         (summing, window) =  average_sum_abs_range(list, least_recent, most_recent)
-        #summing = sum(map(lambda acc: abs(acc), list[least_recent, most_recent]))
     return summing/window
 
 def average_sum_abs_range(list, least_recent, most_recent):
@@ -235,7 +224,6 @@ def differential_window(list, window):
         return 0
     most_recent = bmp_pointer
     least_recent = bmp_pointer-window
-    diff = 0 # will be turned into a ternary if
     diff = []
     if least_recent < 0:
         least_recent = BMP_BUFFER_LEN-1-abs(least_recent)

@@ -46,15 +46,12 @@ if __name__ == '__main__':
 
             if (bno055.calibrated):
                 # Read bno055 data
-                #print(f"time:{this_sample_T-start_sample_T}\tgyro:{bno055.gyro}\taccl:{bno055.linear_acceleration}\tmagn:{bno055.magnetic}")
+                print(f"time:{this_sample_T-start_sample_T}\tgyro:{bno055.gyro}\taccl:{bno055.linear_acceleration}\tmagn:{bno055.magnetic}")
                 if not None in bno055.quaternion:
                     quat = bno055.quaternion
                     [x, y, z, w] = quat
                     yy = y * y # 2 Uses below
-                    # convert to euler, then tell from vertical -- roll and pitch
                     roll = math.atan2(2 * (w* x + y * z), 1 - 2*(x * x + yy))
-                    #print('almost asin domain error:', 2 * w* y - x * z)
-                    #pitch = math.asin(2 * w* y - x * z)
                     # clamping asin values
                     yaw = math.asin(max(-1, min(2 * w * y - x * z, 1)))
                     pitch = math.atan2(2 * (w* z + x * y), 1 - 2*(yy+z * z))
