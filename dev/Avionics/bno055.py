@@ -1,7 +1,7 @@
 import time
 import mathlib
 import board
-
+import math
 import adafruit_bno055 as a_bno
 
 ## Units
@@ -33,7 +33,7 @@ if __name__ == '__main__':
     # bno055.mode = a_bno.AMG_MODE
 
     SECOND_NS = 1_000_000_000
-    NUM_READINGS = 100
+    NUM_READINGS = 1000000
     SAMPLE_FREQUENCY = 100   # in Hz
     DELTA_T = SECOND_NS/SAMPLE_FREQUENCY
     last_sample_T = time.monotonic_ns()
@@ -46,7 +46,20 @@ if __name__ == '__main__':
 
             if (bno055.calibrated):
                 # Read bno055 data
-                print(f"time:{this_sample_T-start_sample_T}\tgyro:{bno055.gyro}\taccl:{bno055.linaear_acceleration}\tmagn:{bno055.magnetic}")
+                #print(f"time:{this_sample_T-start_sample_T}\tgyro:{bno055.gyro}\taccl:{bno055.linear_acceleration}\tmagn:{bno055.magnetic}")
+                if not None in bno055.quaternion:
+                    quat = bno055.quaternion
+                    [x, y, z, w] = quat
+                    yy = y * y # 2 Uses below
+                    # convert to euler, then tell from vertical -- roll and pitch
+                    roll = math.atan2(2 * (w* x + y * z), 1 - 2*(x * x + yy))
+                    #print('almost asin domain error:', 2 * w* y - x * z)
+                    #pitch = math.asin(2 * w* y - x * z)
+                    # clamping asin values
+                    yaw = math.asin(max(-1, min(2 * w * y - x * z, 1)))
+                    pitch = math.atan2(2 * (w* z + x * y), 1 - 2*(yy+z * z))
+
+                    print('pitch, row, yaw:', pitch, roll, yaw)
                 NUM_READINGS -= 1
             else:
                 print(f'Calibration (s,g,a,m) {bno055.calibration_status}')

@@ -62,8 +62,9 @@ def read_bno():
         yy = y * y # 2 Uses below
         # convert to euler, then tell from vertical -- roll and pitch
         roll = math.atan2(2 * (w* x + y * z), 1 - 2*(x * x + yy))
-        pitch = math.asin(2 * w* y - x * z)
-        yaw = math.atan2(2 * (w* z + x * y), 1 - 2*(yy+z * z))
+        # clamping asin values
+        yaw = math.asin(max(-1, min(2 * w * y - x * z, 1)))
+        pitch = math.atan2(2 * (w* z + x * y), 1 - 2*(yy+z * z))
         print('pitch: ', pitch)
         print('roll: ', roll)
         three_ele = [roll, pitch, yaw]
@@ -94,7 +95,7 @@ def read_bno():
             data_f.write(f"{acc[0]}\t{acc[1]}\t{acc[2]}\t")
             data_f.write(f"{qua[0]}\t{qua[1]}\t{qua[2]}\t{qua[3]}\n")
             '''
-            the_file.write(euler_buffer)
+            the_file.write(str(euler_buffer))
     
     #bno_pointer = bno_pointer+1
         
@@ -110,8 +111,9 @@ def read_euler_buffer():
         yy = y * y # 2 Uses below
         # convert to euler, then tell from vertical -- roll and pitch
         roll = math.atan2(2 * (w* x + y * z), 1 - 2*(x * x + yy))
-        pitch = math.asin(2 * w* y - x * z)
-        yaw = math.atan2(2 * (w* z + x * y), 1 - 2*(yy+z * z))
+        # clamping asin values
+        yaw = math.asin(max(-1, min(2 * w * y - x * z, 1)))
+        pitch = math.atan2(2 * (w* z + x * y), 1 - 2*(yy+z * z))
         print('pitch: ', pitch)
         print('roll: ', roll)
         euler_buffer[euler_orient_pointer] = [roll, pitch, yaw]
@@ -125,7 +127,7 @@ def read_euler_buffer():
             data_f.write(f"{acc[0]}\t{acc[1]}\t{acc[2]}\t")
             data_f.write(f"{qua[0]}\t{qua[1]}\t{qua[2]}\t{qua[3]}\n")
             '''
-            the_file.write(euler_buffer)
+            the_file.write(str(euler_buffer))
     
     return euler_buffer
 
@@ -141,7 +143,7 @@ def read_acceleration_buffer():
     # if bno_pointer == BNO_BUFFER_LEN-1:
     if linear_acc_pointer == BNO_BUFFER_LEN-1:
         with open('accelerations.txt', 'a') as the_file:
-            the_file.write(acceleration_buffer)
+            the_file.write(str(acceleration_buffer))
     
     return acceleration_buffer
 
@@ -170,10 +172,10 @@ def read_bmp():
     if bmp_pointer == BMP_BUFFER_LEN-1:
         with open('altitudes.txt', 'a') as the_file:
             #the_file.write(altitude)
-            the_file.write(altitude_buffer)
+            the_file.write(str(altitude_buffer))
         with open('pressures.txt', 'a') as the_file:
             #the_file.write(pressure)
-             the_file.write(pressure_buffer)
+             the_file.write(str(pressure_buffer))
 
     return (temperature_buffer, pressure_buffer, altitude_buffer)
 
@@ -199,10 +201,12 @@ def average_window(list, window, pointer):
         buf_len = len(list)
         least_recent = buf_len-1-abs(least_recent)
         print('almost error: ', least_recent)
-        print('inspect this:', list)
+        #print('inspect this:', list)
         #inspecting = list[0, most_recent]
         #first_non_none_index = next((i for i, value in enumerate(inspecting) if value is not None), None)
         #last_non_none_index =  max((i for i, x in enumerate(inspecting) if x is not None), default=None)
+
+        print('checking', type(most_recent))
         (sum_left, total_left) = average_sum_abs_range(list, 0, most_recent)
         (sum_right, total_right) = average_sum_abs_range(list, least_recent, buf_len)
         summing = sum_left+sum_right
@@ -219,7 +223,7 @@ def average_sum_abs_range(list, least_recent, most_recent):
     start_idx = next((i for i, x in enumerate(list[least_recent:most_recent+1]) if x is not None), None)
     end_idx = next((i for i, x in enumerate(reversed(list[most_recent:least_recent+1])) if x is not None), None)
     if start_idx is None or end_idx is None:
-        return 0
+        return (0, 1)
     start_idx += most_recent
     end_idx = least_recent - end_idx
     summing = sum(abs(x) for x in list[start_idx:end_idx])
@@ -272,7 +276,7 @@ def vertical(euler_accumulator):
     global euler_orient_pointer
     is_vertical = False
     rolling_window = 50
-    threshold = 0.02 # NEED TESTING
+    threshold = 0.15 # NEED TESTING -- tested 3/6
     rolls = [item[0] for item in euler_accumulator]
     pitches = [item[1] for item in euler_accumulator]
     if (abs(average_window(rolls, rolling_window, euler_orient_pointer)) < threshold and abs(average_window(pitches, rolling_window, euler_orient_pointer)) < threshold):
