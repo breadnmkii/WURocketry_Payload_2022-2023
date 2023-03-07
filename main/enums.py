@@ -27,6 +27,25 @@ class Deployed(Enum):
     # Logan
     pass
 
+class Warn_Heat(Enum):
+    NORMAL = 0
+    WARNING_HEAT = 1
+
+class Warn_Camera(Enum):
+    NORMAL = 0
+    WARNING_CAMERA = 1
+
+
+class Warn_Avionics(Enum):
+    NORMAL = 0
+    WARNING_BMP = 1
+    WARNING_BNO = 2
+
+class Warn_Motive(Enum):
+    # Logan
+    pass
+
+
 class System_Flags(Enum):
     STAGE_INFO = (Stage.PRELAUNCH, Stage.MIDAIR, Stage.LANDED)
     MOVEMENT = (Movement.NOT_MOVING, Movement.MOVING, Movement.CONFLICTING_DECISION)
@@ -37,10 +56,23 @@ class System_Flags(Enum):
     # Logan
     DEPLOYED = None
 
-    def __init__(self, STAGE_INFO, MOVEMENT, FLIGHT_DIRECTION,  VERTICALITY, SEPARATED, DEPLOYED):
+    WARN_HEAT = (Warn_Heat.NORMAL, Warn_Heat.WARNING_HEAT)
+    WARN_CAMERA = (Warn_Camera.NORMAL, Warn_Camera.WARNING_CAMERA)
+    WARN_AVIONICS = (Warn_Avionics.NORMAL, Warn_Avionics.WARNING_BMP, Warn_Avionics.WARNING_BNO)
+    # Logan
+    WARN_MOTIVE = None
+
+    def __init__(self, STAGE_INFO, MOVEMENT, FLIGHT_DIRECTION, VERTICALITY, SEPARATED, DEPLOYED, HEAT, CAMERA_MODULE, AVIONICS, MOTIVE):
         self.STAGE_INFO = STAGE_INFO
         self.MOVEMENT = MOVEMENT
         self.FLIGHT_DIRECTION = FLIGHT_DIRECTION
         self.VERTICALITY = VERTICALITY
+        # John
         self.SEPARATED = SEPARATED
+        # Logan
         self.DEPLOYED = DEPLOYED
+        self.WARN_HEAT = HEAT
+        self.WARN_CAMERA = CAMERA_MODULE
+        self.WARN_AVIONICS = AVIONICS 
+        # Logan
+        self.WARN_MOTIVE = MOTIVE

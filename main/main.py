@@ -10,6 +10,8 @@ from Radio import APRS
 from adafruit_motorkit import MotorKit
 import time
 import board
+from enums import *
+
 
 ## Globals -- look into enums/dictionary for this 
 '''
@@ -31,6 +33,12 @@ WARN AVIONIC  index 8
 WARN MOTIVE   index 9
 '''
 sys_flags = []
+sys_flags = System_Flags(Stage.PRELAUNCH, Movement.NOT_MOVING, Flight_Direction.INDETERMINENT, Verticality.NOT_UPRIGHT, 
+                         Separated.value, Deployed.value,
+                         Warn_Heat.NORMAL, Warn_Camera.NORMAL, Warn_Avionics.NORMAL,
+                         Warn_Motive.value)
+
+'''
 from enum import Enum
 class System_Flags(Enum):
     STAGE_INFO = 0
@@ -43,6 +51,8 @@ class System_Flags(Enum):
     WARN_CAMERA = 7
     WARN_AVIONICS = 8
     WAR_MOTIVE = 9
+
+'''
 
 
 
@@ -90,12 +100,12 @@ def avionicRoutine(stage):
     ground_steady = None
 
     ### PRE-LAUNCH STANDBY ###
-    if(stage == 0):
+    if(stage == Stage.PRELAUNCH):
         (has_launched, is_still) = avionics_prelaunch()
-    elif (stage == 1):
+    elif (stage == Stage.MIDAIR):
         # sample for movement (if launched)
         (has_launched, heat, is_still, ground_steady, bmp_values_status) = avionics_midair()
-    elif (stage == 2):
+    elif (stage == Stage.LANDED):
         # check for no movement (if landed)
         # check for upright (orientation sensor)
         (heat, is_still, is_upright) = avionics_landed()
@@ -130,31 +140,41 @@ def avionics_landed():
 
 def update_system_flags(is_upright,heat, bmp_values_status, has_launched, is_still, ground_steady):
     if is_upright:
-        sys_flags[3] = int(is_upright == True) 
+        #sys_flags[3] = int(is_upright == True) 
+        sys_flags.VERTICALITY = int(is_upright == True) 
     if heat:
-        sys_flags[6]  = int(heat == True) 
+        #sys_flags[6]  = int(heat == True) 
+        sys_flags.WARN_HEAT = int(heat == True) 
     if bmp_values_status:
         if sys_flags[1] == 1 and bmp_values_status == 'up':
-            sys_flags[2] = 0     
+            #sys_flags[2] = 0     
+            sys_flags.FLIGHT_DIRECTION = Flight_Direction.MOVING_UP
         elif sys_flags[1] == 1 and bmp_values_status == 'down':
-            sys_flags[2] = 1
+            #sys_flags[2] = 1
+            sys_flags.FLIGHT_DIRECTION = Flight_Direction.MOVING_DOWN
         else:
-            sys_flags[2] = 2
+            #sys_flags[2] = 2
+            sys_flags.FLIGHT_DIRECTION = Flight_Direction.INDETERMINENT
 
     if has_launched and is_still:
         if has_launched and not is_still:
-            sys_flags[1] = 1
+            #sys_flags[1] = 1
+            sys_flags.MOVEMENT = Movement.MOVING
         elif not has_launched and  is_still:
-            sys_flags[1] = 0
+            #sys_flags[1] = 0
+            sys_flags.MOVEMENT = Movement.NOT_MOVING
         else:
-            sys_flags[1] = 2
+            #sys_flags[1] = 2
+            sys_flags.MOVEMENT = Movement.CONFLICTING_DECISION
             print('ATTENTION: linear acceleration and quarternion info not enough to determine the presence/absence of movement ')
     # Update sys flags
     # switch stages
-    if (stage == 1 and has_launched and bmp_values_status == 'up'):
-        stage = 2
-    if (stage == 2 and is_still and ground_steady):
-        stage = 3
+    if (sys_flags.STAGE_INFO == Stage.PRELAUNCH and has_launched and bmp_values_status == 'up'):
+        #stage = 2
+        sys_flags.STAGE_INFO = Stage.MIDAIR
+    if (sys_flags.STAGE_INFO == Stage.MIDAIR and is_still and ground_steady):
+        #stage = 3
+        sys_flags.STAGE_INFO = Stage.LANDED
 
 
 hat = MotorKit(i2c = board.I2C()) #motor1 = separation motor, motor2 = cylnoid1, motor3 = cylnoid2
@@ -293,9 +313,9 @@ def main():
         time_this_sample = time.time()
         if(time_this_sample - time_last_sample >= BNO_FREQUENCY):
             time_last_sample = time_this_sample
-            avionicRoutine(sys_flags[0])
+            avionicRoutine(sys_flags.STAGE_INFO)
         time_this_sample = time.time()
-        imageRoutine(sys_flags[0])
+        imageRoutine(sys_flags.STAGE_INFO)
         
         if (sys_flags[0]):
             stage = 2
