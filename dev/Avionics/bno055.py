@@ -46,7 +46,17 @@ if __name__ == '__main__':
 
             if (bno055.calibrated):
                 # Read bno055 data
-                print(f"time:{this_sample_T-start_sample_T}\tgyro:{bno055.gyro}\taccl:{bno055.linaear_acceleration}\tmagn:{bno055.magnetic}")
+                print(f"time:{this_sample_T-start_sample_T}\tgyro:{bno055.gyro}\taccl:{bno055.linear_accelearation}\tmagn:{bno055.magnetic}")
+
+                quat = bno055.quaternion
+                [x, y, z, w] = quat
+                yy = y * y # 2 Uses below
+                # convert to euler, then tell from vertical -- roll and pitch
+                roll = math.atan2(2 * (w* x + y * z), 1 - 2*(x * x + yy))
+                pitch = math.asin(2 * w* y - x * z)
+                yaw = math.atan2(2 * (w* z + x * y), 1 - 2*(yy+z * z))
+                print('pitch: ', pitch)
+                print('roll: ', roll)
                 NUM_READINGS -= 1
             else:
                 print(f'Calibration (s,g,a,m) {bno055.calibration_status}')
