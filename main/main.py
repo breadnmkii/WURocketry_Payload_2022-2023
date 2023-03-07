@@ -6,6 +6,7 @@ from Avionics import config as avionics_config
 from Avionics import sensing
 from Imaging import imaging
 from Imaging import config as camera_config
+from Motive import servo
 from Radio import APRS
 from adafruit_motorkit import MotorKit
 import time
@@ -188,25 +189,46 @@ def deployRountine(stage):
         
         ##### RETENTION RELEASE PHASE
 
-        # Logans code here (no conditions, release solenoids as soon as reached)
+        # John's code here (no conditions, release solenoids as soon as reached)
 
-
-        ##### SEPARATION PHASE
-        if(sys_flags[1] == 0): #The motorhat function will run once it detects it is not moving
-            hat.motor1.throttle = 0.5 #Motorhat will separate forward by half once it's not moving
-            time.sleep(halfSeparationTime) #TEMPORARY, NEED DELTA TIMING 
-            hat.motor1.throttle = 0
-
-        while((sys_flags[1] == 1) or (sys_flags[3] == 0)):
+        while(sys_flags.MOVEMENT == Movement.MOVING): #The soleonid will not snap in if it detects movement
             continue
 
-        hat.motor1.throttle = 0.5
+        hat.motor2.throttle = 1 #Both soleoinds will be on (released) and running once it detects no movement
+        hat.motor3.throttle = 1
+
+        while((sys_flags.MOVEMENT == Movement.MOVING)): #Check line 193, transitioning from unclocking retention to separating them
+            continue
+            
+
+        ##### SEPARATION PHASE
+        hat.motor1.throttle = 0.5 #Motorhat will separate forward by half once it's not moving
         time.sleep(halfSeparationTime) #TEMPORARY, NEED DELTA TIMING 
-        hat.motor1.throttle = 0
+        hat.motor1.throttle = 0 #Stops separating (1st half)
+
+        while((sys_flags.VERTICALITY == Verticality.NOT_UPRIGHT) or (sys_flags.MOVEMENT == Movement.MOVING)): #The second part of separation won't happen it the nosecone is not upright or moving
+            continue
+
+        hat.motor1.throttle = 0.5 #Will perform the second half of separation once it detects no movement or if it is upright
+        time.sleep(halfSeparationTime) #TEMPORARY, NEED DELTA TIMING 
+        hat.motor1.throttle = 0 #Stops separating (2nd half)
+        #Disengaging solenoids (stops running after separation phase)
+        hat.motor2.throttle = 0
+        hat.motor3.throttle = 0
+        
+        sys_flags.SEPARATED = Separated.SEPARATED
+
 
         ##### EXTEND CAMERA PHASE
+        while((sys_flags.VERTICALITY == Verticality.NOT_UPRIGHT) or (sys_flags.MOVEMENT == Movement.NOT_MOVING)):
+            continue
 
+        servo.extend()
+        
+        sys_flags.DEPLOYED = Deployed.DEPLOYED
         # Logans code here (determine if not moving and upright, extend arm)
+
+
 
 def controlRoutine():
     pass
