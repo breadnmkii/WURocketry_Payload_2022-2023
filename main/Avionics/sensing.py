@@ -221,7 +221,7 @@ def average_sum_abs_range(list, least_recent, most_recent):
     start_idx = next((i for i, x in enumerate(list[least_recent:most_recent+1]) if x is not None), None)
     end_idx = next((i for i, x in enumerate(reversed(list[most_recent:least_recent+1])) if x is not None), None)
     if start_idx is None or end_idx is None:
-        return 0
+        return (0, 1)
     start_idx += most_recent
     end_idx = least_recent - end_idx
     summing = sum(abs(x) for x in list[start_idx:end_idx])
