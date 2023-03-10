@@ -231,7 +231,7 @@ def average_sum_abs_range(list, least_recent, most_recent):
     end_idx = least_recent - end_idx
     summing = sum(abs(x) for x in list[start_idx:end_idx])
     print('summing, effective window:', summing, end_idx-start_idx)
-    return summing/(end_idx-start_idx)
+    return summing/abs(end_idx-start_idx)
 
 # for BMP readings only 
 def differential_window(list, window):
