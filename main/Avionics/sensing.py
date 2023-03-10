@@ -210,7 +210,7 @@ def average_window(list, window, pointer):
     
 def average_sum_abs_range(list, least_recent, most_recent):
     of_interest = list[least_recent:most_recent+1]
-    values = [abs(x) for x in of_interest if x is not None]
+    values = [x for x in of_interest if x is not None]
     if len(values) == 0:
         return 0
     return sum(values) / len(values)
