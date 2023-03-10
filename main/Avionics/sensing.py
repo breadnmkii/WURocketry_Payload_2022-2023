@@ -203,11 +203,12 @@ def average_window(list, window, pointer):
         (sum_left, total_left) = average_sum_abs_range(list, 0, most_recent)
         (sum_right, total_right) = average_sum_abs_range(list, least_recent, buf_len)
         summing = sum_left+sum_right
+        print('summing:', summing)
         window = total_left+total_right
     else:
         # when least_recent >= 0
         (summing, window) =  average_sum_abs_range(list, least_recent, most_recent)
-    print('summing:', summing)
+        print('summing??:', summing)
     return summing/window
 
 def average_sum_abs_range(list, least_recent, most_recent):
