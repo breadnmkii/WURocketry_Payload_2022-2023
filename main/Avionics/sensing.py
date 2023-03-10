@@ -371,4 +371,5 @@ if __name__ == '__main__':
     while True:
         read_bno()
         read_acceleration_buffer()
+        print('sequential:',seqeuntial_euler )
         print('is it vertical?', vertical(seqeuntial_euler))
