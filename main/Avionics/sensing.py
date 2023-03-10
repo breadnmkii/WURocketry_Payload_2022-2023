@@ -22,8 +22,7 @@ bmp = config.init_bmp()
 # delete any values from the front??? -- TODO: pointer none stuffs
 bno_buf = []
 bmp_buf = []
-acceleration_buffer = [None]*BNO_BUFFER_LEN
-#euler_buffer = [None, None, None]*BNO_BUFFER_LEN
+acceleration_buffer = [[None, None, None] for _ in range(BNO_BUFFER_LEN)]
 euler_buffer = [[None, None, None] for _ in range(BNO_BUFFER_LEN)]
 seqeuntial_euler = [[None, None, None]]
 altitude_buffer = [None]*BMP_BUFFER_LEN
@@ -259,7 +258,14 @@ def detectMovement(acc_accumulator):
     MOTION_LAUNCH_SENSITIVITY = 13   # Amount of accel added to offset for stronger initial launch accel
     hasLaunched = False
     ACC_WINDOW = 50                  # Range of values to apply rolling average in 'acc_accumulator'
-    if(average_window(acc_accumulator, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY + MOTION_LAUNCH_SENSITIVITY):
+
+    x = [item[0] for item in acc_accumulator]
+    y = [item[1] for item in acc_accumulator]
+    z = [item[1] for item in acc_accumulator]
+
+    if(average_window(x, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY + MOTION_LAUNCH_SENSITIVITY 
+       and average_window(y, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY + MOTION_LAUNCH_SENSITIVITY
+       and average_window(z, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY + MOTION_LAUNCH_SENSITIVITY):
         print("Launch detected!")
         hasLaunched = True
     return hasLaunched
