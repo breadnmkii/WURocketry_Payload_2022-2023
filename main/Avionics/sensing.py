@@ -266,7 +266,7 @@ def vertical(euler_accumulator):
     pitches = [item[1] for item in euler_accumulator]
     pitch = abs(average_window(pitches, rolling_window, euler_orient_pointer))
     roll = abs(average_window(rolls, rolling_window, euler_orient_pointer))
-    print('inspecting rolls:', rolls)
+    #print('inspecting rolls:', rolls)
     if (roll < threshold and pitch < threshold):
         print("Camera is vertical from horizontal: row pitch", roll, pitch)
         
