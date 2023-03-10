@@ -3,7 +3,7 @@ import time
 import mathlib
 import board
 import math 
-
+import numpy as np
 #import adafruit_bno055 as a_bno
 
 """
@@ -272,8 +272,10 @@ def vertical(euler_accumulator):
     threshold = 0.15 # NEED TESTING -- tested 3/6
     rolls = [item[0] for item in euler_accumulator]
     pitches = [item[1] for item in euler_accumulator]
-    pitch = abs(average_window(pitches, rolling_window, euler_orient_pointer))
-    roll = abs(average_window(rolls, rolling_window, euler_orient_pointer))
+    pitchh = abs(average_window(pitches, rolling_window, euler_orient_pointer))
+    rolll = abs(average_window(rolls, rolling_window, euler_orient_pointer))
+    roll = np.nanmean(rolls[:rolling_window])
+    pitch = np.nanmean(pitches[:rolling_window])
     #print('inspecting rolls:', rolls)
     if (roll < threshold and pitch < threshold):
         print("Camera is vertical from horizontal: row pitch", roll, pitch)
@@ -357,6 +359,6 @@ if __name__ == '__main__':
     #vertical(euler_acc)
 
     while True:
-        euler_acc = read_euler_buffer()
+        read_euler_buffer()
         read_acceleration_buffer()
-        print('is it vertical?', vertical(euler_buffer))
+        print('is it vertical?', vertical(seqeuntial_euler))
