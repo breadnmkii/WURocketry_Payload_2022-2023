@@ -193,6 +193,7 @@ def isMoving(window):
 
 def average_window(list, window, pointer):
     print('buffer:', list)
+    print('pointers--', pointer)
     if(not list):
         return 0
     most_recent = pointer
@@ -266,7 +267,6 @@ def vertical(euler_accumulator):
     threshold = 0.15 # NEED TESTING -- tested 3/6
     rolls = [item[0] for item in euler_accumulator]
     pitches = [item[1] for item in euler_accumulator]
-    print('pointers--', euler_orient_pointer)
     pitch = abs(average_window(pitches, rolling_window, euler_orient_pointer))
     roll = abs(average_window(rolls, rolling_window, euler_orient_pointer))
     #print('inspecting rolls:', rolls)
