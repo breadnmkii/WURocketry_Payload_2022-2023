@@ -24,9 +24,43 @@ def init_avionics():
     
     __config_BNO055(bno055, adafruit_bno055.NDOF_MODE)
     __calibrate_BNO055(bno055)
-    __config_BMP388(bmp388, 25)
+    #__config_BMP388(bmp388, 25)
 
     return(bno055, bmp388)
+
+def init_bmp():
+    i2c = board.I2C()
+    try:
+        bmp388 = adafruit_bmp3xx.BMP3XX_I2C(i2c)
+    except:
+        print("WARNING: BMP388 NOT INITIALIZED")
+        bmp388 = None
+
+    
+    #__config_BMP388(bmp388, 25)
+
+    return bmp388
+
+def init_bno():
+    i2c = board.I2C()
+    try:
+        bno055 = adafruit_bno055.BNO055_I2C(i2c)
+    except:
+        print('enetered the except case')
+        print("WARNING: BNO055 NOT INITIALIZED")
+        bno055 = None
+    
+    try:
+        bmp388 = adafruit_bmp3xx.BMP3XX_I2C(i2c)
+    except:
+        print("WARNING: BMP388 NOT INITIALIZED")
+        bmp388 = None
+    __config_BNO055(bno055, adafruit_bno055.NDOF_MODE)
+    __calibrate_BNO055(bno055)
+
+    return bno055
+
+
 
 # NEED testing
 def __calibrate_BNO055(bno055):
