@@ -31,37 +31,14 @@ def init_avionics():
 # NEED testing
 def __calibrate_BNO055(bno055):
     SECOND_NS = 1_000_000_000
-    NUM_READINGS = 1000000
     SAMPLE_FREQUENCY = 100   # in Hz
     DELTA_T = SECOND_NS/SAMPLE_FREQUENCY
-    last_sample_T = time.monotonic_ns()
+    #last_sample_T = time.monotonic_ns()
 
-    start_sample_T = time.monotonic_ns()
-    while (NUM_READINGS):
+    #start_sample_T = time.monotonic_ns()
+    while (not bno055.calibrated):
+        print(f'Calibration (s,g,a,m) {bno055.calibration_status}')
 
-        this_sample_T = time.monotonic_ns()
-        if (this_sample_T >= last_sample_T + DELTA_T):
-
-            if (bno055.calibrated):
-                # Read bno055 data
-                print(f"time:{this_sample_T-start_sample_T}\tgyro:{bno055.gyro}\taccl:{bno055.linear_acceleration}\tmagn:{bno055.magnetic}")
-                # the quaternion stuff will be deleted later
-                if not None in bno055.quaternion:
-                    quat = bno055.quaternion
-                    [x, y, z, w] = quat
-                    yy = y * y # 2 Uses below
-                    roll = math.atan2(2 * (w* x + y * z), 1 - 2*(x * x + yy))
-                    # clamping asin values
-                    yaw = math.asin(max(-1, min(2 * w * y - x * z, 1)))
-                    pitch = math.atan2(2 * (w* z + x * y), 1 - 2*(yy+z * z))
-
-                    print('pitch, row, yaw:', pitch, roll, yaw)
-                NUM_READINGS -= 1
-            else:
-                print(f'Calibration (s,g,a,m) {bno055.calibration_status}')
-                start_sample_T = time.monotonic_ns()
-
-            last_sample_T = this_sample_T
 
 def __config_BNO055(sensor, mode):
     print("Configuring bno055...")

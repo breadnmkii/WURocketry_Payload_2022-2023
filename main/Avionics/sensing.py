@@ -16,7 +16,8 @@ BNO_BUFFER_LEN = 200
 """
 Main components
 """
-(bno, bmp) = config.init_avionics()
+#(bno, bmp) = config.init_avionics()
+bno = config.init_avionics()
 # delete any values from the front??? -- TODO: pointer none stuffs
 bno_buf = []
 bmp_buf = []
