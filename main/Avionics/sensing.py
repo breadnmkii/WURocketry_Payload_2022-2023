@@ -194,29 +194,26 @@ def isMoving(window):
 def average_window(list, window, pointer):
     if(not list):
         return 0
-    summing = 0
     most_recent = pointer
     least_recent = pointer-window
     if least_recent < 0:
         buf_len = len(list)
         least_recent = buf_len-1-abs(least_recent)
-        #(sum_left, total_left) = average_sum_abs_range(list, 0, most_recent)
         sum_left = average_sum_abs_range(list, 0, most_recent)
-        #(sum_right, total_right) = average_sum_abs_range(list, least_recent, buf_len)
         sum_right = average_sum_abs_range(list, least_recent, buf_len)
-        #print('almost err left, right:', sum_left, sum_right)
         summing = sum_left+sum_right
         return summing
     else:
         # when least_recent >= 0
         summing =  average_sum_abs_range(list, least_recent, most_recent)
         return summing/window
-        #print('summing??:', summing)
-    print('almost error:', window)
-    return summing/window
-
+    
 def average_sum_abs_range(list, least_recent, most_recent):
     of_interest = list[least_recent:most_recent+1]
+    values = [x for x in of_interest if x is not None]
+    if len(values) == 0:
+        return None
+    return sum(values) / len(values)
     #start_idx = next((i for i, x in enumerate(list[least_recent:most_recent+1]) if x is not None), None)
     #end_idx = next((i for i, x in enumerate(reversed(list[most_recent:least_recent+1])) if x is not None), None)
     not_nones  = [i for i in range(len(of_interest)) if of_interest[i] != None]
@@ -228,6 +225,7 @@ def average_sum_abs_range(list, least_recent, most_recent):
     if start_idx is None or end_idx is None:
         return 0
     start_idx += most_recent
+    # this code may not work 
     end_idx = least_recent - end_idx
     if (end_idx<start_idx):
         end_idx, start_idx = start_idx, end_idx
