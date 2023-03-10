@@ -198,6 +198,7 @@ def average_window(list, window, pointer):
         return 0
     most_recent = pointer
     least_recent = pointer-window
+    print('subset:', window[least_recent:most_recent])
     if least_recent < 0:
         buf_len = len(list)
         least_recent = buf_len-1-abs(least_recent)
