@@ -200,15 +200,16 @@ def average_window(list, window, pointer):
     if least_recent < 0:
         buf_len = len(list)
         least_recent = buf_len-1-abs(least_recent)
-        (sum_left, total_left) = average_sum_abs_range(list, 0, most_recent)
-        (sum_right, total_right) = average_sum_abs_range(list, least_recent, buf_len)
+        #(sum_left, total_left) = average_sum_abs_range(list, 0, most_recent)
+        sum_left = average_sum_abs_range(list, 0, most_recent)
+        #(sum_right, total_right) = average_sum_abs_range(list, least_recent, buf_len)
+        sum_right = average_sum_abs_range(list, least_recent, buf_len)
         summing = sum_left+sum_right
-        #print('summing:', summing)
-        window = abs(total_left)+abs(total_right)
-        print('hitting total left and total right:', total_left, total_right)
+        return summing
     else:
         # when least_recent >= 0
-        (summing, window) =  average_sum_abs_range(list, least_recent, most_recent)
+        summing =  average_sum_abs_range(list, least_recent, most_recent)
+        return summing/window
         #print('summing??:', summing)
     print('almost error:', window)
     return summing/window
@@ -229,8 +230,8 @@ def average_sum_abs_range(list, least_recent, most_recent):
     start_idx += most_recent
     end_idx = least_recent - end_idx
     summing = sum(abs(x) for x in list[start_idx:end_idx])
-    print('summing:', summing)
-    return (summing, end_idx-start_idx)
+    print('summing, effective window:', summing, end_idx-start_idx)
+    return summing/(end_idx-start_idx)
 
 # for BMP readings only 
 def differential_window(list, window):
