@@ -65,8 +65,8 @@ def read_bno():
         # convert to euler, then tell from vertical -- roll and pitch
         roll = math.atan2(2 * (w* x + y * z), 1 - 2*(x * x + yy))
         # clamping asin values
-        yaw = math.asin(max(-1, min(2 * w * y - x * z, 1)))
-        pitch = math.atan2(2 * (w* z + x * y), 1 - 2*(yy+z * z))
+        pitch = math.asin(max(-1, min(2 * w * y - x * z, 1)))
+        yaw = math.atan2(2 * (w* z + x * y), 1 - 2*(yy+z * z))
         three_ele = [roll, pitch, yaw]
         print("r,p,y:\t", three_ele)
         # euler_buffer.append(three_ele) trying ring buffer right now
@@ -113,8 +113,8 @@ def read_euler_buffer():
         # convert to euler, then tell from vertical -- roll and pitch
         roll = math.atan2(2 * (w* x + y * z), 1 - 2*(x * x + yy))
         # clamping asin values
-        yaw = math.asin(max(-1, min(2 * w * y - x * z, 1)))
-        pitch = math.atan2(2 * (w* z + x * y), 1 - 2*(yy+z * z))
+        pitch = math.asin(max(-1, min(2 * w * y - x * z, 1)))
+        yaw= math.atan2(2 * (w* z + x * y), 1 - 2*(yy+z * z))
         three_ele = [roll, pitch, yaw]
         print("r,p,y:\t", three_ele)
         euler_buffer[euler_orient_pointer] = [roll, pitch, yaw]

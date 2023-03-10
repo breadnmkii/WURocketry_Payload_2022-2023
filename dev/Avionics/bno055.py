@@ -54,8 +54,8 @@ if __name__ == '__main__':
                     yy = y * y # 2 Uses below
                     roll = math.atan2(2 * (w* x + y * z), 1 - 2*(x * x + yy))
                     # clamping asin values
-                    yaw = math.asin(max(-1, min(2 * w * y - x * z, 1)))
-                    pitch = math.atan2(2 * (w* z + x * y), 1 - 2*(yy+z * z))
+                    pitch= math.asin(max(-1, min(2 * w * y - x * z, 1)))
+                    yaw = math.atan2(2 * (w* z + x * y), 1 - 2*(yy+z * z))
 
                     print('pitch, row, yaw:', pitch, roll, yaw)
                 NUM_READINGS -= 1
