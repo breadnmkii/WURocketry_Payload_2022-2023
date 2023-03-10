@@ -116,7 +116,7 @@ def read_euler_buffer():
         pitch = math.asin(max(-1, min(2 * w * y - x * z, 1)))
         roll= math.atan2(2 * (w* z + x * y), 1 - 2*(yy+z * z))
         three_ele = [roll, pitch, yaw]
-        print("r,p,y:\t", three_ele)
+        #print("r,p,y:\t", three_ele)
         euler_buffer[euler_orient_pointer] = [roll, pitch, yaw]
         euler_orient_pointer = euler_orient_pointer+1
     
