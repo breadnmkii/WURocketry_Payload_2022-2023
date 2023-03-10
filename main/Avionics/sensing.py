@@ -376,6 +376,6 @@ if __name__ == '__main__':
         read_bno()
         read_acceleration_buffer()
         read_bmp()
-        print('sequential:',seqeuntial_euler )
+        #print('sequential:',seqeuntial_euler )
         print('is there movement?', detectMovement(acceleration_buffer))
-        print('is it vertical?', vertical(seqeuntial_euler))
+        #print('is it vertical?', vertical(seqeuntial_euler))
