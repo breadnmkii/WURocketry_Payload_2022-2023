@@ -57,6 +57,7 @@ def read_bno():
     global bno_pointer
     global euler_orient_pointer
     global linear_acc_pointer
+    global seqeuntial_euler
     #bno_pointer = bno_pointer % BNO_BUFFER_LEN
     euler_orient_pointer = euler_orient_pointer % BNO_BUFFER_LEN
     linear_acc_pointer = linear_acc_pointer % BNO_BUFFER_LEN
