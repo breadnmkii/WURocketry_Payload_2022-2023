@@ -1,16 +1,17 @@
 # FILE FOR MAIN PAYLOAD MISSION ROUTINE
 
 ## Imports
-from Control import fsm
 from Avionics import config as avionics_config
+from Imaging import config as imaging_config
+from Motive import config as motive_config
+
 from Avionics import sensing
-from Imaging import imaging
-from Imaging import config as camera_config
-from Motive import servo
+from Control import fsm
+from Motive import camarm
 from Radio import APRS
-from adafruit_motorkit import MotorKit
+from Radio import telemetry
+
 import time
-import board
 from enums import *
 
 
@@ -58,37 +59,24 @@ class System_Flags(Enum):
 
 
 
-def update_imageCommands():
+def updateRAFCO():
+    imageCommands = []
     with open("data") as file:
-        imageCommands = []
-
         data = file.readlines()
 
         for line in data:
             cleanLine = line.strip("\n,;").split(" ")
             cleanLine = list(filter(None, cleanLine))
-            
             imageCommands.append(cleanLine)
-            
-        return imageCommands
-
-
-
-
-
-
-
-
-
-
-
-
+        file.close()
+    
+    return imageCommands
 
 
 
 
 # Payload mission functions (base on payload mission execution flowchart??)
-def avionicRoutine(stage):
+def avionicRoutine():
     # TODO: confirm design decision, add comments
     #acceleration_accumulator = []
     # initialize values
@@ -101,12 +89,12 @@ def avionicRoutine(stage):
     ground_steady = None
 
     ### PRE-LAUNCH STANDBY ###
-    if(stage == Stage.PRELAUNCH):
+    if(sys_flags.STAGE_INFO == Stage.PRELAUNCH):
         (has_launched, is_still) = avionics_prelaunch()
-    elif (stage == Stage.MIDAIR):
+    elif (sys_flags.STAGE_INFO == Stage.MIDAIR):
         # sample for movement (if launched)
         (has_launched, heat, is_still, ground_steady, bmp_values_status) = avionics_midair()
-    elif (stage == Stage.LANDED):
+    elif (sys_flags.STAGE_INFO == Stage.LANDED):
         # check for no movement (if landed)
         # check for upright (orientation sensor)
         (heat, is_still, is_upright) = avionics_landed()
@@ -179,92 +167,75 @@ def update_system_flags(is_upright,heat, bmp_values_status, has_launched, is_sti
         sys_flags.STAGE_INFO = Stage.LANDED
 
 
-hat = MotorKit(i2c = board.I2C()) #motor1 = separation motor, motor2 = cylnoid1, motor3 = cylnoid2
-hasMovedForward = False
-halfSeparationTime = 1
-def deployRountine(stage):
-    if (stage == 3):
-        ##### REALIGN (New phase, need to "pull" nosecone back a bit to release retention)
+HALF_SEPARATION_TIME = 10
+def deployRoutine(motor, solenoids):
+    if (sys_flags.STAGE_INFO == 3):
+        if (sys_flags.DEPLOYED == Deployed.NOT_DEPLOYED):
+            ##### REALIGN (New phase, need to "pull" nosecone back a bit to release retention)
 
-        # Brendan's code, ill look at this later if its needed
-        
-        ##### RETENTION RELEASE PHASE
-
-        # John's code here (no conditions, release solenoids as soon as reached)
-
-        while(sys_flags.MOVEMENT == Movement.MOVING): #The soleonid will not snap in if it detects movement
-            continue
-
-        hat.motor2.throttle = 1 #Both soleoinds will be on (released) and running once it detects no movement
-        hat.motor3.throttle = 1
-
-        while((sys_flags.MOVEMENT == Movement.MOVING)): #Check line 193, transitioning from unclocking retention to separating them
-            continue
+            motor.throttle = -1
+            time.sleep(0.5)
+            motor.throttle = 0
             
+            ##### RETENTION RELEASE PHASE
+            while (sys_flags.MOVEMENT == Movement.MOVING): #The soleonid will not retract in if it detects movement
+                continue
 
-        ##### SEPARATION PHASE
-        hat.motor1.throttle = 0.5 #Motorhat will separate forward by half once it's not moving
-        time.sleep(halfSeparationTime) #TEMPORARY, NEED DELTA TIMING 
-        hat.motor1.throttle = 0 #Stops separating (1st half)
+            # Retract all solenoids in retention
+            for solenoid in solenoids:
+                solenoid.throttle = 1
 
-        while((sys_flags.VERTICALITY == Verticality.NOT_UPRIGHT) or (sys_flags.MOVEMENT == Movement.MOVING)): #The second part of separation won't happen it the nosecone is not upright or moving
-            continue
+            while (sys_flags.MOVEMENT == Movement.MOVING): #Wait to transition from retracting retention to separation phase
+                continue
+                
+            ##### SEPARATION PHASE
+            motor.throttle = 1 #Motorhat will separate forward by half once it's not moving
+            time.sleep(HALF_SEPARATION_TIME) 
+            motor.throttle = 0 #Stops separating (1st half)
 
-        hat.motor1.throttle = 0.5 #Will perform the second half of separation once it detects no movement or if it is upright
-        time.sleep(halfSeparationTime) #TEMPORARY, NEED DELTA TIMING 
-        hat.motor1.throttle = 0 #Stops separating (2nd half)
-        #Disengaging solenoids (stops running after separation phase)
-        hat.motor2.throttle = 0
-        hat.motor3.throttle = 0
-        
-        sys_flags.SEPARATED = Separated.SEPARATED
+            while ((sys_flags.VERTICALITY == Verticality.NOT_UPRIGHT) or (sys_flags.MOVEMENT == Movement.MOVING)): #The second part of separation won't happen it the nosecone is not upright or moving
+                continue
 
+            motor.throttle = 1 #Will perform the second half of separation once it detects no movement or if it is upright
+            time.sleep(HALF_SEPARATION_TIME) 
+            motor.throttle = 0 #Stops separating (2nd half)
 
-        ##### EXTEND CAMERA PHASE
-        while((sys_flags.VERTICALITY == Verticality.NOT_UPRIGHT) or (sys_flags.MOVEMENT == Movement.NOT_MOVING)):
-            continue
+            # Release all retracted solenoids
+            for solenoid in solenoids:
+                solenoid.throttle = 0
+            
+            sys_flags.SEPARATED = Separated.SEPARATED
 
-        servo.extend()
-        
-        sys_flags.DEPLOYED = Deployed.DEPLOYED
-        # Logans code here (determine if not moving and upright, extend arm)
+            ##### EXTEND CAMERA PHASE
+            while((sys_flags.VERTICALITY == Verticality.NOT_UPRIGHT) or (sys_flags.MOVEMENT == Movement.NOT_MOVING)):
+                continue
 
-
-
-def controlRoutine():
-    pass
-
-def imageRoutine(stage):
-    if (stage != 3):
-        pass
-    # cam stuff
+            camarm.extend()
+            
+            sys_flags.DEPLOYED = Deployed.DEPLOYED
 
 
-def telemetryRoutine(stage):
+def telemetryRoutine():
     # data we send back to base station
-    telemtery.transmit("data")
+    telemetry.transmit("TEST")
 
-def fsmRoutine(stage, currentState):
-    while(stage == 3):
+
+def controlRoutine(currentState, currRAFCO):
+    if (sys_flags.STAGE_INFO == Stage.LANDED):
+        RAFCOS_LIST = APRS.updateRAFCO() # READ ONLY list of ALL (including past) received APRS RAFCOS (rafco sequence)
+
+        # Check if any unprocessed rafco in list (guaranteed to transition out of wait state)
+        if (len(RAFCOS_LIST) > currRAFCO):
+            newState = fsm.FSM(currentState, RAFCOS_LIST[currRAFCO])
+            
+            # If FSM complete (i.e. returned to a wait state)
+            if (newState == fsm.State.WAIT):
+                currRAFCO += 1
+            
+            return newState # Return FSM's new state
         
-        call = "XD71" #Brief outline of the call that we will recieve from our call variable
-        data = APRS.update_imageCommands() #Put in that call into this function
-        currentState = fsm.State.CALL #Changes currentState when call recieved
-
-        rafCall = data[0]
-
-
-        if(data == call): #Checks to see if the call is ours
-            currentState = fsm.State.EXEC 
-            fsm.FSM(currentState, rafCall) #Will make currentState to execute condition, follows FSM function (see lines 15-20)
-            currentState = fsm.State.WAIT #Back to wait condition once it's done, restarting the cycle
-
-        else:
-            currentState = fsm.State.WAIT #Goes back to wait condition if call is not ours
+        return currentState # If no RAFCO, do not call FSM and return original state 
         
-   
-
-    pass
 
 
 '''
@@ -290,66 +261,67 @@ Transition Factors:
 
 
 def main():
+    """ INITIALIZATION PHASE """
+    ### Generic global config
+    # Set current flight stage to prelaunch
+    sys_flags.STAGE_INFO = Stage.PRELAUNCH
+    midair_oneshot_transition = False
+    landed_oneshot_transition = False
+
     # Init FSM starting state
-    currentState = fsm.State.WAIT
-    # Component config and init
-    (bno, bmp) = avionics_config.init_avionics()
-    camera = camera_config.init_avionics()
-    # BMP or BNO hardware fualt
-    if bno == None or bmp == None:
-        sys_flags[8] = 1
+    state = fsm.State.WAIT
+    currRAFCO = 0   # Index within RAFCOS_LIST for first unprocessed RAFCOS (rafco sequence)
+
+    ### Component config
+    motor, solenoids = motive_config.electromotives_config()
+    bno, bmp = avionics_config.init_avionics()
+    camera = imaging_config.init_avionics()
+    # BMP or BNO hardware fault
+    if (bno == None or bmp == None):
+        sys_flags.WARN_AVIONICS = Warn_Avionics.WARNING
     # PiCamera hardware fault
-    if camera == None:
-        sys_flags[7] = 1
-    # right now, only BNO frequency used, ask whether two machines sampled at different rate
-    BNO_FREQUENCY = 100 # bno frequncy per second -- check documentations
-    BMP_FREQUENCY = 100 # bmp frequncy per second    
-    '''
-    ### Stage 1
-    while(hasNotLaunched):
-        routines()
-        
-        if(hasLaunched):
-            break
+    if (camera == None):
+        sys_flags.WARNCAMERA = Warn_Camera.WARNING
 
-    ### Stage 2 -- motion detected
-    while(sensing.detectMovement(acc_accumulator)):
-        rotunines()
+    ### Delta timing frequencies
+    # AVIONIC
+    AVIONIC_FREQ = 100 # bno frequncy per second -- check documentations
 
-        if(landed):
-            break
+    # TELEMETRY
+    TELEMETRY_FREQ = 1
 
-    ### Stage 3
-    while(sensing.remain_still(acc_accumulator)):
-        pass
-    '''
+    # CONTROL
+    CONTROL_FREQ = 2
 
-    """ ALTERNATIVE """
-
-    #stage = 1
-    sys_flags[0] = 0
-    ### Main delta timing loop
-    aprs_begin = False
+    """ Main delta timing loop (HIGHEST ROUTINE PRIORITY FROM TOP) """
 
     time_last_sample = time.time()   # Reset delta timing
     while(True):
+        # AVIONIC ROUTINE
         time_this_sample = time.time()
-        if(time_this_sample - time_last_sample >= BNO_FREQUENCY):
+        if(time_this_sample - time_last_sample >= AVIONIC_FREQ):
             time_last_sample = time_this_sample
-            avionicRoutine(sys_flags.STAGE_INFO)
+            avionicRoutine()
+
+        # TELEMETRY ROUTINE
         time_this_sample = time.time()
-        imageRoutine(sys_flags.STAGE_INFO)
+        if(time_this_sample - time_last_sample >= TELEMETRY_FREQ):
+            time_last_sample = time_this_sample
+            telemetryRoutine()
+
+        # CONTROL ROUTINE
+        time_this_sample = time.time()
+        if(time_this_sample - time_last_sample >= CONTROL_FREQ):
+            time_last_sample = time_this_sample
+            state = controlRoutine(state, currRAFCO)
         
-        if (sys_flags[0]):
-            stage = 2
 
+        # TRANSITION ONESHOTS
+        if (sys_flags.STAGE_INFO == Stage.MIDAIR and midair_oneshot_transition == False):
+            midair_oneshot_transition = True
+            # do single transition to midair stuff here
 
-        if (hasLanded):
-            stage = 3
-
-        if(stage == 3 and aprs_begin == False):
-            aprs_subprocess = APRS.begin_APRS_recieve()
-            aprs_begin = True
-            currentState = fsmRoutine(stage, currentState)
-
-    # Delta timing loop
+        if (sys_flags.STAGE_INFO == Stage.LANDED and landed_oneshot_transition == False):
+            landed_oneshot_transition = True
+            deployRoutine(motor, solenoids) # Deploy imaging system
+            aprs_subprocess = APRS.begin_APRS_recieve() # Begin listening for APRS commands

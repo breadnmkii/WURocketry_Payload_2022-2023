@@ -15,7 +15,7 @@ import sys
 from Imaging import imaging
 from Motive import servo
 
-CALLSIGN = "XD71"
+CALLSIGN = "XD71" # NASA's callsign
 
 # States enum
 class State(Enum):
@@ -32,7 +32,7 @@ class State(Enum):
 def FSM(state, sequence): 
 	
 	if state == State.WAIT:
-		# if sequence is a command
+		# if sequence is not empty
 		if (len(sequence) > 0):
 			state = State.CALL
 		else:
