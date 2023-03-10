@@ -292,7 +292,7 @@ def vertical(euler_accumulator):
         
         is_vertical = True
     else:
-        print('not vertical:', roll, pitch)
+        print('not vertical:', averaged_roll, averaged_pitch)
     return is_vertical
 
 '''
