@@ -92,7 +92,7 @@ def read_bno():
     # if bno_pointer == BNO_BUFFER_LEN-1:
     if linear_acc_pointer == BNO_BUFFER_LEN-1:
         with open('accelerations.txt', 'a') as the_file:
-            the_file.write(acceleration_buffer)
+            the_file.write(str(acceleration_buffer))
     if euler_orient_pointer == BNO_BUFFER_LEN-1:
         with open('eulers.txt', 'a') as the_file:
             '''
