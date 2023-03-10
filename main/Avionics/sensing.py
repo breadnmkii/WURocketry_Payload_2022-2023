@@ -10,7 +10,7 @@ import math
 Constants
 """
 BMP_BUFFER_LEN = 200     # Length of sensor reading buffer
-BNO_BUFFER_LEN = 200 
+BNO_BUFFER_LEN = 50  # length 50 for testing
 
 
 """
@@ -192,6 +192,7 @@ def isMoving(window):
         print("Moving")
 
 def average_window(list, window, pointer):
+    print('buffer:', list)
     if(not list):
         return 0
     most_recent = pointer
@@ -201,43 +202,20 @@ def average_window(list, window, pointer):
         least_recent = buf_len-1-abs(least_recent)
         sum_left = average_sum_abs_range(list, 0, most_recent)
         sum_right = average_sum_abs_range(list, least_recent, buf_len)
-        summing = sum_left+sum_right
-        return summing
+        average = sum_left+sum_right
+        return average
     else:
         # when least_recent >= 0
-        summing =  average_sum_abs_range(list, least_recent, most_recent)
-        return summing/window
+        average =  average_sum_abs_range(list, least_recent, most_recent)
+        return average
     
 def average_sum_abs_range(list, least_recent, most_recent):
     of_interest = list[least_recent:most_recent+1]
-    values = [abs(x) for x in of_interest if x is not None]
+    print('averaging window:', of_interest)
+    values = [x for x in of_interest if x is not None]
     if len(values) == 0:
         return 0
     return sum(values) / len(values)
-    #start_idx = next((i for i, x in enumerate(list[least_recent:most_recent+1]) if x is not None), None)
-    #end_idx = next((i for i, x in enumerate(reversed(list[most_recent:least_recent+1])) if x is not None), None)
-    not_nones  = [i for i in range(len(of_interest)) if of_interest[i] != None]
-    # 0 as defualt not optimal -> 0 means vertical
-    if not_nones is None or len(not_nones) == 0:
-        return 0
-    start_idx = not_nones[0]
-    end_idx = not_nones[-1]
-    if start_idx is None or end_idx is None:
-        return 0
-    start_idx += most_recent
-    # this code may not work 
-    end_idx = least_recent - end_idx
-    if (end_idx<start_idx):
-        end_idx, start_idx = start_idx, end_idx
-    #print('start, end:', list[start_idx:end_idx])
-    subset_not_none = list[start_idx:end_idx]
-    print('to sum:', subset_not_none, start_idx, end_idx)
-    #summing = sum(abs(x) for x in list[start_idx:end_idx+1])
-    summing = sum(map(abs, subset_not_none))
-    #if (end_idx<start_idx):
-    #    print('end index, start index', end_idx, start_idx)
-    print('summing, effective window:', summing, end_idx-start_idx)
-    return summing/(abs(end_idx-start_idx))
 
 # for BMP readings only 
 def differential_window(list, window):
@@ -284,18 +262,19 @@ functionality: detect whether the camera has reached vertical position or not
 def vertical(euler_accumulator):
     global euler_orient_pointer
     is_vertical = False
-    rolling_window = 50
+    rolling_window = 10
     threshold = 0.15 # NEED TESTING -- tested 3/6
     rolls = [item[0] for item in euler_accumulator]
     pitches = [item[1] for item in euler_accumulator]
     pitch = abs(average_window(pitches, rolling_window, euler_orient_pointer))
     roll = abs(average_window(rolls, rolling_window, euler_orient_pointer))
+    #print('inspecting rolls:', rolls)
     if (roll < threshold and pitch < threshold):
         print("Camera is vertical from horizontal: row pitch", roll, pitch)
         
         is_vertical = True
     else:
-        print('not vertical')
+        print('not vertical:', roll, pitch)
     return is_vertical
 
 '''
