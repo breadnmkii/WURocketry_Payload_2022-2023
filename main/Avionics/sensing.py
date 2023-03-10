@@ -276,8 +276,6 @@ def vertical(euler_accumulator):
     pitches = [item[1] for item in euler_accumulator]
     pitchh = abs(average_window(pitches, rolling_window, euler_orient_pointer))
     rolll = abs(average_window(rolls, rolling_window, euler_orient_pointer))
-    #roll = np.nanmean(rolls[:rolling_window])
-    #pitch = np.nanmean(pitches[:rolling_window])
 
     filtered_rolls = [abs(x) for x in rolls if x is not None]
     averaged_roll = sum(filtered_rolls) / len(filtered_rolls)
@@ -371,5 +369,7 @@ if __name__ == '__main__':
     while True:
         read_bno()
         read_acceleration_buffer()
+        read_bmp()
         print('sequential:',seqeuntial_euler )
+        print('is there movement?', detectMovement(acceleration_buffer))
         print('is it vertical?', vertical(seqeuntial_euler))
