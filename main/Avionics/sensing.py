@@ -209,6 +209,7 @@ def average_window(list, window, pointer):
         # when least_recent >= 0
         (summing, window) =  average_sum_abs_range(list, least_recent, most_recent)
         #print('summing??:', summing)
+    print('almost error:', window)
     return summing/window
 
 def average_sum_abs_range(list, least_recent, most_recent):
