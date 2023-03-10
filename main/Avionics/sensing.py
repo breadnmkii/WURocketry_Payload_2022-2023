@@ -201,12 +201,12 @@ def average_window(list, window, pointer):
         least_recent = buf_len-1-abs(least_recent)
         sum_left = average_sum_abs_range(list, 0, most_recent)
         sum_right = average_sum_abs_range(list, least_recent, buf_len)
-        summing = sum_left+sum_right
-        return summing
+        average = sum_left+sum_right
+        return average
     else:
         # when least_recent >= 0
-        summing =  average_sum_abs_range(list, least_recent, most_recent)
-        return summing/window
+        average =  average_sum_abs_range(list, least_recent, most_recent)
+        return average
     
 def average_sum_abs_range(list, least_recent, most_recent):
     of_interest = list[least_recent:most_recent+1]
