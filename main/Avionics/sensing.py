@@ -367,6 +367,6 @@ if __name__ == '__main__':
     #vertical(euler_acc)
 
     while True:
-        read_euler_buffer()
+        read_bno()
         read_acceleration_buffer()
         print('is it vertical?', vertical(seqeuntial_euler))
