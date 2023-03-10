@@ -231,8 +231,8 @@ def average_sum_abs_range(list, least_recent, most_recent):
     end_idx = least_recent - end_idx
     if (end_idx<start_idx):
         end_idx, start_idx = start_idx, end_idx
-    print('start, end:', list[start_idx:end_idx+1])
-    subset_not_none = list[start_idx:end_idx+1]
+    print('start, end:', list[start_idx:end_idx])
+    subset_not_none = list[start_idx:end_idx]
     #summing = sum(abs(x) for x in list[start_idx:end_idx+1])
     summing = sum(map(abs, subset_not_none))
     if (end_idx<start_idx):
