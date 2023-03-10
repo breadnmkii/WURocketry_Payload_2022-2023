@@ -214,30 +214,6 @@ def average_sum_abs_range(list, least_recent, most_recent):
     if len(values) == 0:
         return 0
     return sum(values) / len(values)
-    #start_idx = next((i for i, x in enumerate(list[least_recent:most_recent+1]) if x is not None), None)
-    #end_idx = next((i for i, x in enumerate(reversed(list[most_recent:least_recent+1])) if x is not None), None)
-    not_nones  = [i for i in range(len(of_interest)) if of_interest[i] != None]
-    # 0 as defualt not optimal -> 0 means vertical
-    if not_nones is None or len(not_nones) == 0:
-        return 0
-    start_idx = not_nones[0]
-    end_idx = not_nones[-1]
-    if start_idx is None or end_idx is None:
-        return 0
-    start_idx += most_recent
-    # this code may not work 
-    end_idx = least_recent - end_idx
-    if (end_idx<start_idx):
-        end_idx, start_idx = start_idx, end_idx
-    #print('start, end:', list[start_idx:end_idx])
-    subset_not_none = list[start_idx:end_idx]
-    print('to sum:', subset_not_none, start_idx, end_idx)
-    #summing = sum(abs(x) for x in list[start_idx:end_idx+1])
-    summing = sum(map(abs, subset_not_none))
-    #if (end_idx<start_idx):
-    #    print('end index, start index', end_idx, start_idx)
-    print('summing, effective window:', summing, end_idx-start_idx)
-    return summing/(abs(end_idx-start_idx))
 
 # for BMP readings only 
 def differential_window(list, window):
@@ -295,7 +271,7 @@ def vertical(euler_accumulator):
         
         is_vertical = True
     else:
-        print('not vertical')
+        print('not vertical:', roll, pitch)
     return is_vertical
 
 '''
