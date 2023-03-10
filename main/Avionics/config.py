@@ -70,7 +70,7 @@ def __calibrate_BNO055(bno055):
     #last_sample_T = time.monotonic_ns()
 
     #start_sample_T = time.monotonic_ns()
-    while (not bno055.calibrated):
+    while (bno055.calibrated[2] != 3):
         print(f'Calibration (s,g,a,m) {bno055.calibration_status}')
 
 
