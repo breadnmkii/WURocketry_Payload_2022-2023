@@ -3,7 +3,7 @@ import time
 import mathlib
 import board
 import math 
-import numpy as np
+#import numpy as np
 #import adafruit_bno055 as a_bno
 
 """
