@@ -217,6 +217,7 @@ def average_sum_abs_range(list, least_recent, most_recent):
     values = [x for x in of_interest if x is not None]
     if len(values) == 0:
         return 0
+    print('average:', sum(values) / len(values))
     return sum(values) / len(values)
 
 # for BMP readings only 
