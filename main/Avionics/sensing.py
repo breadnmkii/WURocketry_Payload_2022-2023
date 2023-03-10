@@ -76,7 +76,7 @@ def read_bno():
         #euler_buffer[bno_pointer] = [roll, pitch, yaw]
         euler_buffer[euler_orient_pointer] = [roll, pitch, yaw]
         euler_orient_pointer = euler_orient_pointer+1
-        seqeuntial_euler.insert(0, [euler_orient_pointer])
+        seqeuntial_euler.insert(0, three_ele)
         seqeuntial_euler = seqeuntial_euler[:BNO_BUFFER_LEN]
 
         
