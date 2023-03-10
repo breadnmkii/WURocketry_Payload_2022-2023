@@ -222,12 +222,12 @@ def average_sum_abs_range(list, least_recent, most_recent):
     not_nones  = [i for i in range(len(of_interest)) if of_interest[i] != None]
     # 0 as defualt not optimal -> 0 means vertical
     if not_nones is None or len(not_nones) == 0:
-        return (0, 1)
+        return 0
     start_idx = not_nones[0]
     end_idx = not_nones[-1]
     print('start, end:', start_idx, end_idx)
     if start_idx is None or end_idx is None:
-        return (0, 1)
+        return 0
     start_idx += most_recent
     end_idx = least_recent - end_idx
     summing = sum(abs(x) for x in list[start_idx:end_idx])
