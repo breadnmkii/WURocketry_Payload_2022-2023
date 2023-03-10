@@ -68,7 +68,7 @@ def read_bno():
         pitch = math.asin(max(-1, min(2 * w * y - x * z, 1)))
         roll= math.atan2(2 * (w* z + x * y), 1 - 2*(yy+z * z))
         three_ele = [roll, pitch, yaw]
-        print("r,p,y:\t", three_ele)
+        #print("r,p,y:\t", three_ele)
         # euler_buffer.append(three_ele) trying ring buffer right now
         #euler_buffer[bno_pointer] = [roll, pitch, yaw]
         euler_buffer[euler_orient_pointer] = [roll, pitch, yaw]
@@ -271,6 +271,8 @@ def vertical(euler_accumulator):
     if (abs(average_window(rolls, rolling_window, euler_orient_pointer)) < threshold and abs(average_window(pitches, rolling_window, euler_orient_pointer)) < threshold):
         print("Camera is vertical from horizontal")
         is_vertical = True
+    else:
+        print('not vertical')
     return is_vertical
 
 '''
