@@ -231,6 +231,8 @@ def average_sum_abs_range(list, least_recent, most_recent):
     start_idx += most_recent
     end_idx = least_recent - end_idx
     summing = sum(abs(x) for x in list[start_idx:end_idx])
+    if (end_idx<start_idx):
+        print('end index, start index', end_idx, start_idx)
     print('summing, effective window:', summing, end_idx-start_idx)
     return summing/(abs(end_idx-start_idx))
 
