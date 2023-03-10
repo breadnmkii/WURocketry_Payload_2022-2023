@@ -347,10 +347,9 @@ if __name__ == '__main__':
     # start_sample_T = time.monotonic_ns()
     print('entering main')
     #print(read_bmp())
-    euler_acc = read_euler_buffer()
-    read_acceleration_buffer()
-    vertical(euler_acc)
-    print('exiting avionics testing for read_bno')
+    #euler_acc = read_euler_buffer()
+    #read_acceleration_buffer()
+    #vertical(euler_acc)
 
     while True:
         euler_acc = read_euler_buffer()
