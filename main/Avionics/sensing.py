@@ -274,11 +274,19 @@ def vertical(euler_accumulator):
     pitches = [item[1] for item in euler_accumulator]
     pitchh = abs(average_window(pitches, rolling_window, euler_orient_pointer))
     rolll = abs(average_window(rolls, rolling_window, euler_orient_pointer))
-    roll = np.nanmean(rolls[:rolling_window])
-    pitch = np.nanmean(pitches[:rolling_window])
+    #roll = np.nanmean(rolls[:rolling_window])
+    #pitch = np.nanmean(pitches[:rolling_window])
+
+    filtered_rolls = [x for x in rolls if x is not None]
+    averaged_roll = sum(filtered_rolls) / len(filtered_rolls)
+
+    filtered_pitches = [x for x in pitches if x is not None]
+    averaged_pitch = sum(filtered_pitches) / len(filtered_pitches)
+
+
     #print('inspecting rolls:', rolls)
-    if (roll < threshold and pitch < threshold):
-        print("Camera is vertical from horizontal: row pitch", roll, pitch)
+    if (averaged_roll < threshold and averaged_pitch < threshold):
+        print("Camera is vertical from horizontal: row pitch", averaged_roll, averaged_pitch)
         
         is_vertical = True
     else:
