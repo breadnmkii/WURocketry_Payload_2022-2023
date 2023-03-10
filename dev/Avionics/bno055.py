@@ -44,7 +44,8 @@ if __name__ == '__main__':
         this_sample_T = time.monotonic_ns()
         if (this_sample_T >= last_sample_T + DELTA_T):
 
-            if (bno055.calibrated):
+            # if (bno055.calibrated):
+            if (bno055.calibration_status[3] != 3):
                 # Read bno055 data
                 print(f"time:{this_sample_T-start_sample_T}\tgyro:{bno055.gyro}\taccl:{bno055.linear_acceleration}\tmagn:{bno055.magnetic}")
                 if not None in bno055.quaternion:
