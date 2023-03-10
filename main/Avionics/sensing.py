@@ -169,7 +169,7 @@ def read_bmp():
     altitude_buffer.append(altitude)
     pressure_buffer.append(pressure)
     '''
-    if None not in altitude and None not in pressure and None not in temperature:
+    if altitude and pressure and temperature:
         altitude_buffer[bmp_pointer] = altitude
         pressure_buffer[bmp_pointer] = pressure
         temperature_buffer[bmp_pointer] = temperature
