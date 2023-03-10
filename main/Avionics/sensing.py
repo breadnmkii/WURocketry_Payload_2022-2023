@@ -225,11 +225,12 @@ def average_sum_abs_range(list, least_recent, most_recent):
         return 0
     start_idx = not_nones[0]
     end_idx = not_nones[-1]
-    print('start, end:', list[start_idx:end_idx+1])
+    #print('start, end:', list[start_idx:end_idx+1])
     if start_idx is None or end_idx is None:
         return 0
     start_idx += most_recent
     end_idx = least_recent - end_idx
+    print('start, end:', list[start_idx:end_idx+1])
     summing = sum(abs(x) for x in list[start_idx:end_idx+1])
     if (end_idx<start_idx):
         print('end index, start index', end_idx, start_idx)
