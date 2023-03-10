@@ -203,12 +203,12 @@ def average_window(list, window, pointer):
         (sum_left, total_left) = average_sum_abs_range(list, 0, most_recent)
         (sum_right, total_right) = average_sum_abs_range(list, least_recent, buf_len)
         summing = sum_left+sum_right
-        print('summing:', summing)
+        #print('summing:', summing)
         window = total_left+total_right
     else:
         # when least_recent >= 0
         (summing, window) =  average_sum_abs_range(list, least_recent, most_recent)
-        print('summing??:', summing)
+        #print('summing??:', summing)
     return summing/window
 
 def average_sum_abs_range(list, least_recent, most_recent):
@@ -219,6 +219,7 @@ def average_sum_abs_range(list, least_recent, most_recent):
     start_idx += most_recent
     end_idx = least_recent - end_idx
     summing = sum(abs(x) for x in list[start_idx:end_idx])
+    print('summing:', summing)
     return (summing, end_idx-start_idx)
 
 # for BMP readings only 
