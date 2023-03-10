@@ -225,7 +225,7 @@ def average_sum_abs_range(list, least_recent, most_recent):
         return 0
     start_idx = not_nones[0]
     end_idx = not_nones[-1]
-    print('start, end:', not_nones[start_idx], not_nones[end_idx])
+    print('start, end:', not_nones[start_idx:end_idx+1])
     if start_idx is None or end_idx is None:
         return 0
     start_idx += most_recent
