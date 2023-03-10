@@ -264,8 +264,8 @@ def detectMovement(acc_accumulator):
     z = [item[1] for item in acc_accumulator]
 
     if(average_window(x, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY #+ MOTION_LAUNCH_SENSITIVITY 
-       and average_window(y, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY #+ MOTION_LAUNCH_SENSITIVITY
-       and average_window(z, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY #+ MOTION_LAUNCH_SENSITIVITY
+       or average_window(y, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY #+ MOTION_LAUNCH_SENSITIVITY
+       or average_window(z, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY #+ MOTION_LAUNCH_SENSITIVITY
        ):
         print("Launch detected!")
         hasLaunched = True
