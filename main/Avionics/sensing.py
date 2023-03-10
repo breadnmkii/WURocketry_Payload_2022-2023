@@ -254,8 +254,8 @@ return:
 '''
 def detectMovement(acc_accumulator):
     global linear_acc_pointer
-    MOTION_SENSITIVITY = 3           # Amount of 3-axis acceleration needed to be read to trigger "movement" detection
-    MOTION_LAUNCH_SENSITIVITY = 13   # Amount of accel added to offset for stronger initial launch accel
+    MOTION_SENSITIVITY = 1           # Amount of 3-axis acceleration needed to be read to trigger "movement" detection
+    #MOTION_LAUNCH_SENSITIVITY = 13   # Amount of accel added to offset for stronger initial launch accel
     hasLaunched = False
     ACC_WINDOW = 50                  # Range of values to apply rolling average in 'acc_accumulator'
 
@@ -263,9 +263,10 @@ def detectMovement(acc_accumulator):
     y = [item[1] for item in acc_accumulator]
     z = [item[1] for item in acc_accumulator]
 
-    if(average_window(x, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY + MOTION_LAUNCH_SENSITIVITY 
-       and average_window(y, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY + MOTION_LAUNCH_SENSITIVITY
-       and average_window(z, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY + MOTION_LAUNCH_SENSITIVITY):
+    if(average_window(x, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY #+ MOTION_LAUNCH_SENSITIVITY 
+       and average_window(y, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY #+ MOTION_LAUNCH_SENSITIVITY
+       and average_window(z, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY #+ MOTION_LAUNCH_SENSITIVITY
+       ):
         print("Launch detected!")
         hasLaunched = True
     return hasLaunched
