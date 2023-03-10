@@ -217,7 +217,7 @@ def average_sum_abs_range(list, least_recent, most_recent):
     #end_idx = next((i for i, x in enumerate(reversed(list[most_recent:least_recent+1])) if x is not None), None)
     not_nones  = [i for i in range(len(of_interest)) if of_interest[i] != None]
     # 0 as defualt not optimal -> 0 means vertical
-    if not_nones is None:
+    if not_nones is None or len(not_nones) == 0:
         return (0, 1)
     start_idx = not_nones[0]
     end_idx = not_nones[-1]
