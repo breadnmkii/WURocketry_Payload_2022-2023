@@ -204,7 +204,7 @@ def average_window(list, window, pointer):
         (sum_right, total_right) = average_sum_abs_range(list, least_recent, buf_len)
         summing = sum_left+sum_right
         #print('summing:', summing)
-        window = total_left+total_right
+        window = abs(total_left)+abs(total_right)
         print('hitting total left and total right:', total_left, total_right)
     else:
         # when least_recent >= 0
