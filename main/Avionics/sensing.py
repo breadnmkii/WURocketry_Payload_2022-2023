@@ -192,6 +192,7 @@ def isMoving(window):
         print("Moving")
 
 def average_window(list, window, pointer):
+    print('buffer:', list)
     if(not list):
         return 0
     most_recent = pointer
@@ -210,6 +211,7 @@ def average_window(list, window, pointer):
     
 def average_sum_abs_range(list, least_recent, most_recent):
     of_interest = list[least_recent:most_recent+1]
+    print('averaging window:', of_interest)
     values = [x for x in of_interest if x is not None]
     if len(values) == 0:
         return 0
