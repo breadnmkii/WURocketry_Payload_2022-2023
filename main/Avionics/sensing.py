@@ -10,7 +10,7 @@ import math
 Constants
 """
 BMP_BUFFER_LEN = 200     # Length of sensor reading buffer
-BNO_BUFFER_LEN = 200 
+BNO_BUFFER_LEN = 50  # length 50 for testing
 
 
 """
@@ -260,7 +260,7 @@ functionality: detect whether the camera has reached vertical position or not
 def vertical(euler_accumulator):
     global euler_orient_pointer
     is_vertical = False
-    rolling_window = 50
+    rolling_window = 10
     threshold = 0.15 # NEED TESTING -- tested 3/6
     rolls = [item[0] for item in euler_accumulator]
     pitches = [item[1] for item in euler_accumulator]
