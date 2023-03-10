@@ -204,7 +204,7 @@ def average_window(list, window, pointer):
         sum_left = average_sum_abs_range(list, 0, most_recent)
         #(sum_right, total_right) = average_sum_abs_range(list, least_recent, buf_len)
         sum_right = average_sum_abs_range(list, least_recent, buf_len)
-        print('almost err left, right:', sum_left, sum_right)
+        #print('almost err left, right:', sum_left, sum_right)
         summing = sum_left+sum_right
         return summing
     else:
@@ -231,12 +231,12 @@ def average_sum_abs_range(list, least_recent, most_recent):
     end_idx = least_recent - end_idx
     if (end_idx<start_idx):
         end_idx, start_idx = start_idx, end_idx
-    print('start, end:', list[start_idx:end_idx])
+    #print('start, end:', list[start_idx:end_idx])
     subset_not_none = list[start_idx:end_idx]
     #summing = sum(abs(x) for x in list[start_idx:end_idx+1])
     summing = sum(map(abs, subset_not_none))
-    if (end_idx<start_idx):
-        print('end index, start index', end_idx, start_idx)
+    #if (end_idx<start_idx):
+    #    print('end index, start index', end_idx, start_idx)
     print('summing, effective window:', summing, end_idx-start_idx)
     return summing/(abs(end_idx-start_idx))
 
