@@ -279,10 +279,10 @@ def vertical(euler_accumulator):
     #roll = np.nanmean(rolls[:rolling_window])
     #pitch = np.nanmean(pitches[:rolling_window])
 
-    filtered_rolls = [x for x in rolls if x is not None]
+    filtered_rolls = [abs(x) for x in rolls if x is not None]
     averaged_roll = sum(filtered_rolls) / len(filtered_rolls)
 
-    filtered_pitches = [x for x in pitches if x is not None]
+    filtered_pitches = [abs(x) for x in pitches if x is not None]
     averaged_pitch = sum(filtered_pitches) / len(filtered_pitches)
 
 
