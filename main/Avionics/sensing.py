@@ -18,7 +18,7 @@ Main components
 """
 #(bno, bmp) = config.init_avionics()
 bno = config.init_bno()
-#bmp = config.init_bmp()
+bmp = config.init_bmp()
 # delete any values from the front??? -- TODO: pointer none stuffs
 bno_buf = []
 bmp_buf = []
