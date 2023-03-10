@@ -25,6 +25,7 @@ bmp_buf = []
 acceleration_buffer = [None]*BNO_BUFFER_LEN
 #euler_buffer = [None, None, None]*BNO_BUFFER_LEN
 euler_buffer = [[None, None, None] for _ in range(BNO_BUFFER_LEN)]
+seqeuntial_euler = []
 altitude_buffer = [None]*BMP_BUFFER_LEN
 pressure_buffer = [None]*BMP_BUFFER_LEN
 temperature_buffer = [None]*BMP_BUFFER_LEN
@@ -73,6 +74,8 @@ def read_bno():
         #euler_buffer[bno_pointer] = [roll, pitch, yaw]
         euler_buffer[euler_orient_pointer] = [roll, pitch, yaw]
         euler_orient_pointer = euler_orient_pointer+1
+        seqeuntial_euler.insert(0, [euler_orient_pointer])
+        seqeuntial_euler = seqeuntial_euler[:BNO_BUFFER_LEN]
 
         
     # thinking about splitting into two functions not sure how to deal with the pointer though 
@@ -356,4 +359,4 @@ if __name__ == '__main__':
     while True:
         euler_acc = read_euler_buffer()
         read_acceleration_buffer()
-        print('is it vertical?', vertical(euler_acc))
+        print('is it vertical?', vertical(euler_buffer))
