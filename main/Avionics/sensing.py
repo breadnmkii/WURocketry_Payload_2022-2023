@@ -269,7 +269,7 @@ def vertical(euler_accumulator):
     rolls = [item[0] for item in euler_accumulator]
     pitches = [item[1] for item in euler_accumulator]
     if (abs(average_window(rolls, rolling_window, euler_orient_pointer)) < threshold and abs(average_window(pitches, rolling_window, euler_orient_pointer)) < threshold):
-        print("Camera is vertical from horizontal")
+        #print("Camera is vertical from horizontal")
         is_vertical = True
     return is_vertical
 
