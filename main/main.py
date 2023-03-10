@@ -220,21 +220,22 @@ def telemetryRoutine():
     telemetry.transmit("TEST")
 
 
-def controlRoutine(currentState, currRAFCO):
+def controlRoutine(currentState, currRAFCO_S, currRAFCO):
     if (sys_flags.STAGE_INFO == Stage.LANDED):
         RAFCOS_LIST = APRS.updateRAFCO() # READ ONLY list of ALL (including past) received APRS RAFCOS (rafco sequence)
 
-        # Check if any unprocessed rafco in list (guaranteed to transition out of wait state)
-        if (len(RAFCOS_LIST) > currRAFCO):
-            newState = fsm.FSM(currentState, RAFCOS_LIST[currRAFCO])
+        # Check if any unprocessed or is processing rafco in list (guaranteed to transition out of wait state)
+        if (len(RAFCOS_LIST) > currRAFCO_S):
+            newState = fsm.FSM(currentState, RAFCOS_LIST[currRAFCO_S], currRAFCO)
             
             # If FSM complete (i.e. returned to a wait state)
             if (newState == fsm.State.WAIT):
-                currRAFCO += 1
+                currRAFCO_S += 1    # Increment to next RAFCO_S when FSM has completed
+            currRAFCO += 1  # Increment to next RAFCO
             
-            return newState # Return FSM's new state
+            return newState, currRAFCO_S, currRAFCO # Return FSM's new state
         
-        return currentState # If no RAFCO, do not call FSM and return original state 
+        return currentState, currRAFCO_S, currRAFCO # If no RAFCO, do not call FSM and return original state 
         
 
 
@@ -313,7 +314,7 @@ def main():
         time_this_sample = time.time()
         if(time_this_sample - time_last_sample >= CONTROL_FREQ):
             time_last_sample = time_this_sample
-            state = controlRoutine(state, currRAFCO)
+            state, currRAFCO = controlRoutine(state, currRAFCO)
         
 
         # TRANSITION ONESHOTS

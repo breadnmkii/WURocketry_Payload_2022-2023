@@ -13,7 +13,7 @@ from enum import Enum
 import time
 import sys
 from Imaging import imaging
-from Motive import servo
+from Motive import camarm
 
 CALLSIGN = "XD71" # NASA's callsign
 
@@ -27,13 +27,13 @@ class State(Enum):
 ## THIS IS THE MAIN FSM PROGRAM
 # A function that changes state depending on state and input (Mealy machine)
 # Inputs:
-# - sequenceBuffer: queue of received APRS signals, managed externally from FSM
-# - sequence: a temp list for current sequence being processed
-def FSM(state, sequence): 
+# - currRAFCO_S: list of RAFCO
+# - idx: index into currRAFCO_S 
+def FSM(state, currRAFCO_S, idx): 
 	
 	if state == State.WAIT:
 		# if sequence is not empty
-		if (len(sequence) > 0):
+		if (len(currRAFCO_S) > 0):
 			state = State.CALL
 		else:
 			state = State.WAIT
@@ -41,25 +41,27 @@ def FSM(state, sequence):
 	elif state == State.CALL:
 		# Look for NASA CALLSIGN in RAFCO sequence and change to exec if found
 		state = State.WAIT
-		while (len(sequence) > 0):
-			RAFCO = sequence.pop(0)		# Remove callsign or any corrupt RAFCO from sequence (optimization)
+		while (len(currRAFCO_S) > 0):
+			RAFCO = currRAFCO_S.pop(0)		# Remove callsign or any corrupt RAFCO from sequence (optimization)
 			if (RAFCO == CALLSIGN):
 				state = State.EXEC
 				break
+		
 			
 	elif state == State.EXEC:
 		# Grab first RAFCO from currently executing sequence
-		if (len(sequence) > 0):
-			RAFCO = sequence.pop(0)
+		if (idx < len(currRAFCO_S)):
+			RAFCO = currRAFCO_S[idx]
+			idx += 1
 
 			# Execute RAFCO
 			if (RAFCO == "A1"):
 				print("A1: servo 60 degrees right")
-				servo.right_60()
+				camarm.right_60()
 				
 			elif (RAFCO == "B2"):
 				print("B2: servo 60 degrees left")
-				servo.left_60()
+				camarm.left_60()
 				
 			elif (RAFCO == "C3"):
 				# take_picture.camera_time()
@@ -93,7 +95,7 @@ def FSM(state, sequence):
 				print("Corrupted RAFCO: Could not execute")
 
 			# Save FSM cycle for checking empty sequence (optimization)
-			if (len(sequence) <= 0):
+			if (len(currRAFCO_S) <= 0):
 				state = State.WAIT
 
 		else:
@@ -104,4 +106,4 @@ def FSM(state, sequence):
 		# default case to wait
 		state = State.WAIT
 
-	return (state, sequence)
+	return (state, currRAFCO_S, idx)
