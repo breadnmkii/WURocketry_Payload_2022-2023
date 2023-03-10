@@ -29,17 +29,16 @@ class Deployed(Enum):
 
 class Warn_Heat(Enum):
     NORMAL = 0
-    WARNING_HEAT = 1
+    WARNING = 1
 
 class Warn_Camera(Enum):
     NORMAL = 0
-    WARNING_CAMERA = 1
+    WARNING = 1
 
 
 class Warn_Avionics(Enum):
     NORMAL = 0
-    WARNING_BMP = 1
-    WARNING_BNO = 2
+    WARNING = 1
 
 class Warn_Motive(Enum):
     # Logan
