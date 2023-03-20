@@ -1,61 +1,38 @@
-# FILE FOR MAIN PAYLOAD MISSION ROUTINE
+################################################
+######## MAIN PAYLOAD MISSION ROUTINE ##########
+################################################
 
-## Imports
-from Avionics import config as avionics_config
-from Imaging import config as imaging_config
-from Motive import config as motive_config
+### IMPORTS ###
+# from Avionics import config as avionics_config
+# from Imaging import config as imaging_config
+# from Motive import config as motive_config
 
-from Avionics import sensing
-from Control import fsm
-from Motive import camarm
-from Radio import APRS
-from Radio import telemetry
+# from Avionics import sensing
+# from Control import fsm
+# from Motive import camarm
+# from Radio import APRS
+# from Radio import telemetry
 
 import time
+import datetime
 from enums import *
 
 
-## Globals -- look into enums/dictionary for this 
+
+### GLOBALS ###
+
+# System flags -- refer to enums.py
 '''
-SYS ARRAY: [isMoving, hitApogee, hasDeployed]
-sys_flags index 0: stage information, index 1: movement_decision, index 2: altitude_status
 at index 0: 0 means prelaunch standby stage, 1 means payload midair, 2 means payload landed
 at index 1: 0 means not moving, 1 means moving, 2 conflicting decisions
 at index 2: 0 means moving up, 1 means moving down, 2 indeterminant 
 at index 3: 0 means not upright, 1 means vertical position for camera
 at index 6: 1 means BMP senses averaged temperature above 83 Celcius
-at index 7: 1 means PiCamera initialization fails -- hardware fualt
-at index 8: 1 means BNO or BMP initialization fails -- hardware fualt
-IS UPRIGHT    index 3
-IS SEPARATED  index 4
-IS DEPLOYED   index 5
-WARN HEAT     index 6
-WARN CAMERA   index 7
-WARN AVIONIC  index 8
-WARN MOTIVE   index 9
-'''
-sys_flags = []
-sys_flags = System_Flags(Stage.PRELAUNCH, Movement.NOT_MOVING, Flight_Direction.INDETERMINENT, Verticality.NOT_UPRIGHT, 
-                         Separated.value, Deployed.value,
-                         Warn_Heat.NORMAL, Warn_Camera.NORMAL, Warn_Avionics.NORMAL,
-                         Warn_Motive.value)
+at index 7: 1 means PiCamera initialization fails -- hardware fault
+at index 8: 1 means BNO or BMP initialization fails -- hardware fault
 
 '''
-from enum import Enum
-class System_Flags(Enum):
-    STAGE_INFO = 0
-    MOVMENT = 1
-    DIRECTION = 2
-    VERTICALITY = 3
-    SEPARTED = 4
-    DEPLOYED = 5
-    WARN_HEAT = 6
-    WARN_CAMERA = 7
-    WARN_AVIONICS = 8
-    WAR_MOTIVE = 9
-
-'''
-
+sys_flags = System_Flags(Stage.PRELAUNCH, Movement.NOT_MOVING, Flight_Direction.INDETERMINENT, Verticality.NOT_UPRIGHT, Separated.NOT_SEPARATED, Deployed.NOT_DEPLOYED, Warn_Heat.NOMINAL, Warn_Camera.NOMINAL, Warn_Avionics.NOMINAL, Warn_Motive.NOMINAL)
 
 
 
@@ -71,8 +48,6 @@ def updateRAFCO():
         file.close()
     
     return imageCommands
-
-
 
 
 # Payload mission functions (base on payload mission execution flowchart??)
@@ -216,8 +191,13 @@ def deployRoutine(motor, solenoids):
 
 
 def telemetryRoutine():
-    # data we send back to base station
-    telemetry.transmit("TEST")
+    # basic data we send back to base station
+    current_time = datetime.datetime.now()
+    sys_flags_str = ' | '.join(sys_flags.get_str())
+
+    packet = f'{current_time}: {sys_flags_str}'
+    print(packet)
+    telemetry.transmitData(packet)
 
 
 def controlRoutine(currentState, currRAFCO_S, currRAFCO):
@@ -238,7 +218,6 @@ def controlRoutine(currentState, currRAFCO_S, currRAFCO):
         return currentState, currRAFCO_S, currRAFCO # If no RAFCO, do not call FSM and return original state 
         
 
-
 '''
 NOTES:
 Payload mission has 3 stages of execution
@@ -257,8 +236,6 @@ Transition Factors:
 - Ground level altitude + Sea level pressure -- from the same sensor
 
 '''
-
-
 
 
 def main():
@@ -326,3 +303,9 @@ def main():
             landed_oneshot_transition = True
             deployRoutine(motor, solenoids) # Deploy imaging system
             aprs_subprocess = APRS.begin_APRS_recieve() # Begin listening for APRS commands
+
+def test_main():
+    telemetryRoutine()
+
+if __name__ == '__main__':
+    test_main()
