@@ -388,3 +388,4 @@ if __name__ == '__main__':
         print('is there movement?', detectMovement(acceleration_buffer))
         print('is it vertical?', vertical(euler_buffer))
         #print('is it vertical?', vertical(seqeuntial_euler))
+        print('flight status?', altitude_status(altitude_buffer, pressure_buffer))
