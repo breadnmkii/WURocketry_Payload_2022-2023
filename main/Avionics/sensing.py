@@ -190,8 +190,8 @@ def isMoving(window):
         print("Moving")
 
 def average_window(list, window, pointer):
-    print('buffer:', list)
-    print('pointers--', pointer)
+    #print('buffer:', list)
+    #print('pointers--', pointer)
     if(not list):
         return 0
     
