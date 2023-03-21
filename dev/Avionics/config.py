@@ -23,7 +23,7 @@ def init_avionics():
 
     
     __config_BNO055(bno055, adafruit_bno055.NDOF_MODE)
-    __calibrate_BNO055(bno055)
+    #__calibrate_BNO055(bno055)
     __config_BMP388(bmp388, 25)
 
     return(bno055, bmp388)
@@ -37,7 +37,7 @@ def init_bmp():
         bmp388 = None
 
     
-    #__config_BMP388(bmp388, 25)
+    __config_BMP388(bmp388, 25)
 
     return bmp388
 
