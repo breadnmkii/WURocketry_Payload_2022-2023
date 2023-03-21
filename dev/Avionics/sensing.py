@@ -345,10 +345,13 @@ def altitude_status(altitude_accumulator, pressure_accumulator):
     ascent_altitude =  0.02 # HOW TO TEST THRESHOLD
     descent_pressure = 0.02 # HOW TO TEST THRESHOLD
     ascent_pressure =  -0.02 # HOW TO TEST THRESHOLD
-    if (differential_window(altitude_accumulator, rolling_window) < descent_altitude and differential_window(pressure_accumulator, rolling_window) > descent_pressure):
+    altitude_diff_average = differential_window(altitude_accumulator, rolling_window)
+    print('altitude difference?', altitude_diff_average )
+    print('raw altitude readings:', altitude_accumulator)
+    if (altitude_diff_average < descent_altitude and differential_window(pressure_accumulator, rolling_window) > descent_pressure):
         print('BMP -- payload is moving up')
         return 'up'
-    elif (differential_window(altitude_accumulator, rolling_window) > ascent_altitude and differential_window(pressure_accumulator, rolling_window) < ascent_pressure):
+    elif (altitude_diff_average > ascent_altitude and differential_window(pressure_accumulator, rolling_window) < ascent_pressure):
         print('BMP -- payload is moving down')
         return 'down'
     else:
