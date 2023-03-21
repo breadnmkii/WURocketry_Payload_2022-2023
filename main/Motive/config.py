@@ -1,5 +1,5 @@
 from adafruit_motorkit import MotorKit
-import lib_para_360_servo
+from . import lib_para_360_servo
 import pigpio
 import board
 import time
