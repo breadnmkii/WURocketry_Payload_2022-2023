@@ -3,19 +3,18 @@ import lib_para_360_servo
 import pigpio
 import board
 import time
+#init pigpio to access GPIO pins with PWM
+pi = pigpio.pi()
 
-
-def servo_config(signal_gpio, feedback_gpio):
+def servo_config(write_gpio, read_gpio):
     #Define GPIO pins that we will read and write to (Using GPIO numbers NOT pin numbers)
-    WHITE_CABLE_SIGNAL = signal_gpio #23
-    YELLOW_CABLE_FEEDBACK = feedback_gpio #24  
+    WHITE_CABLE_WRITE = write_gpio #23
+    YELLOW_CABLE_READ = read_gpio #24  
 
-    #init pigpio to access GPIO pins with PWM
-    pi = pigpio.pi()
 
     #init servo and servo position reader from lib_para_360_servo
-    servo = lib_para_360_servo.write_pwm(pi = pi, gpio = WHITE_CABLE_SIGNAL)
-    reader = lib_para_360_servo.read_pwm(pi = pi, gpio = YELLOW_CABLE_FEEDBACK)
+    servo = lib_para_360_servo.write_pwm(pi = pi, gpio = WHITE_CABLE_WRITE)
+    reader = lib_para_360_servo.read_pwm(pi = pi, gpio = YELLOW_CABLE_READ)
 
     #Buffer time for initializing library servo
     time.sleep(2)

@@ -24,7 +24,7 @@ def init_avionics():
     
     __config_BNO055(bno055, adafruit_bno055.NDOF_MODE)
     __calibrate_BNO055(bno055)
-    #__config_BMP388(bmp388, 25)
+    __config_BMP388(bmp388, 25)
 
     return(bno055, bmp388)
 
@@ -68,7 +68,6 @@ def __calibrate_BNO055(bno055):
     SAMPLE_FREQUENCY = 100   # in Hz
     DELTA_T = SECOND_NS/SAMPLE_FREQUENCY
     #last_sample_T = time.monotonic_ns()
-
     #start_sample_T = time.monotonic_ns()
     while (bno055.calibration_status[3] != 3 ):
         print(f'Calibration (s,g,a,m) {bno055.calibration_status}')

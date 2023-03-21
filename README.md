@@ -76,7 +76,7 @@ Enables processing of RAFCO via a finite state machine for execution of Payload 
 
 ## Motive
 (Servo)
-- pigpio 			(apt): allows us to send pulse width modulation signals for servo control on the pi pins
+- pigpio 			(apt/pip): allows us to send pulse width modulation signals for servo control on the pi pins
 - lib_para_servo_360 		(pip): controls for seeing position of servo and changing speeds
 
 (Motor)
