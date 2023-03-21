@@ -3,15 +3,16 @@
 ################################################
 
 ### IMPORTS ###
-# from Avionics import config as avionics_config
-# from Imaging import config as imaging_config
-# from Motive import config as motive_config
+from Avionics import config as avionics_config
+from Imaging import config as imaging_config
+from Motive import config as motive_config
+from Motive import lib_para_360_servo
 
-# from Avionics import sensing
-# from Control import fsm
-# from Motive import camarm
-# from Radio import APRS
-# from Radio import telemetry
+from Avionics import sensing
+from Control import fsm
+from Motive import camarm
+from Radio import APRS
+from Radio import telemetry
 
 import time
 import datetime
@@ -305,6 +306,7 @@ def main():
             aprs_subprocess = APRS.begin_APRS_recieve() # Begin listening for APRS commands
 
 def test_main():
+    
     telemetryRoutine()
 
 if __name__ == '__main__':

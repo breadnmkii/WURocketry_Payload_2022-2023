@@ -1,4 +1,4 @@
-import config
+from . import config
 import time
 import mathlib
 import board
