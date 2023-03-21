@@ -263,7 +263,6 @@ def differential_window(list, window):
         window_list = list[start:] + list[:end]
     # need to take care of none initializations
     filtered_list = [x for x in window_list if x is not None]
-    print('erroring:', filtered_list)
     #window_list = list(filter(lambda item: item is not None, window_list))
     # for the first value ever written to the list
     if len(filtered_list) < 2:
@@ -343,10 +342,10 @@ functionality: detect whether the payload is moving up, or moving down or
 '''
 def altitude_status(altitude_accumulator, pressure_accumulator):
     rolling_window = 50
-    descent_altitude = -2 # HOW TO TEST THRESHOLD
-    ascent_altitude =  2 # HOW TO TEST THRESHOLD
-    descent_pressure = 2 # HOW TO TEST THRESHOLD
-    ascent_pressure =  -2 # HOW TO TEST THRESHOLD
+    descent_altitude = -0.02 # HOW TO TEST THRESHOLD
+    ascent_altitude =  0.02 # HOW TO TEST THRESHOLD
+    descent_pressure = 0.02 # HOW TO TEST THRESHOLD
+    ascent_pressure =  -0.02 # HOW TO TEST THRESHOLD
     if (differential_window(altitude_accumulator, rolling_window) < descent_altitude and differential_window(pressure_accumulator, rolling_window) > descent_pressure):
         print('BMP -- payload is moving up')
         return 'up'
