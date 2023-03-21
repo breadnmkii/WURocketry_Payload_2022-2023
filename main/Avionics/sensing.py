@@ -263,8 +263,8 @@ def differential_window(list, window):
         window_list = list[start:end]
     else:
         window_list = list[start:] + list[:end]
-    window_list = list(filter(lambda item: item is not None, window_list))
-    diff = [window_list[i+1] - window_list[i] for i in window_list]
+    #window_list = list(filter(lambda item: item is not None, window_list))
+    diff = [window_list[i+1] - window_list[i] for i in window_list if window_list[i] is not None and window_list[i+1] is not None]
 
     return sum(diff)/window
 
