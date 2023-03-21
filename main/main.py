@@ -1,15 +1,15 @@
 # FILE FOR MAIN PAYLOAD MISSION ROUTINE
 
 ## Imports
-from Avionics import config as avionics_config
-from Imaging import config as imaging_config
-from Motive import config as motive_config
+#from Avionics import config as avionics_config
+#from Imaging import config as imaging_config
+#from Motive import config as motive_config
 
-from Avionics import sensing
+#from Avionics import sensing
 from Control import fsm
-from Motive import camarm
+#from Motive import camarm
 from Radio import APRS
-from Radio import telemetry
+#from Radio import telemetry
 
 import time
 from enums import *
@@ -229,9 +229,10 @@ def controlRoutine(currentState, currRAFCO_S, currRAFCO):
             newState = fsm.FSM(currentState, RAFCOS_LIST[currRAFCO_S], currRAFCO)
             
             # If FSM complete (i.e. returned to a wait state)
+            currRAFCO += 1  # Increment to next RAFCO
             if (newState == fsm.State.WAIT):
                 currRAFCO_S += 1    # Increment to next RAFCO_S when FSM has completed
-            currRAFCO += 1  # Increment to next RAFCO
+                currRAFCO = 0
             
             return newState, currRAFCO_S, currRAFCO # Return FSM's new state
         
@@ -258,8 +259,13 @@ Transition Factors:
 
 '''
 
+def test():
+    currentState = fsm.State.WAIT
+    currRAFCO_S = 0
+    currRAFCO = 0
 
-
+    while (True):
+        currentState, currRAFCO_S = controlRoutine(currentState, currRAFCO_S, currRAFCO)
 
 def main():
     """ INITIALIZATION PHASE """
@@ -326,3 +332,8 @@ def main():
             landed_oneshot_transition = True
             deployRoutine(motor, solenoids) # Deploy imaging system
             aprs_subprocess = APRS.begin_APRS_recieve() # Begin listening for APRS commands
+
+
+if __name__ == '__main__':
+    # main() # real function
+    test() # testing purposes
