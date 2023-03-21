@@ -229,11 +229,10 @@ testing status:
 '''
 def average_sum_abs_range(list, least_recent, most_recent):
     of_interest = list[least_recent:most_recent+1]
-    print('averaging window:', of_interest)
     values = [abs(x) for x in of_interest if x is not None]
     if len(values) == 0:
         return 0
-    print('average:', sum(values) / len(values))
+    #print('average:', sum(values) / len(values))
     return sum(values) / len(values)
 
 # for BMP readings only 
