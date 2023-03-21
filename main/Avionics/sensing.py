@@ -258,7 +258,7 @@ def differential_window(list, window):
     buf_len = len(list)
     start = (bmp_pointer - window + 1) % buf_len
     end = (bmp_pointer + 1) % buf_len
-    window_list = None
+    window_list = []
     if start <= end:
         window_list = list[start:end]
     else:
