@@ -213,7 +213,7 @@ def average_window(list, window, pointer):
     buf_len = len(list)
     start = (pointer - window + 1) % buf_len
     end = (pointer + 1) % buf_len
-
+    window_list = None
     if start <= end:
         window_list = list[start:end]
     else:
@@ -242,6 +242,8 @@ def average_sum_abs_range(list, least_recent, most_recent):
 def differential_window(list, window):
     if (not list):
         return 0
+    
+    '''
     most_recent = bmp_pointer
     least_recent = bmp_pointer-window
     diff = []
@@ -252,7 +254,18 @@ def differential_window(list, window):
     else:
         # when least_recent >= 0
         diff = [list[i+1] - list[i] for i in range(least_recent, most_recent)]
-    
+    '''
+    buf_len = len(list)
+    start = (bmp_pointer - window + 1) % buf_len
+    end = (bmp_pointer + 1) % buf_len
+    window_list = None
+    if start <= end:
+        window_list = list[start:end]
+    else:
+        window_list = list[start:] + list[:end]
+
+    diff = [window_list[i+1] - window_list[i] for i in window_list]
+
     return sum(diff)/window
 
 
