@@ -56,7 +56,7 @@ def init_bno():
         print("WARNING: BMP388 NOT INITIALIZED")
         bmp388 = None
     __config_BNO055(bno055, adafruit_bno055.NDOF_MODE)
-    __calibrate_BNO055(bno055)
+    #__calibrate_BNO055(bno055)
 
     return bno055
 
