@@ -6,7 +6,6 @@
 from Avionics import config as avionics_config
 from Imaging import config as imaging_config
 from Motive import config as motive_config
-from Motive import lib_para_360_servo
 
 from Avionics import sensing
 from Control import fsm
