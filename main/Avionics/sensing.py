@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 from . import config
-=======
->>>>>>> 90094732944ba54b9459e21d332ed96577f0e68b
 import time
 import mathlib
 import board
