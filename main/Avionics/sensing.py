@@ -263,10 +263,13 @@ def differential_window(list, window):
         window_list = list[start:end]
     else:
         window_list = list[start:] + list[:end]
-    
+    # need to take care of none initializations
     filtered_list = [x for x in window_list if x is not None]
     print('erroring:', filtered_list)
     #window_list = list(filter(lambda item: item is not None, window_list))
+    # for the first value ever written to the list
+    if len(filtered_list) < 2:
+        return filtered_list[0]
     diff = [filtered_list[i+1] - filtered_list[i] for i in filtered_list 
             #if window_list[i] is not None and window_list[i+1] is not None
             ]
