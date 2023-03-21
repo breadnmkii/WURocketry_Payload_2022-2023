@@ -1,4 +1,4 @@
-import config
+from . import config
 import time
 import mathlib
 import board
@@ -50,6 +50,8 @@ functionality:
     push linear acceleration values into acceleration_buffer
     push displacement from vertical orientation values into quaternion_buffer
 return: (accel(3), mag(3), gyro(3))
+testing status:
+    partially tested, but not used in the final version
 """
 def read_bno():
     quat = bno.quaternion
@@ -102,6 +104,10 @@ def read_bno():
         
     return (bno.magnetic, bno.gyro)
 
+'''
+testing status:
+    tested, needed in final version
+'''
 def read_euler_buffer():
     quat = bno.quaternion
     global euler_orient_pointer
@@ -132,6 +138,10 @@ def read_euler_buffer():
     
     return euler_buffer
 
+'''
+testing status:
+    tested, needed in final version
+'''
 def read_acceleration_buffer():
     global linear_acc_pointer
     linear_acc_pointer = linear_acc_pointer % BNO_BUFFER_LEN
@@ -152,6 +162,8 @@ def read_acceleration_buffer():
 """
 Function returning raw bmp data 
 return: (temp, pres, alt)
+testing status:
+    tested, needed in final version
 """
 def read_bmp():
     global bmp_pointer
@@ -182,6 +194,7 @@ def read_bmp():
 """ 
 Function to determine if payload is moving,
 with sensitivity of 'window' readings mean
+not needed in final version
 """
 def isMoving(window):
     if(bno.linear_acceleration == 0.0): #Assuming it returns in m/s based from documentation
@@ -189,16 +202,18 @@ def isMoving(window):
     else:
         print("Moving")
 
+'''
+testing status:
+    tested, needed in final version
+'''
 def average_window(list, window, pointer):
-    #print('buffer:', list)
-    #print('pointers--', pointer)
     if(not list):
         return 0
     
     buf_len = len(list)
     start = (pointer - window + 1) % buf_len
     end = (pointer + 1) % buf_len
-
+    window_list = None
     if start <= end:
         window_list = list[start:end]
     else:
@@ -209,22 +224,11 @@ def average_window(list, window, pointer):
         return 0
 
     return sum(window_list) / len(window_list)
-    # will try the attempt above
-    most_recent = pointer
-    least_recent = pointer-window
-    print('subset:', list[least_recent:most_recent])
-    if least_recent < 0:
-        buf_len = len(list)
-        least_recent = buf_len-1-abs(least_recent)
-        sum_left = average_sum_abs_range(list, 0, most_recent)
-        sum_right = average_sum_abs_range(list, least_recent, buf_len)
-        average = sum_left+sum_right
-        return average
-    else:
-        # when least_recent >= 0
-        average =  average_sum_abs_range(list, least_recent, most_recent)
-        return average
     
+'''
+testing status:
+    tested, needed in final version
+'''
 def average_sum_abs_range(list, least_recent, most_recent):
     of_interest = list[least_recent:most_recent+1]
     print('averaging window:', of_interest)
@@ -238,6 +242,8 @@ def average_sum_abs_range(list, least_recent, most_recent):
 def differential_window(list, window):
     if (not list):
         return 0
+    
+    '''
     most_recent = bmp_pointer
     least_recent = bmp_pointer-window
     diff = []
@@ -248,7 +254,26 @@ def differential_window(list, window):
     else:
         # when least_recent >= 0
         diff = [list[i+1] - list[i] for i in range(least_recent, most_recent)]
-    
+    '''
+    buf_len = len(list)
+    start = (bmp_pointer - window + 1) % buf_len
+    end = (bmp_pointer + 1) % buf_len
+    window_list = []
+    if start <= end:
+        window_list = list[start:end]
+    else:
+        window_list = list[start:] + list[:end]
+    # need to take care of none initializations
+    filtered_list = [x for x in window_list if x is not None]
+    print('erroring:', filtered_list)
+    #window_list = list(filter(lambda item: item is not None, window_list))
+    # for the first value ever written to the list
+    if len(filtered_list) < 2:
+        return filtered_list[0]
+    diff = [filtered_list[i+1] - filtered_list[i] for i in range(len(filtered_list))
+            #if window_list[i] is not None and window_list[i+1] is not None
+            ]
+
     return sum(diff)/window
 
 
@@ -261,6 +286,8 @@ input:
 return:
     True if rocket has launched and is moving
     False if payload is relatively static right now
+testing status:
+    tested, needed in final version
 '''
 def detectMovement(acc_accumulator):
     global linear_acc_pointer
@@ -283,6 +310,8 @@ def detectMovement(acc_accumulator):
     
 '''
 functionality: detect whether the camera has reached vertical position or not
+testing status:
+    tested, needed in final version
 '''
 def vertical(euler_accumulator):
     global euler_orient_pointer
@@ -328,19 +357,26 @@ def altitude_status(altitude_accumulator, pressure_accumulator):
     else:
         print('BMP -- indeterminant')  
         return 'not_sure'      
-
+'''
+not needed for final version 
+'''
 def isUpright():
     if(bno.calibrated):
         print("Euler angle: {}".format(bno.euler))
 
 
-
+'''
+not needed for final version 
+'''
 def isAboveAltitude(altitude):
     if(altitude > bmp388.altitude):
         return True
     else:
         return False
 
+'''
+TODO: testing
+'''
 def ground_level(altitude_accumulator, pressure_accumulator):
     rolling_window = 50
     ground_altitude_sensitivity = 0.5 # NEED TESTING 
