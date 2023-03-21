@@ -209,9 +209,10 @@ def controlRoutine(currentState, currRAFCO_S, currRAFCO):
             newState = fsm.FSM(currentState, RAFCOS_LIST[currRAFCO_S], currRAFCO)
             
             # If FSM complete (i.e. returned to a wait state)
+            currRAFCO += 1  # Increment to next RAFCO
             if (newState == fsm.State.WAIT):
                 currRAFCO_S += 1    # Increment to next RAFCO_S when FSM has completed
-            currRAFCO += 1  # Increment to next RAFCO
+                currRAFCO = 0
             
             return newState, currRAFCO_S, currRAFCO # Return FSM's new state
         
@@ -236,7 +237,6 @@ Transition Factors:
 - Ground level altitude + Sea level pressure -- from the same sensor
 
 '''
-
 
 def main():
     """ INITIALIZATION PHASE """
@@ -305,8 +305,12 @@ def main():
             aprs_subprocess = APRS.begin_APRS_recieve() # Begin listening for APRS commands
 
 def test_main():
-    
-    telemetryRoutine()
+    currentState = fsm.State.WAIT
+    currRAFCO_S = 0
+    currRAFCO = 0
+
+    while (True):
+        currentState, currRAFCO_S = controlRoutine(currentState, currRAFCO_S, currRAFCO)
 
 if __name__ == '__main__':
     test_main()
