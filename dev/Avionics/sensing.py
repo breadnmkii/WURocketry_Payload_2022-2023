@@ -1,13 +1,8 @@
-<<<<<<< HEAD
-from . import config
-=======
->>>>>>> 90094732944ba54b9459e21d332ed96577f0e68b
+import config
 import time
-import mathlib
 import board
 import math 
-#import numpy as np
-#import adafruit_bno055 as a_bno
+
 
 """
 Constants
