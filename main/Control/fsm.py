@@ -15,7 +15,7 @@ import sys
 #from Imaging import imaging
 #from Motive import camarm
 
-CALLSIGN = "XD71" # NASA's callsign
+CALLSIGN = "XD71" # NASA's callsign (FSM only responds to RAFCO sequences headed by this callsign)
 
 # States enum
 class State(Enum):
@@ -40,16 +40,17 @@ def FSM(state, currRAFCO_S, idx):
 
 	elif state == State.CALL:
 		# Look for NASA CALLSIGN in RAFCO sequence and change to exec if found
-		state = State.WAIT
-		while (len(currRAFCO_S) > 0):
-			RAFCO = currRAFCO_S.pop(0)		# Remove callsign or any corrupt RAFCO from sequence (optimization)
-			if (RAFCO == CALLSIGN):
-				state = State.EXEC
-				break
-		
-			
+		print(f'~~ Verifying {currRAFCO_S}')
+		if (CALLSIGN in currRAFCO_S):
+			print("Valid RAFCO_S")
+			state = State.EXEC
+		else:
+			print("Invalid RAFCO_S")
+			state = State.WAIT
+
 	elif state == State.EXEC:
-		# Grab first RAFCO from currently executing sequence
+		# Grab first RAFCO from currently executing sequence (Should always be at idx+1 position)
+		idx += 1
 		if (idx < len(currRAFCO_S)):
 			RAFCO = currRAFCO_S[idx]
 
@@ -89,9 +90,9 @@ def FSM(state, currRAFCO_S, idx):
 			elif (RAFCO == "H8"):
 				print("H8: remove all filters")
 				#imaging.remove_filter()
-			
+
 			else:
-				print("Corrupted RAFCO: Could not execute")
+				print(f'Non-RAFCO ({RAFCO}): Did not execute')
 
 		else:
 			# Finished executing current RAFCO sequence, return to waiting
@@ -101,4 +102,4 @@ def FSM(state, currRAFCO_S, idx):
 		# default case to wait
 		state = State.WAIT
 
-	return (state, currRAFCO_S, idx)
+	return (state, idx)

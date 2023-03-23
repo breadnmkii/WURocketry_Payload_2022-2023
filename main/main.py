@@ -10,7 +10,7 @@
 # from Avionics import sensing
 from Control import fsm
 # from Motive import camarm
-# from Radio import APRS
+from Radio import APRS
 # from Radio import telemetry
 
 import time
@@ -35,22 +35,10 @@ at index 8: 1 means BNO or BMP initialization fails -- hardware fault
 sys_flags = System_Flags(Stage.PRELAUNCH, Movement.NOT_MOVING, Flight_Direction.INDETERMINENT, Verticality.NOT_UPRIGHT, Separated.NOT_SEPARATED, Deployed.NOT_DEPLOYED, Warn_Heat.NOMINAL, Warn_Camera.NOMINAL, Warn_Avionics.NOMINAL, Warn_Motive.NOMINAL)
 
 
+APRS_LOG_PATH = "./APRS_log"    # APRS Log File Path
 
-def updateRAFCO():
-    imageCommands = []
-    with open("data") as file:
-        data = file.readlines()
-
-        for line in data:
-            cleanLine = line.strip("\n,;").split(" ")
-            cleanLine = list(filter(None, cleanLine))
-            imageCommands.append(cleanLine)
-        file.close()
-    
-    return imageCommands
-
-
-# Payload mission functions (base on payload mission execution flowchart??)
+### PAYLOAD ROUTINE FUNCTION ###
+# Sensing
 def avionicRoutine():
     # TODO: confirm design decision, add comments
     #acceleration_accumulator = []
@@ -141,7 +129,7 @@ def update_system_flags(is_upright,heat, bmp_values_status, has_launched, is_sti
         #stage = 3
         sys_flags.STAGE_INFO = Stage.LANDED
 
-
+# Deployment
 HALF_SEPARATION_TIME = 10
 def deployRoutine(motor, solenoids):
     if (sys_flags.STAGE_INFO == 3):
@@ -189,7 +177,7 @@ def deployRoutine(motor, solenoids):
             
             sys_flags.DEPLOYED = Deployed.DEPLOYED
 
-
+# Telemetry
 def telemetryRoutine():
     # basic data we send back to base station
     current_time = datetime.datetime.now()
@@ -199,24 +187,44 @@ def telemetryRoutine():
     print(packet)
     telemetry.transmitData(packet)
 
+# APRS
+def updateRAFCO():
+    imageCommands = []
+    with open(APRS_LOG_PATH) as file:
+        data = file.readlines()
 
-def controlRoutine(currentState, currRAFCO_S, currRAFCO):
+        for line in data:
+            cleanLine = line.strip().replace(",", "").split(" ")
+            cleanLine = list(filter(None, cleanLine))
+            imageCommands.append(cleanLine)
+        file.close()
+    
+    return imageCommands
+
+# Control
+def controlRoutine(currentState, currRAFCO_S_idx, currRAFCO_idx):
     if (sys_flags.STAGE_INFO == Stage.LANDED):
-        RAFCOS_LIST = APRS.updateRAFCO() # READ ONLY list of ALL (including past) received APRS RAFCOS (rafco sequence)
+        RAFCOS_LIST = updateRAFCO() # READ ONLY list of ALL (including past) received APRS RAFCOS (rafco sequence)
 
         # Check if any unprocessed or is processing rafco in list (guaranteed to transition out of wait state)
-        if (len(RAFCOS_LIST) > currRAFCO_S):
-            newState = fsm.FSM(currentState, RAFCOS_LIST[currRAFCO_S], currRAFCO)
-            
+        if (len(RAFCOS_LIST) > currRAFCO_S_idx):
+            fsmUpdate = fsm.FSM(currentState, RAFCOS_LIST[currRAFCO_S_idx], currRAFCO_idx)
+
+            # Update fsm inputs
+            currentState = fsmUpdate[0]
+            currRAFCO_idx = fsmUpdate[1]
+
+            print(currentState)
+
             # If FSM complete (i.e. returned to a wait state)
-            currRAFCO += 1  # Increment to next RAFCO
-            if (newState == fsm.State.WAIT):
-                currRAFCO_S += 1    # Increment to next RAFCO_S when FSM has completed
-                currRAFCO = 0
-            
-            return newState, currRAFCO_S, currRAFCO # Return FSM's new state
+            if (currentState == fsm.State.WAIT):
+                print(f'Processed RAFCO_S: {RAFCOS_LIST[currRAFCO_S_idx]}\n')
+                currRAFCO_S_idx += 1    # Increment to next RAFCO_S when FSM has completed
+                currRAFCO_idx = 0       # Seek back to beginning of RAFCO_S
+                
+            return (currentState, currRAFCO_S_idx, currRAFCO_idx) # Return FSM's new state inputs
         
-        return currentState, currRAFCO_S, currRAFCO # If no RAFCO, do not call FSM and return original state 
+    return (currentState, currRAFCO_S_idx, currRAFCO_idx) # If not execution stage or no RAFCO, do not call FSM and return original state
         
 
 '''
@@ -306,11 +314,17 @@ def main():
 
 def test_main():
     currentState = fsm.State.WAIT
-    currRAFCO_S = 0
-    currRAFCO = 0
+    currRAFCO_S_idx = 0
+    currRAFCO_idx = 0
+
+    sys_flags.STAGE_INFO = Stage.LANDED # Override to mission execution phase (to enable FSM routine)
+    # APRS.begin_APRS_recieve(APRS_LOG_PATH)   # Begin APRS receiving process at specified file (comment out if APRS_log exists in main directory)
 
     while (True):
-        currentState, currRAFCO_S = controlRoutine(currentState, currRAFCO_S, currRAFCO)
+        fsmUpdate = controlRoutine(currentState, currRAFCO_S_idx, currRAFCO_idx)
+        currentState = fsmUpdate[0]
+        currRAFCO_S_idx = fsmUpdate[1]
+        currRAFCO_idx = fsmUpdate[2]
 
 if __name__ == '__main__':
     test_main()

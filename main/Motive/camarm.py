@@ -1,5 +1,5 @@
 import time
-import config
+from . import config
 MARGIN = 2
 current = 0
 ## Init servo components
