@@ -192,18 +192,11 @@ def updateRAFCO():
     imageCommands = []
     with open(APRS_LOG_PATH) as file:
         data = file.readlines()
-        print('testing updateRAFCO in main.py')
-        print(data)
         for line in data:
             cleanLine = line.strip().replace(",", "").split(" ")
             cleanLine = list(filter(None, cleanLine))
             imageCommands.append(cleanLine)
         file.close()
-    '''
-    move on
-    print('testing updateRAFCO in main.py')
-    print(imageCommands)
-    '''
     return imageCommands
 
 # Control
