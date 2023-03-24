@@ -198,7 +198,8 @@ def updateRAFCO():
             cleanLine = list(filter(None, cleanLine))
             imageCommands.append(cleanLine)
         file.close()
-    
+    print('testing updateRAFCO in main.py')
+    print(imageCommands)
     return imageCommands
 
 # Control
