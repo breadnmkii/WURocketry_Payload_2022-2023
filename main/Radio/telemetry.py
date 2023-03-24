@@ -4,7 +4,7 @@ import time
 import datetime     # for testing
 import busio
 import board
-import rfmconfig
+from . import rfmconfig
 from digitalio import DigitalInOut
 
 """

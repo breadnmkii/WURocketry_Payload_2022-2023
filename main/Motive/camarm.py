@@ -1,27 +1,30 @@
 import time
-import config
+from . import config
 MARGIN = 2
-
+current = 0
 ## Init servo components
 # servo_config takes two params, GPIO for (r,w) respectively
 
+# write/read parameters
 servo, reader = config.servo_config(23,24)
-lift_servo, lift_reader = config.servo_config(13,14)
+lift_servo, lift_reader = config.servo_config(13,16)
 
 def extend():
-    lift_servo.set_speed(0.1)
+    lift_servo.set_speed(0.4)
     
     while(True):
         postion1 = get_angpos(lift_reader)
 
-        time.sleep(.5)
+        time.sleep(.1)
 
         postion2 = get_angpos(lift_reader)
 
         if(abs(postion1-postion2) < 5):
-            servo.stop()
+            print("caught!")
             break
 
+    lift_servo.stop()
+    time.sleep(1)
     print("Stalled!")
 
 
@@ -45,9 +48,9 @@ def set_angpos(moveto_angle):
         servo.set_speed(0.1)    # @6v 0.09
 
 
-    curr_pos = get_angpos()
+    curr_pos = get_angpos(reader)
     while (curr_pos > moveto_angle+MARGIN or curr_pos < moveto_angle-MARGIN):
-        curr_pos = get_angpos()
+        curr_pos = get_angpos(reader)
     
     current = moveto_angle
     servo.stop()
@@ -55,8 +58,8 @@ def set_angpos(moveto_angle):
 
     
 #return the current angular position
-def get_angpos(reader):
-    position = round((get_angpos_helper(reader.read()/10)), 2)
+def get_angpos(given_reader):
+    position = round((get_angpos_helper(given_reader.read()/10)), 2)
 
 
     return position
@@ -64,7 +67,7 @@ def get_angpos(reader):
 
 #set angular position to zero    
 def set_zero():
-    set_angpos(servo, 0)
+    set_angpos(0)
     print("Set 360 Position to Zero Sucessfully")
     
 
@@ -74,7 +77,7 @@ def set_zero():
 
 
     
-def left_60(servo):
+def left_60():
     global current
 
     moveto_angle = current - 60
@@ -83,20 +86,34 @@ def left_60(servo):
         moveto_angle = moveto_angle + 360
     
     print("Moving Left! to ", moveto_angle)
-    set_angpos(servo, moveto_angle)
+    set_angpos(moveto_angle)
 
 
 
 
 
 
-def right_60(servo):
+def right_60():
     global current
 
     moveto_angle = current + 60
     moveto_angle = moveto_angle % 360
 
     print("Moving Right! to ", moveto_angle)
-    set_angpos(servo, moveto_angle)
+    set_angpos(moveto_angle)
 
 
+def main():
+    set_zero()
+    left_60()
+    right_60()
+
+    print("stopped and waiting 2 seconds")
+    time.sleep(2)
+    servo.stop()
+    print("extend!")
+    extend()
+    
+
+if __name__ == '__main__':
+    main()
