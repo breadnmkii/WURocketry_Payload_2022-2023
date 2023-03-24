@@ -9,7 +9,7 @@
 
 from Avionics import sensing
 from Control import fsm
-# from Motive import camarm
+from Motive import camarm
 from Radio import APRS
 # from Radio import telemetry
 
@@ -318,7 +318,7 @@ def test_main():
     currRAFCO_idx = 0
 
     sys_flags.STAGE_INFO = Stage.LANDED # Override to mission execution phase (to enable FSM routine)
-    # APRS.begin_APRS_recieve(APRS_LOG_PATH)   # Begin APRS receiving process at specified file (comment out if APRS_log exists in main directory)
+    APRS.begin_APRS_recieve(APRS_LOG_PATH)   # Begin APRS receiving process at specified file (comment out if APRS_log exists in main directory)
 
     while (True):
         fsmUpdate = controlRoutine(currentState, currRAFCO_S_idx, currRAFCO_idx)

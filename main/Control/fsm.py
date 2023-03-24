@@ -12,8 +12,8 @@ import random
 from enum import Enum
 import time
 import sys
-#from Imaging import imaging
-#from Motive import camarm
+from Imaging import imaging
+from Motive import camarm
 
 CALLSIGN = "XD71" # NASA's callsign (FSM only responds to RAFCO sequences headed by this callsign)
 
@@ -57,39 +57,39 @@ def FSM(state, currRAFCO_S, idx):
 			# Execute RAFCO
 			if (RAFCO == "A1"):
 				print("A1: servo 60 degrees right")
-				#camarm.right_60()
+				camarm.right_60()
 				
 			elif (RAFCO == "B2"):
 				print("B2: servo 60 degrees left")
-				#camarm.left_60()
+				camarm.left_60()
 				
 			elif (RAFCO == "C3"):
 				# take_picture.camera_time()
 				print("C3: take picture")
-				#imaging.take_picture()
+				imaging.take_picture()
 				
 			elif (RAFCO == "D4"):
 				print("D4: image color to grayscale")
-				#imaging.to_grayscale()
+				imaging.to_grayscale()
 				
 			elif (RAFCO == "E5"):
 				# filter_image.greyscale2rgb()
 				print("E5: image grayscale to color")
-				#imaging.to_color_mode()
+				imaging.to_color_mode()
 				
 			elif (RAFCO == "F6"):
 				# filter_image.rotate()
 				print("F6: image rotate")
-				#imaging.rotate()
+				imaging.rotate()
 				
 			elif (RAFCO == "G7"):
 				# filter_image.projective_transform()
 				print("G7: special effects filter")
-				#imaging.rgb2bgr()
+				imaging.rgb2bgr()
 				
 			elif (RAFCO == "H8"):
 				print("H8: remove all filters")
-				#imaging.remove_filter()
+				imaging.remove_filter()
 
 			else:
 				print(f'Non-RAFCO ({RAFCO}): Did not execute')
