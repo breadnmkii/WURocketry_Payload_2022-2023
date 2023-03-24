@@ -59,6 +59,7 @@ def set_angpos(moveto_angle):
     
 #return the current angular position
 def get_angpos(given_reader):
+    print('is reader none?', reader)
     print('is it None?', given_reader.read())
     position = round((get_angpos_helper(given_reader.read()/10)), 2)
 
@@ -87,7 +88,7 @@ def left_60():
         moveto_angle = moveto_angle + 360
     
     print("Moving Left! to ", moveto_angle)
-    set_angpos(moveto_angle)
+    set_angpos(reader, moveto_angle)
 
 
 
@@ -101,7 +102,7 @@ def right_60():
     moveto_angle = moveto_angle % 360
 
     print("Moving Right! to ", moveto_angle)
-    set_angpos(moveto_angle)
+    set_angpos(reader, moveto_angle)
 
 '''
 def main():
