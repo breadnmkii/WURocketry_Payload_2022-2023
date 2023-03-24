@@ -88,7 +88,7 @@ def left_60():
         moveto_angle = moveto_angle + 360
     
     print("Moving Left! to ", moveto_angle)
-    set_angpos(reader, moveto_angle)
+    set_angpos(moveto_angle)
 
 
 
@@ -102,7 +102,7 @@ def right_60():
     moveto_angle = moveto_angle % 360
 
     print("Moving Right! to ", moveto_angle)
-    set_angpos(reader, moveto_angle)
+    set_angpos(moveto_angle)
 
 '''
 def main():
