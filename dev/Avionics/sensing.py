@@ -15,7 +15,7 @@ BNO_BUFFER_LEN = 50  # length 50 for testing
 Main components
 """
 #(bno, bmp) = config.init_avionics()
-bno = config.init_bno()
+#bno = config.init_bno()
 bmp = config.init_bmp()
 # delete any values from the front??? -- TODO: pointer none stuffs
 bno_buf = []
@@ -348,6 +348,7 @@ def altitude_status(altitude_accumulator, pressure_accumulator):
     altitude_diff_average = differential_window(altitude_accumulator, rolling_window)
     print('altitude difference?', altitude_diff_average )
     print('raw altitude readings:', altitude_accumulator)
+    # altitude raw data seems to be recorded in meters
     if (altitude_diff_average < descent_altitude and differential_window(pressure_accumulator, rolling_window) > descent_pressure):
         print('BMP -- payload is moving up')
         return 'up'
