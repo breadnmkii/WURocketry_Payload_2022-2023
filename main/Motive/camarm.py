@@ -59,7 +59,7 @@ def set_angpos(moveto_angle):
     
 #return the current angular position
 def get_angpos(given_reader):
-    print('is it None?', (get_angpos_helper(given_reader.read()/10)))
+    print('is it None?', given_reader.read())
     position = round((get_angpos_helper(given_reader.read()/10)), 2)
 
 
