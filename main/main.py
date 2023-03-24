@@ -7,7 +7,7 @@
 # from Imaging import config as imaging_config
 # from Motive import config as motive_config
 
-#from Avionics import sensing
+from Avionics import sensing
 from Control import fsm
 from Motive import camarm
 from Radio import APRS
