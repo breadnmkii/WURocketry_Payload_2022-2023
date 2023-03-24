@@ -323,6 +323,7 @@ def test_main():
         currentState = fsmUpdate[0]
         currRAFCO_S_idx = fsmUpdate[1]
         currRAFCO_idx = fsmUpdate[2]
+        avionicRoutine(Stage.LANDED)
 
 
 if __name__ == '__main__':
