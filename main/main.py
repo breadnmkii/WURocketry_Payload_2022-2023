@@ -7,7 +7,7 @@
 # from Imaging import config as imaging_config
 # from Motive import config as motive_config
 
-# from Avionics import sensing
+from Avionics import sensing
 from Control import fsm
 # from Motive import camarm
 from Radio import APRS
@@ -325,6 +325,7 @@ def test_main():
         currentState = fsmUpdate[0]
         currRAFCO_S_idx = fsmUpdate[1]
         currRAFCO_idx = fsmUpdate[2]
+
 
 if __name__ == '__main__':
     test_main()
