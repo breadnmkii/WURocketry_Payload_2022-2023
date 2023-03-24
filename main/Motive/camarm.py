@@ -107,6 +107,9 @@ def right_60():
 
 def main():
     print('main of camarm.py')
+    servo.set_speed(0.1)
+    time.sleep(2)
+    servo.stop()
     set_zero()
 '''
     left_60()

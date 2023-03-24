@@ -56,12 +56,14 @@ def FSM(state, currRAFCO_S, idx):
 
 			# Execute RAFCO
 			if (RAFCO == "A1"):
-				camarm.set_zero()
+				#camarm.set_zero()
+				camarm.main()
 				print("A1: servo 60 degrees right")
 				camarm.right_60()
 				
 			elif (RAFCO == "B2"):
-				camarm.set_zero()
+				#camarm.set_zero()
+				camarm.main()
 				print("B2: servo 60 degrees left")
 				camarm.left_60()
 				
