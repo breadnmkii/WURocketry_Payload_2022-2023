@@ -6,8 +6,8 @@ current = 0
 # servo_config takes two params, GPIO for (r,w) respectively
 
 # write/read parameters
-servo, reader = config.servo_config(23,24)
-lift_servo, lift_reader = config.servo_config(13,16)
+#servo, reader = config.servo_config(23,24)
+#lift_servo, lift_reader = config.servo_config(13,16)
 
 def extend():
     lift_servo.set_speed(0.4)
@@ -102,7 +102,7 @@ def right_60():
     print("Moving Right! to ", moveto_angle)
     set_angpos(moveto_angle)
 
-
+'''
 def main():
     set_zero()
     left_60()
@@ -117,3 +117,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+'''
