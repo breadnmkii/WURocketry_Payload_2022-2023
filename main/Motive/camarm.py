@@ -104,9 +104,11 @@ def right_60():
     print("Moving Right! to ", moveto_angle)
     set_angpos(moveto_angle)
 
-'''
+
 def main():
+    print('main of camarm.py')
     set_zero()
+'''
     left_60()
     right_60()
 
@@ -116,7 +118,7 @@ def main():
     print("extend!")
     extend()
     
-
+'''
 if __name__ == '__main__':
     main()
-'''
+
