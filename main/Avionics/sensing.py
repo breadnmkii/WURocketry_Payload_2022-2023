@@ -317,7 +317,7 @@ def vertical(euler_accumulator):
     global euler_orient_pointer
     is_vertical = False
     rolling_window = 10
-    threshold = 0.15 # NEED TESTING -- tested 3/6
+    threshold = 0.2 # NEED TESTING -- tested 0.15 on 3/6 by itself -- tested again 3/24 on motor hat not stable enough -> changed to 0.2
     rolls = [item[0] for item in euler_accumulator]
     pitches = [item[1] for item in euler_accumulator]
     pitch= abs(average_window(pitches, rolling_window, euler_orient_pointer))
@@ -346,8 +346,8 @@ def altitude_status(altitude_accumulator, pressure_accumulator):
     rolling_window = 50
     descent_altitude = -2 # HOW TO TEST THRESHOLD
     ascent_altitude =  2 # HOW TO TEST THRESHOLD
-    descent_pressure = 2 # HOW TO TEST THRESHOLD
-    ascent_pressure =  -2 # HOW TO TEST THRESHOLD
+    descent_pressure = 0.5 # HOW TO TEST THRESHOLD
+    ascent_pressure =  -0.5 # HOW TO TEST THRESHOLD
     if (differential_window(altitude_accumulator, rolling_window) < descent_altitude and differential_window(pressure_accumulator, rolling_window) > descent_pressure):
         print('BMP -- payload is moving up')
         return 'up'
