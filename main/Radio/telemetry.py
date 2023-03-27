@@ -43,4 +43,4 @@ def recieveData():
         receive_time = time.time_ns()
         rx_data = str(rx_packet, "utf-8")
         f.write(f'{receive_time} <- {rx_data}\n')
-        print(f'{receive_time} <- {rx_data}') 
+        print(f'{receive_time} <- {rx_data}')  
