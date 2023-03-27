@@ -324,6 +324,7 @@ def test_main():
         currRAFCO_S_idx = fsmUpdate[1]
         currRAFCO_idx = fsmUpdate[2]
         avionicRoutine()
+        telemetryRoutine()
 
 
 if __name__ == '__main__':
