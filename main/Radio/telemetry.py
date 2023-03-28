@@ -7,6 +7,9 @@ import board
 from . import rfmconfig
 from digitalio import DigitalInOut
 
+# Import the RFM9x radio module.
+import adafruit_rfm9x
+
 """
  Pins
    19 - MOSI
@@ -38,7 +41,7 @@ def transmitData(str):
     print(f'Sent -> {tx_packet}')
 
 def recieveData():
-    rx_packet = RFM96W.recieve()
+    rx_packet = RFM96W.receive()
     if rx_packet:
         receive_time = time.time_ns()
         rx_data = str(rx_packet, "utf-8")
