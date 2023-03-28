@@ -186,6 +186,7 @@ def telemetryRoutine():
     current_time = datetime.datetime.now()
     sys_flags_str = ' | '.join(sys_flags.get_str())
 
+    print(int(sys_flags))
     packet = f'{current_time}: {sys_flags_str}'
     print(packet)
     telemetry.transmitData(packet)
