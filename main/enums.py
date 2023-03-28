@@ -1,47 +1,47 @@
-from enum import Enum
+from enum import Enum, IntEnum
 
-class Stage(Enum):
+class Stage(IntEnum):
     PRELAUNCH = 0
     MIDAIR = 1
     LANDED = 2
 
-class Movement(Enum):
+class Movement(IntEnum):
     NOT_MOVING = 0
     MOVING = 1
     CONFLICTING_DECISION = 2
 
-class Flight_Direction(Enum):
+class Flight_Direction(IntEnum):
     MOVING_UP = 0
     MOVING_DOWN = 1
     INDETERMINENT = 2
 
-class Verticality(Enum):
+class Verticality(IntEnum):
     NOT_UPRIGHT = 0
     UPRIGHT = 1
 
-class Separated(Enum):
+class Separated(IntEnum):
     NOT_SEPARATED = 0
     SEPARATED = 1
 
-class Deployed(Enum):
+class Deployed(IntEnum):
     NOT_DEPLOYED = 0
     DEPLOYED = 1
 
-class Warn_Heat(Enum):
+class Warn_Heat(IntEnum):
     NOMINAL = 0
     WARNING = 1
 
-class Warn_Camera(Enum):
+class Warn_Camera(IntEnum):
     NOMINAL = 0
     WARNING = 1
 
-class Warn_Avionics(Enum):
+class Warn_Avionics(IntEnum):
     NOMINAL = 0
     WARNING_BNO = 1
     WARNING_BMP = 2
     WARNING_SYS = 3 # entire system (both bno and bmp warning)
 
-class Warn_Motive(Enum):
+class Warn_Motive(IntEnum):
     NOMINAL = 0
     WARNING = 1
 
@@ -71,4 +71,8 @@ class System_Flags():
     
     def get_str(self):
         flags = (str(self.STAGE_INFO), str(self.MOVEMENT), str(self.FLIGHT_DIRECTION), str(self.VERTICALITY), str(self.SEPARATED), str(self.DEPLOYED), str(self.WARN_HEAT), str(self.WARN_CAMERA), str(self.WARN_AVIONICS), str(self.WARN_MOTIVE))
+        return flags
+    
+    def get_int(self):
+        flags = (int(self.STAGE_INFO), int(self.MOVEMENT), int(self.FLIGHT_DIRECTION), int(self.VERTICALITY), int(self.SEPARATED), int(self.DEPLOYED), int(self.WARN_HEAT), int(self.WARN_CAMERA), int(self.WARN_AVIONICS), int(self.WARN_MOTIVE))
         return flags

@@ -8,7 +8,7 @@
 # from Motive import config as motive_config
 
 #from Avionics import sensing
-#from Control import fsm
+from Control import fsm
 #from Motive import camarm
 #from Radio import APRS
 from Radio import telemetry
@@ -181,7 +181,7 @@ def deployRoutine(motor, solenoids):
 def telemetryRoutine():
     # basic data we send back to base station
     current_time = datetime.datetime.now()
-    sys_flags_str = ' | '.join(sys_flags.get_str())
+    sys_flags_str = ' | '.join(str(sys_flags.get_int()))
 
     packet = f'{current_time}: {sys_flags_str}'
     print(packet)
