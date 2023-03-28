@@ -32,7 +32,6 @@ def config_RFM96w():
     try:
         RFM96w = adafruit_rfm9x.RFM9x(spi, CS, RESET, rf_freq)
         RFM96w.tx_power = 23
-        RFM96w.receive()
         print("RFM96w successfully set up")
         return RFM96w
 
