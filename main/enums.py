@@ -74,5 +74,6 @@ class System_Flags():
         return flags
     
     def get_int(self):
+        print(int(self.STAGE_INFO))
         flags = (int(self.STAGE_INFO), int(self.MOVEMENT), int(self.FLIGHT_DIRECTION), int(self.VERTICALITY), int(self.SEPARATED), int(self.DEPLOYED), int(self.WARN_HEAT), int(self.WARN_CAMERA), int(self.WARN_AVIONICS), int(self.WARN_MOTIVE))
         return flags
