@@ -37,6 +37,7 @@ f.write(f"Collection started: {datetime.datetime.now()}\n")
 def transmitData(str):
     # RX
     tx_packet =  bytes(f'{str}\r\n', 'utf-8')
+    print(tx_packet)
     RFM96W.send(tx_packet)
     print(f'Sent -> {tx_packet}')
 

@@ -6,8 +6,14 @@
 # from Avionics import config as avionics_config
 # from Imaging import config as imaging_config
 # from Motive import config as motive_config
+'''
+from Avionics import sensing
+
+from Motive import camarm
+from Radio import APRS
 
 #from Avionics import sensing
+'''
 from Control import fsm
 #from Motive import camarm
 #from Radio import APRS
@@ -320,6 +326,7 @@ def test_main():
 
     while (True):
         '''
+        
         fsmUpdate = controlRoutine(currentState, currRAFCO_S_idx, currRAFCO_idx)
         currentState = fsmUpdate[0]
         currRAFCO_S_idx = fsmUpdate[1]
