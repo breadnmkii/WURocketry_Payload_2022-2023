@@ -13,7 +13,7 @@ from enum import Enum
 import time
 import sys
 #from Imaging import imaging
-from Motive import camarm
+#from Motive import camarm
 
 CALLSIGN = "XD71" # NASA's callsign (FSM only responds to RAFCO sequences headed by this callsign)
 
