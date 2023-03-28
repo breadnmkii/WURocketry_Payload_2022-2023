@@ -184,9 +184,10 @@ def deployRoutine(motor, solenoids):
 def telemetryRoutine():
     # basic data we send back to base station
     current_time = datetime.datetime.now()
+    print(type(sys_flags))
+    print(sys_flags.get_int())
     sys_flags_str = ' | '.join(sys_flags.get_str())
 
-    print(int(sys_flags))
     packet = f'{current_time}: {sys_flags_str}'
     print(packet)
     telemetry.transmitData(packet)
