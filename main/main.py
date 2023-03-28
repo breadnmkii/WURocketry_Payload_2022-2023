@@ -7,10 +7,10 @@
 # from Imaging import config as imaging_config
 # from Motive import config as motive_config
 
-from Avionics import sensing
-from Control import fsm
-from Motive import camarm
-from Radio import APRS
+#from Avionics import sensing
+#from Control import fsm
+#from Motive import camarm
+#from Radio import APRS
 from Radio import telemetry
 
 import time
@@ -319,11 +319,13 @@ def test_main():
     # APRS.begin_APRS_recieve(APRS_LOG_PATH)   # Begin APRS receiving process at specified file (comment out if APRS_log exists in main directory)
 
     while (True):
+        '''
         fsmUpdate = controlRoutine(currentState, currRAFCO_S_idx, currRAFCO_idx)
         currentState = fsmUpdate[0]
         currRAFCO_S_idx = fsmUpdate[1]
         currRAFCO_idx = fsmUpdate[2]
         avionicRoutine()
+        '''
         telemetryRoutine()
 
 
