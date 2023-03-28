@@ -30,7 +30,7 @@ rf_freq = 434.550 + rf_channel * 0.1
 
 def config_RFM96w():
     try:
-        RFM96w = adafruit_rfm9x.RFM96w(spi, CS, RESET, rf_freq)
+        RFM96w = adafruit_rfm9x.RFM96x(spi, CS, RESET, rf_freq)
         RFM96w.tx_power = 23
         print("RFM96w successfully set up")
         return RFM96w
