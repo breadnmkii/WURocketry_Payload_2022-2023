@@ -15,7 +15,7 @@ BNO_BUFFER_LEN = 50  # length 50 for testing
 Main components
 """
 #(bno, bmp) = config.init_avionics()
-#bno = config.init_bno()
+bno = config.init_bno()
 bmp = config.init_bmp()
 # delete any values from the front??? -- TODO: pointer none stuffs
 bno_buf = []
@@ -303,6 +303,9 @@ def detectMovement(acc_accumulator):
        ):
         print("Launch detected!")
         hasLaunched = True
+    else:
+        print(f"{average_window(x, ACC_WINDOW, linear_acc_pointer)} {average_window(y, ACC_WINDOW, linear_acc_pointer)} {average_window(z, ACC_WINDOW, linear_acc_pointer)}")
+
     return hasLaunched
     
 '''
@@ -422,7 +425,7 @@ if __name__ == '__main__':
         read_acceleration_buffer()
         read_bmp()
         #print('sequential:',seqeuntial_euler )
-        print('is there movement?', detectMovement(acceleration_buffer))
-        print('is it vertical?', vertical(euler_buffer))
+        detectMovement(acceleration_buffer)
+        # print('is it vertical?', vertical(euler_buffer))
         #print('is it vertical?', vertical(seqeuntial_euler))
-        print('flight status?', altitude_status(altitude_buffer, pressure_buffer))
+        # print('flight status?', altitude_status(altitude_buffer, pressure_buffer))

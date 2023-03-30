@@ -256,8 +256,26 @@ testing status:
 '''
 def detectMovement(acc_accumulator):
     global linear_acc_pointer
+    MOTION_SENSITIVITY = 2           # Amount of 3-axis acceleration needed to be read to trigger "movement" detection
+    isMoving = False
+    ACC_WINDOW = 20                  # Range of values to apply rolling average in 'acc_accumulator'
+
+    x = [item[0] for item in acc_accumulator]
+    y = [item[1] for item in acc_accumulator]
+    z = [item[1] for item in acc_accumulator]
+
+    if(average_window(x, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY 
+       or average_window(y, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY 
+       or average_window(z, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY
+       ):
+        print("Motion detected!")
+        isMoving = True
+    return isMoving
+
+def detectLaunch(acc_accumulator):
+    global linear_acc_pointer
     MOTION_SENSITIVITY = 1           # Amount of 3-axis acceleration needed to be read to trigger "movement" detection
-    MOTION_LAUNCH_SENSITIVITY = 13   # Amount of accel added to offset for stronger initial launch accel
+    MOTION_LAUNCH_SENSITIVITY = 10   # Amount of accel added to offset for stronger initial launch accel
     hasLaunched = False
     ACC_WINDOW = 20                  # Range of values to apply rolling average in 'acc_accumulator'
 
@@ -265,13 +283,14 @@ def detectMovement(acc_accumulator):
     y = [item[1] for item in acc_accumulator]
     z = [item[1] for item in acc_accumulator]
 
-    if(average_window(x, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY #+ MOTION_LAUNCH_SENSITIVITY 
-       or average_window(y, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY #+ MOTION_LAUNCH_SENSITIVITY
-       or average_window(z, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY #+ MOTION_LAUNCH_SENSITIVITY
+    if(average_window(x, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY + MOTION_LAUNCH_SENSITIVITY 
+       or average_window(y, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY + MOTION_LAUNCH_SENSITIVITY
+       or average_window(z, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY + MOTION_LAUNCH_SENSITIVITY
        ):
         print("Launch detected!")
         hasLaunched = True
     return hasLaunched
+    
     
 '''
 functionality: detect whether the camera has reached vertical position or not
@@ -386,7 +405,7 @@ if __name__ == '__main__':
         read_acceleration_buffer()
         read_bmp()
         #print('sequential:',seqeuntial_euler )
-        print('is there movement?', detectMovement(acceleration_buffer))
-        print('is it vertical?', vertical(euler_buffer))
+        print(detectMovement(acceleration_buffer))
+        # print('is it vertical?', vertical(euler_buffer))
         #print('is it vertical?', vertical(seqeuntial_euler))
-        print('flight status?', altitude_status(altitude_buffer, pressure_buffer))
+        # print('flight status?', altitude_status(altitude_buffer, pressure_buffer))

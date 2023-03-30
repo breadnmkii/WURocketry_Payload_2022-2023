@@ -41,7 +41,7 @@ APRS_LOG_PATH = "./APRS_log.log"    # APRS Log File Path
 # Sensing
 def avionicRoutine():
     # initialize values
-    has_launched = None # sensing.detectMovement(acc_accumulator) # true means movement detected, false means movement not detected
+    has_launched = None # sensing.detectMovement(acc_accumulator) # true means launch detected, false means launch not detected
     is_still = None # sensing.remain_still(acc_accumulator) # true means still, false means not still
     is_upright = None
     heat = None
@@ -50,33 +50,34 @@ def avionicRoutine():
 
     ### PRE-LAUNCH STANDBY ###
     if(sys_flags.STAGE_INFO == Stage.PRELAUNCH):
-        (has_launched, is_still) = avionics_prelaunch()
+        has_launched = avionics_prelaunch()
     elif (sys_flags.STAGE_INFO == Stage.MIDAIR):
         # sample for movement (if launched)
-        (has_launched, heat, is_still, ground_steady, bmp_values_status) = avionics_midair()
+        (heat, is_still, ground_steady, bmp_values_status) = avionics_midair()
     elif (sys_flags.STAGE_INFO == Stage.LANDED):
         # check for no movement (if landed)
         # check for upright (orientation sensor)
         (heat, is_still, is_upright) = avionics_landed()
 
     # update system flags -- specifics (related to avionics)
+    print("update sysflags")
+    print(is_upright, heat, bmp_values_status, has_launched, is_still, ground_steady)
     update_system_flags(is_upright, heat, bmp_values_status, has_launched, is_still, ground_steady)
 
 def avionics_prelaunch():
     acceleration_buffer = sensing.read_acceleration_buffer()
-    has_launched = sensing.detectMovement(acceleration_buffer)
-    is_still = sensing.remain_still(acceleration_buffer)
-    return (has_launched, is_still)
+    has_launched = sensing.detectLaunch(acceleration_buffer)
+    # is_still = sensing.remain_still(acceleration_buffer)
+    return (has_launched)
 
 def avionics_midair():
     acceleration_buffer = sensing.read_acceleration_buffer()
-    has_launched = sensing.detectMovement(acceleration_buffer)
     (temperature_buffer, pressure_buffer, altitude_buffer) = sensing.read_bmp()
     bmp_values_status = sensing.altitude_status(altitude_buffer, pressure_buffer)
     heat = sensing.check_heat(temperature_buffer)
-    is_still = sensing.remain_still(acceleration_buffer)
+    is_still = sensing.detectMovement(acceleration_buffer)
     ground_steady = sensing.ground_level(altitude_buffer, pressure_buffer)
-    return (has_launched, heat, is_still, ground_steady, bmp_values_status)
+    return (heat, is_still, ground_steady, bmp_values_status)
 
 def avionics_landed():
     euler_buffer = sensing.read_euler_buffer()
@@ -195,7 +196,6 @@ def telemetryRoutine():
     packet = f'{current_time} {sys_flags_pkt}'
     telemetry.transmitData(packet)
 
-
 # APRS
 def updateRAFCO():
     imageCommands = []
@@ -262,8 +262,9 @@ def main():
     landed_oneshot_transition = False
 
     # Init FSM starting state
-    state = fsm.State.WAIT
-    currRAFCO = 0   # Index within RAFCOS_LIST for first unprocessed RAFCOS (rafco sequence)
+    currentState = fsm.State.WAIT
+    currRAFCO_S_idx = 0
+    currRAFCO_idx = 0   # Index within RAFCOS_LIST for first unprocessed RAFCOS (rafco sequence)
 
     ### Component config
     motor, solenoids = motive_config.electromotives_config()
@@ -274,35 +275,40 @@ def main():
 
     ### Delta timing frequencies
     # AVIONIC
-    AVIONIC_FREQ = 100 # bno frequncy per second -- check documentations
+    AVIONIC_FREQ = 1/100 # bno frequncy -- check documentations
+    avionic_last_time = 0
 
     # TELEMETRY
     TELEMETRY_FREQ = 1
+    telemetry_last_time = 0
 
     # CONTROL
-    CONTROL_FREQ = 2
+    CONTROL_FREQ = 1/2
+    control_last_time = 0
 
     """ Main delta timing loop (HIGHEST ROUTINE PRIORITY FROM TOP) """
 
-    time_last_sample = time.time()   # Reset delta timing
     while(True):
         # AVIONIC ROUTINE
-        time_this_sample = time.time()
-        if(time_this_sample - time_last_sample >= AVIONIC_FREQ):
-            time_last_sample = time_this_sample
+        this_time = time.time()
+        if(this_time - avionic_last_time >= AVIONIC_FREQ):
+            avionic_last_time = this_time + AVIONIC_FREQ
             avionicRoutine()
 
         # TELEMETRY ROUTINE
-        time_this_sample = time.time()
-        if(time_this_sample - time_last_sample >= TELEMETRY_FREQ):
-            time_last_sample = time_this_sample
+        this_time= time.time()
+        if(this_time - telemetry_last_time >= TELEMETRY_FREQ):
+            telemetry_last_time = this_time + TELEMETRY_FREQ
             telemetryRoutine()
 
         # CONTROL ROUTINE
-        time_this_sample = time.time()
-        if(time_this_sample - time_last_sample >= CONTROL_FREQ):
-            time_last_sample = time_this_sample
-            state, currRAFCO = controlRoutine(state, currRAFCO)
+        this_time = time.time()
+        if(this_time - control_last_time >= CONTROL_FREQ):
+            control_last_time = this_time + CONTROL_FREQ
+            fsmUpdate = controlRoutine(currentState, currRAFCO_S_idx, currRAFCO_idx)
+            currentState = fsmUpdate[0]
+            currRAFCO_S_idx = fsmUpdate[1]
+            currRAFCO_idx = fsmUpdate[2]
         
 
         ### STAGE TRANSITION ONESHOT EXECUTIONS ###
