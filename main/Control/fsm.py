@@ -8,10 +8,7 @@
 
 # DEBUG NOTE: assume team CALLSIGN is XD71
 
-import random
 from enum import Enum
-import time
-import sys
 from Imaging import imaging
 from Motive import camarm
 

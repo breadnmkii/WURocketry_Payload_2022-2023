@@ -4,10 +4,10 @@
 
 ### IMPORTS ###
 from Avionics import config as avionics_config
-from Imaging import config as imaging_config
+# from Imaging import config as imaging_config  # DEPRECATED
 from Motive import config as motive_config
 
-# from Avionics import sensing
+from Avionics import sensing
 from Control import fsm
 from Motive import camarm
 from Radio import APRS
@@ -60,7 +60,7 @@ def avionicRoutine():
         (heat, is_still, is_upright) = avionics_landed()
 
     # update system flags -- specifics (related to avionics)
-    update_system_flags(is_upright,heat, bmp_values_status, has_launched, is_still, ground_steady)
+    update_system_flags(is_upright, heat, bmp_values_status, has_launched, is_still, ground_steady)
 
 def avionics_prelaunch():
     acceleration_buffer = sensing.read_acceleration_buffer()
@@ -87,7 +87,7 @@ def avionics_landed():
     is_upright = sensing.vertical(euler_buffer)
     return (heat, is_still, is_upright)
 
-def update_system_flags(is_upright,heat, bmp_values_status, has_launched, is_still, ground_steady):
+def update_system_flags(is_upright, heat, bmp_values_status, has_launched, is_still, ground_steady):
     if is_upright:
         sys_flags.VERTICALITY = int(is_upright == True) 
     if heat:
@@ -120,7 +120,7 @@ def update_system_flags(is_upright,heat, bmp_values_status, has_launched, is_sti
 SEPARATION_TIME = 7   # Seconds
 RETRACT_TIME = 5
 def deployRoutine(motor, solenoids):
-    if (sys_flags.STAGE_INFO == 3):
+    if (sys_flags.STAGE_INFO == Stage.LANDED):
         if (sys_flags.DEPLOYED == Deployed.NOT_DEPLOYED):
             ##### REALIGN (New phase, need to "pull" nosecone back a bit to release retention)
             """ DEPRECATED - Racks not connected to nosecone """
@@ -175,7 +175,7 @@ def deployRoutine(motor, solenoids):
             print("Extending camarm...")
             # Wait until stable and upright to deploy camarm
             while((sys_flags.VERTICALITY == Verticality.NOT_UPRIGHT) or (sys_flags.MOVEMENT == Movement.NOT_MOVING)):
-                print("wait stable...")
+                print("wait stable upright...")
                 continue
             print("Extending...")
             camarm.extend()
@@ -232,7 +232,7 @@ def controlRoutine(currentState, currRAFCO_S_idx, currRAFCO_idx):
             return (currentState, currRAFCO_S_idx, currRAFCO_idx) # Return FSM's new state inputs
         
     return (currentState, currRAFCO_S_idx, currRAFCO_idx) # If not execution stage or no RAFCO, do not call FSM and return original state
-        
+
 
 '''
 NOTES:
@@ -268,13 +268,9 @@ def main():
     ### Component config
     motor, solenoids = motive_config.electromotives_config()
     bno, bmp = avionics_config.init_avionics()
-    camera = imaging_config.init_avionics()
     # BMP or BNO hardware fault
     if (bno == None or bmp == None):
         sys_flags.WARN_AVIONICS = Warn_Avionics.WARNING
-    # PiCamera hardware fault
-    if (camera == None):
-        sys_flags.WARNCAMERA = Warn_Camera.WARNING
 
     ### Delta timing frequencies
     # AVIONIC
@@ -333,16 +329,17 @@ def test_main():
 
     """ Main delta timing loop (HIGHEST ROUTINE PRIORITY FROM TOP) """
 
-    time_last_sample = time.time()   # Reset delta timing
-    while(True):
-        # TELEMETRY ROUTINE
-        time_this_sample = time.time()
-        if(time_this_sample - time_last_sample >= TELEMETRY_FREQ):
-            time_last_sample = time_this_sample
-            telemetryRoutine()
+    # time_last_sample = time.time()   # Reset delta timing
+    # while(True):
+    #     # TELEMETRY ROUTINE
+    #     time_this_sample = time.time()
+    #     if(time_this_sample - time_last_sample >= TELEMETRY_FREQ):
+    #         time_last_sample = time_this_sample
+    #         telemetryRoutine()
 
-
-    # deployRoutine
+    sys_flags.STAGE_INFO = Stage.LANDED
+    motor, solenoids = motive_config.electromotives_config()
+    deployRoutine(motor, solenoids)
 
     # currentState = fsm.State.WAIT
     # currRAFCO_S_idx = 0
@@ -360,7 +357,7 @@ def test_main():
 
 
 if __name__ == '__main__':
-    test_main()
+    main()
 
 
 

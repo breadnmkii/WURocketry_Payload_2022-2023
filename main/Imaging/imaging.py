@@ -10,9 +10,11 @@ from . import config
 import glob
 import os
 
-print("before entering config.init_camera()")
+print("Initializing camera in imaging.py")
 camera = config.init_camera()
-# write each function for each RAFCO command that is camera related 
+# PiCamera hardware fault
+if (camera == None):
+    print("Camera could not be initialized!")
 
  
 # modify input, outputs 

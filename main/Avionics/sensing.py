@@ -1,6 +1,5 @@
 from . import config
 import time
-import mathlib
 import board
 import math 
 #import numpy as np
@@ -16,7 +15,6 @@ BNO_BUFFER_LEN = 50  # length 50 for testing
 """
 Main components
 """
-#(bno, bmp) = config.init_avionics()
 bno = config.init_bno()
 bmp = config.init_bmp()
 # delete any values from the front??? -- TODO: pointer none stuffs
@@ -35,24 +33,6 @@ bno_pointer = 0 # pointer for a ring buffer for euler orientations and linear ac
 euler_orient_pointer = 0
 linear_acc_pointer = 0
 
-'''
-TODO manage array size
-    100 samples per second --> definitely overflow 
-solution
-    write file to disk
-    ring buffer -- manage pointer, slice list itself
-    
-'''
-
-"""
-Function returning raw bno data
-functionality: 
-    push linear acceleration values into acceleration_buffer
-    push displacement from vertical orientation values into quaternion_buffer
-return: (accel(3), mag(3), gyro(3))
-testing status:
-    partially tested, but not used in the final version
-"""
 def read_bno():
     quat = bno.quaternion
     global bno_pointer
@@ -191,21 +171,6 @@ def read_bmp():
     return (temperature_buffer, pressure_buffer, altitude_buffer)
 
 
-""" 
-Function to determine if payload is moving,
-with sensitivity of 'window' readings mean
-not needed in final version
-"""
-def isMoving(window):
-    if(bno.linear_acceleration == 0.0): #Assuming it returns in m/s based from documentation
-        print("Not moving")
-    else:
-        print("Moving")
-
-'''
-testing status:
-    tested, needed in final version
-'''
 def average_window(list, window, pointer):
     if(not list):
         return 0
@@ -292,7 +257,7 @@ testing status:
 def detectMovement(acc_accumulator):
     global linear_acc_pointer
     MOTION_SENSITIVITY = 1           # Amount of 3-axis acceleration needed to be read to trigger "movement" detection
-    #MOTION_LAUNCH_SENSITIVITY = 13   # Amount of accel added to offset for stronger initial launch accel
+    MOTION_LAUNCH_SENSITIVITY = 13   # Amount of accel added to offset for stronger initial launch accel
     hasLaunched = False
     ACC_WINDOW = 20                  # Range of values to apply rolling average in 'acc_accumulator'
 

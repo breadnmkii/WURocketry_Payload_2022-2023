@@ -3,8 +3,6 @@
 import board
 import adafruit_bno055
 import adafruit_bmp3xx
-import time
-import math
 
 def init_avionics():
     i2c = board.I2C()
@@ -119,10 +117,3 @@ def __config_BMP388(sensor, avg_iter):
     
     print("...set base MSL pressure to", avg)
 
-
-
-if __name__ == '__main__':
-    (bno, bmp) = init_avionics()
-    
-    print("RUNNING")
-    print(bmp.altitude)
