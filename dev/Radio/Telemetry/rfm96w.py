@@ -1,23 +1,8 @@
 """
- Pins
-    PHYS 10 - MOSI
-    PHYS 09 - MISO
-    PHYS 11 - SCK
-    PHYS 08 - CS
-    PHYS 25 - RST
-    PHYS 24 - EN
-
-    print(board.MOSI)
-    print(board.MISO)
-    print(board.SCK)
-    print(board.CE0)
-    print(board.D25)
-    print(board.D24)
-
-  GPIO (not physical pin no)
+  Motor Hat No (not physical pin no)
    19 - MOSI
    21 - MISO
-   ce1 - CS
+   ce0 - CS
    22 - EN  # not used?
    23 - RST
    11 - SCK
@@ -88,7 +73,7 @@ if __name__ == '__main__':
     # Initialize radio
     spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
     RST = DigitalInOut(board.D23)
-    CS = DigitalInOut(board.CE1)
+    CS = DigitalInOut(board.CE0)
 
     # Configure radio frequencies
     rf_channel = 7

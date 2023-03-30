@@ -10,18 +10,18 @@ from digitalio import DigitalInOut
 import adafruit_rfm9x
 
 """
- Pins PHYSICAL HEADER NUMBERS
+ GPIO (not physical pin no)
    19 - MOSI
    21 - MISO
-   22 - RST
-   23 - SCK
-   26 - CS
-   
+   ce0 - CS
+   22 - EN  # not used?
+   23 - RST
+   11 - SCK
 """
 
 # Configure RFM9x LoRa Radio
-CS = DigitalInOut(board.CE1)
-RESET = DigitalInOut(board.D25)
+CS = DigitalInOut(board.CE0)
+RESET = DigitalInOut(board.D23)
 spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
 
 # Configure radio frequencies
