@@ -1,35 +1,42 @@
-import lib_para_360_servo
-import pigpio
 import time
-import math
-import atexit
-
-#Define GPIO pins that we will read and write to (Using GPIO numbers NOT pin numbers)
-WHITE_CABLE_SIGNAL = 23
-YELLOW_CABLE_FEEDBACK = 24  
-
-#Define the margin of error
+import config
 MARGIN = 2
-
-#global current angular position variable
 current = 0
+## Init servo components
+# servo_config takes two params, GPIO for (r,w) respectively
+"""
+SERVO
+21 - p1 write purple	(servo)
+20 - p1 read gray
+19 - p0 write white	(cam)
+16 - p0 read black
+"""
 
+# write/read parameters
+servo, reader = config.servo_config(19,16)              # cam servo
+lift_servo, lift_reader = config.servo_config(21,20)    # lift servo
 
-def extend(servo):
-    servo.set_speed(0.1)
+def extend():
+    lift_servo.set_speed(0.4)
+    timeout = 45 # TIMEOUT * 0.1 s
     
     while(True):
-        postion1 = get_angpos()
+        postion1 = get_angpos(lift_reader)
 
-        time.sleep(.5)
+        time.sleep(.1)
 
-        postion2 = get_angpos()
+        postion2 = get_angpos(lift_reader)
 
         if(abs(postion1-postion2) < 5):
-            servo.stop()
+            print("caught!")
             break
+        elif (timeout <= 0):
+            print("timeout!")
+            break
+        timeout -=1
 
-    print("Stalled!")
+    lift_servo.stop()
+    time.sleep(1)
 
 
 # Calculate angular position (degrees)
@@ -42,21 +49,19 @@ def get_angpos_helper(read_dc):
 
 
 #set a custom angle position
-def set_angpos(servo, moveto_angle):
+def set_angpos(moveto_angle):
     
     global current
-    if(moveto_angle == 0):
-        servo.set_speed(-0.15)
-
-    elif moveto_angle < current:
-        servo.set_speed(-0.15)   # @6v -0.15
+    
+    if moveto_angle < current:
+        servo.set_speed(-0.2)   # @6v -0.15
     else:
-        servo.set_speed(0.09)    # @6v 0.09
+        servo.set_speed(0.1)    # @6v 0.09
 
 
-    curr_pos = get_angpos()
+    curr_pos = get_angpos(reader)
     while (curr_pos > moveto_angle+MARGIN or curr_pos < moveto_angle-MARGIN):
-        curr_pos = get_angpos()
+        curr_pos = get_angpos(reader)
     
     current = moveto_angle
     servo.stop()
@@ -64,8 +69,8 @@ def set_angpos(servo, moveto_angle):
 
     
 #return the current angular position
-def get_angpos():
-    position = round((get_angpos_helper(reader.read()/10)), 2)
+def get_angpos(given_reader):
+    position = round((get_angpos_helper(given_reader.read()/10)), 2)
 
 
     return position
@@ -73,15 +78,9 @@ def get_angpos():
 
 #set angular position to zero    
 def set_zero():
-    set_angpos(servo, 0)
+    set_angpos(0)
     print("Set 360 Position to Zero Sucessfully")
     
-
-
-
-
-
-
     
 def left_60():
     global current
@@ -92,11 +91,7 @@ def left_60():
         moveto_angle = moveto_angle + 360
     
     print("Moving Left! to ", moveto_angle)
-    set_angpos(servo, moveto_angle)
-
-
-
-
+    set_angpos(moveto_angle)
 
 
 def right_60():
@@ -106,51 +101,27 @@ def right_60():
     moveto_angle = moveto_angle % 360
 
     print("Moving Right! to ", moveto_angle)
-    set_angpos(servo, moveto_angle)
+    set_angpos(moveto_angle)
 
 
+def main():
+    print("starting...")
 
-def exit_handler():
-    
-    servo.stop()
-    pi.stop()
-    print('Finished!')
-
-
-if __name__ == '__main__':
-
-
-
-    #init pigpio to access GPIO pins with PWM
-    pi = pigpio.pi()
-
-    #init servo and servo position reader from lib_para_360_servo
-    servo = lib_para_360_servo.write_pwm(pi = pi, gpio = WHITE_CABLE_SIGNAL)
-    reader = lib_para_360_servo.read_pwm(pi = pi, gpio = YELLOW_CABLE_FEEDBACK)
-
-    #create a handler to run exit requirements
-    atexit.register(exit_handler)
-
-
-    #Buffer time for initializing library servo
     time.sleep(2)
-    print("INIT")
-    servo.stop()
-
-
-
+    print("extending lift")
+    extend()
+    print("left 60")
+    left_60()
+    time.sleep(2)
+    print("right 60")
+    right_60()
+    time.sleep(2)
+    print("zeroing")
     set_zero()
-    time.sleep(1)
-    right_60()
-    time.sleep(1)
-    right_60()
-    time.sleep(1)
-    right_60()
+
+    print("stopped")
+    servo.stop()
     
-
-
-
-
-  
-
+if __name__ == '__main__':
+    main()
 

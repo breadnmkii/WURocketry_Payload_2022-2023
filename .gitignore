@@ -5,3 +5,4 @@ __pycache__
 image_results
 *.txt
 .vscode
+nohup.out

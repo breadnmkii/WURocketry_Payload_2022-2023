@@ -4,13 +4,21 @@ MARGIN = 2
 current = 0
 ## Init servo components
 # servo_config takes two params, GPIO for (r,w) respectively
+"""
+SERVO
+21 - p1 write purple	(servo)
+20 - p1 read gray
+19 - p0 write white	(cam)
+16 - p0 read black
+"""
 
 # write/read parameters
-servo, reader = config.servo_config(23,24)
-lift_servo, lift_reader = config.servo_config(13,16)
+servo, reader = config.servo_config(19,16)              # cam servo
+lift_servo, lift_reader = config.servo_config(21,20)    # lift servo
 
 def extend():
     lift_servo.set_speed(0.4)
+    timeout = 50 # TIMEOUT * 0.1 s
     
     while(True):
         postion1 = get_angpos(lift_reader)
@@ -22,10 +30,13 @@ def extend():
         if(abs(postion1-postion2) < 5):
             print("caught!")
             break
+        elif (timeout <= 0):
+            print("timeout!")
+            break
+        timeout -=1
 
     lift_servo.stop()
     time.sleep(1)
-    print("Stalled!")
 
 
 # Calculate angular position (degrees)
@@ -70,12 +81,6 @@ def set_zero():
     set_angpos(0)
     print("Set 360 Position to Zero Sucessfully")
     
-
-
-
-
-
-
     
 def left_60():
     global current
@@ -89,10 +94,6 @@ def left_60():
     set_angpos(moveto_angle)
 
 
-
-
-
-
 def right_60():
     global current
 
@@ -104,9 +105,10 @@ def right_60():
 
 
 def main():
+    print("starting")
+    time.sleep(2)
     left_60()
     right_60()
-
     print("stopped and waiting 2 seconds")
     time.sleep(2)
     servo.stop()

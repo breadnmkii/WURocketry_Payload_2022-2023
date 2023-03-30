@@ -1,11 +1,11 @@
 """
  Pins
-    GPIO 10 - MOSI
-    GPIO 09 - MISO
-    GPIO 11 - SCK
-    GPIO 08 - CS
-    GPIO 25 - RST
-    GPIO 24 - EN
+    PHYS 10 - MOSI
+    PHYS 09 - MISO
+    PHYS 11 - SCK
+    PHYS 08 - CS
+    PHYS 25 - RST
+    PHYS 24 - EN
 
     print(board.MOSI)
     print(board.MISO)
@@ -13,6 +13,14 @@
     print(board.CE0)
     print(board.D25)
     print(board.D24)
+
+  GPIO (not physical pin no)
+   19 - MOSI
+   21 - MISO
+   ce1 - CS
+   22 - EN  # not used?
+   23 - RST
+   11 - SCK
 """
 
 import sys
@@ -79,7 +87,7 @@ def main():
 if __name__ == '__main__':
     # Initialize radio
     spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
-    RST = DigitalInOut(board.D25)
+    RST = DigitalInOut(board.D23)
     CS = DigitalInOut(board.CE1)
 
     # Configure radio frequencies

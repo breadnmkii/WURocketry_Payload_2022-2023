@@ -37,3 +37,4 @@ def config_RFM96w():
 
     except RuntimeError as error:
         print("RFM96w set up is unsuccessful")
+        return False

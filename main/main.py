@@ -3,20 +3,14 @@
 ################################################
 
 ### IMPORTS ###
-# from Avionics import config as avionics_config
-# from Imaging import config as imaging_config
-# from Motive import config as motive_config
-'''
-from Avionics import sensing
+from Avionics import config as avionics_config
+from Imaging import config as imaging_config
+from Motive import config as motive_config
 
+# from Avionics import sensing
+from Control import fsm
 from Motive import camarm
 from Radio import APRS
-
-#from Avionics import sensing
-'''
-from Control import fsm
-#from Motive import camarm
-#from Radio import APRS
 from Radio import telemetry
 
 import time
@@ -46,12 +40,9 @@ APRS_LOG_PATH = "./APRS_log.log"    # APRS Log File Path
 ### PAYLOAD ROUTINE FUNCTION ###
 # Sensing
 def avionicRoutine():
-    # TODO: confirm design decision, add comments
-    #acceleration_accumulator = []
     # initialize values
     has_launched = None # sensing.detectMovement(acc_accumulator) # true means movement detected, false means movement not detected
     is_still = None # sensing.remain_still(acc_accumulator) # true means still, false means not still
-    # initialize values 
     is_upright = None
     heat = None
     bmp_values_status = None # sensing.altitude_status(altitude_accumulator, pressure_accumulator)
@@ -98,100 +89,113 @@ def avionics_landed():
 
 def update_system_flags(is_upright,heat, bmp_values_status, has_launched, is_still, ground_steady):
     if is_upright:
-        #sys_flags[3] = int(is_upright == True) 
         sys_flags.VERTICALITY = int(is_upright == True) 
     if heat:
-        #sys_flags[6]  = int(heat == True) 
         sys_flags.WARN_HEAT = int(heat == True) 
     if bmp_values_status:
-        # sys_flags[1] == 1
         if sys_flags.MOVEMENT == Movement.MOVING and bmp_values_status == 'up':
-            #sys_flags[2] = 0     
             sys_flags.FLIGHT_DIRECTION = Flight_Direction.MOVING_UP
         elif sys_flags.MOVEMENT == Movement.MOVING and bmp_values_status == 'down':
-            #sys_flags[2] = 1
             sys_flags.FLIGHT_DIRECTION = Flight_Direction.MOVING_DOWN
         else:
-            #sys_flags[2] = 2
             sys_flags.FLIGHT_DIRECTION = Flight_Direction.INDETERMINENT
 
     if has_launched and is_still:
         if has_launched and not is_still:
-            #sys_flags[1] = 1
             sys_flags.MOVEMENT = Movement.MOVING
         elif not has_launched and  is_still:
-            #sys_flags[1] = 0
             sys_flags.MOVEMENT = Movement.NOT_MOVING
         else:
-            #sys_flags[1] = 2
             sys_flags.MOVEMENT = Movement.CONFLICTING_DECISION
-            print('ATTENTION: linear acceleration and quarternion info not enough to determine the presence/absence of movement ')
-    # Update sys flags
+            print('NOTICE: sensor uncertain of movement ')
+
     # switch stages
     if (sys_flags.STAGE_INFO == Stage.PRELAUNCH and has_launched and bmp_values_status == 'up'):
-        #stage = 2
         sys_flags.STAGE_INFO = Stage.MIDAIR
+
     if (sys_flags.STAGE_INFO == Stage.MIDAIR and is_still and ground_steady):
-        #stage = 3
         sys_flags.STAGE_INFO = Stage.LANDED
 
 # Deployment
-HALF_SEPARATION_TIME = 10
+SEPARATION_TIME = 7   # Seconds
+RETRACT_TIME = 5
 def deployRoutine(motor, solenoids):
     if (sys_flags.STAGE_INFO == 3):
         if (sys_flags.DEPLOYED == Deployed.NOT_DEPLOYED):
             ##### REALIGN (New phase, need to "pull" nosecone back a bit to release retention)
-
-            motor.throttle = -1
-            time.sleep(0.5)
-            motor.throttle = 0
+            """ DEPRECATED - Racks not connected to nosecone """
+            # motor.throttle = -1
+            # time.sleep(0.5)
+            # motor.throttle = 0
             
             ##### RETENTION RELEASE PHASE
-            while (sys_flags.MOVEMENT == Movement.MOVING): #The soleonid will not retract in if it detects movement
+            #The soleonid will not retract in if it detects movement
+            print("Releasing retention...")
+            while (sys_flags.MOVEMENT == Movement.MOVING): 
+                print("wait stable...")
                 continue
 
             # Retract all solenoids in retention
             for solenoid in solenoids:
                 solenoid.throttle = 1
 
-            while (sys_flags.MOVEMENT == Movement.MOVING): #Wait to transition from retracting retention to separation phase
-                continue
+            print("Released!")
+            time.sleep(0.5)
                 
             ##### SEPARATION PHASE
-            motor.throttle = 1 #Motorhat will separate forward by half once it's not moving
-            time.sleep(HALF_SEPARATION_TIME) 
-            motor.throttle = 0 #Stops separating (1st half)
-
-            while ((sys_flags.VERTICALITY == Verticality.NOT_UPRIGHT) or (sys_flags.MOVEMENT == Movement.MOVING)): #The second part of separation won't happen it the nosecone is not upright or moving
+            # Wait until stable to separate
+            print("Separating bay...")
+            while (sys_flags.MOVEMENT == Movement.MOVING):
+                print("wait stable...")
                 continue
-
-            motor.throttle = 1 #Will perform the second half of separation once it detects no movement or if it is upright
-            time.sleep(HALF_SEPARATION_TIME) 
-            motor.throttle = 0 #Stops separating (2nd half)
+            print(f"Separating for {SEPARATION_TIME}s")
+            motor.throttle = 1 # Motorhat will separate forward once it's not moving
+            time.sleep(SEPARATION_TIME) 
+            motor.throttle = 0 # Stops separating
+            
+            print("Separated!")
+            time.sleep(0.5)
 
             # Release all retracted solenoids
             for solenoid in solenoids:
                 solenoid.throttle = 0
             
+            print(f"Retracting racks for {RETRACT_TIME}")
+            motor.throttle = -1
+            time.sleep(RETRACT_TIME)
+            motor.throttle = 0
+
+            print("Retracted!")
+            time.sleep(0.5)
+            
             sys_flags.SEPARATED = Separated.SEPARATED
+            print("~ System separated ~")
 
             ##### EXTEND CAMERA PHASE
+            print("Extending camarm...")
+            # Wait until stable and upright to deploy camarm
             while((sys_flags.VERTICALITY == Verticality.NOT_UPRIGHT) or (sys_flags.MOVEMENT == Movement.NOT_MOVING)):
+                print("wait stable...")
                 continue
-
+            print("Extending...")
             camarm.extend()
             
+            print("Extended!")
+            time.sleep(0.5)
+            
             sys_flags.DEPLOYED = Deployed.DEPLOYED
+            
+            print("~ System deployed ~")
 
 # Telemetry
 def telemetryRoutine():
-    # basic data we send back to base station
     current_time = datetime.datetime.now()
-    sys_flags_str = ' | '.join(str(sys_flags.get_int()))
+    sys_flags_pkt = sys_flags.get_bitmask_str()
 
-    packet = f'{current_time}: {sys_flags_str}'
+    packet = f'{current_time} {sys_flags_pkt}'
     print(packet)
-    telemetry.transmitData(packet)
+    # telemetry.transmitData(packet)
+
 
 # APRS
 def updateRAFCO():
@@ -306,7 +310,7 @@ def main():
             state, currRAFCO = controlRoutine(state, currRAFCO)
         
 
-        # TRANSITION ONESHOTS
+        ### STAGE TRANSITION ONESHOT EXECUTIONS ###
         if (sys_flags.STAGE_INFO == Stage.MIDAIR and midair_oneshot_transition == False):
             midair_oneshot_transition = True
             # do single transition to midair stuff here
@@ -317,7 +321,52 @@ def main():
             aprs_subprocess = APRS.begin_APRS_recieve() # Begin listening for APRS commands
 
 def test_main():
-    currentState = fsm.State.WAIT
+
+    ### Delta timing frequencies
+    # AVIONIC
+    AVIONIC_FREQ = 100 # bno frequncy per second -- check documentations
+
+    # TELEMETRY
+    TELEMETRY_FREQ = 1
+
+    # CONTROL
+    CONTROL_FREQ = 2
+
+    """ Main delta timing loop (HIGHEST ROUTINE PRIORITY FROM TOP) """
+
+    time_last_sample = time.time()   # Reset delta timing
+    while(True):
+        # TELEMETRY ROUTINE
+        time_this_sample = time.time()
+        if(time_this_sample - time_last_sample >= TELEMETRY_FREQ):
+            time_last_sample = time_this_sample
+            telemetryRoutine()
+
+
+    # deployRoutine
+
+    # currentState = fsm.State.WAIT
+    # currRAFCO_S_idx = 0
+    # currRAFCO_idx = 0
+
+    # sys_flags.STAGE_INFO = Stage.LANDED # Override to mission execution phase (to enable FSM routine)
+    # # APRS.begin_APRS_recieve(APRS_LOG_PATH)   # Begin APRS receiving process at specified file (comment out if APRS_log exists in main directory)
+
+    # while (True):
+    #     fsmUpdate = controlRoutine(currentState, currRAFCO_S_idx, currRAFCO_idx)
+    #     currentState = fsmUpdate[0]
+    #     currRAFCO_S_idx = fsmUpdate[1]
+    #     currRAFCO_idx = fsmUpdate[2]
+    #     avionicRoutine()
+
+
+if __name__ == '__main__':
+    test_main()
+
+
+
+""" APRS TEST CODE
+currentState = fsm.State.WAIT
     currRAFCO_S_idx = 0
     currRAFCO_idx = 0
 
@@ -325,16 +374,9 @@ def test_main():
     # APRS.begin_APRS_recieve(APRS_LOG_PATH)   # Begin APRS receiving process at specified file (comment out if APRS_log exists in main directory)
 
     while (True):
-        '''
-        
         fsmUpdate = controlRoutine(currentState, currRAFCO_S_idx, currRAFCO_idx)
         currentState = fsmUpdate[0]
         currRAFCO_S_idx = fsmUpdate[1]
         currRAFCO_idx = fsmUpdate[2]
         avionicRoutine()
-        '''
-        telemetryRoutine()
-
-
-if __name__ == '__main__':
-    test_main()
+"""

@@ -76,3 +76,10 @@ class System_Flags():
     def get_int(self):
         flags = (int(self.STAGE_INFO), int(self.MOVEMENT), int(self.FLIGHT_DIRECTION), int(self.VERTICALITY), int(self.SEPARATED), int(self.DEPLOYED), int(self.WARN_HEAT), int(self.WARN_CAMERA), int(self.WARN_AVIONICS), int(self.WARN_MOTIVE))
         return flags
+
+    def get_bitmask_str(self):
+        flags = self.get_int()
+        bitmask_str = ""
+        for flag in flags:
+            bitmask_str += str(flag)
+        return bitmask_str
