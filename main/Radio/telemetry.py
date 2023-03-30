@@ -21,7 +21,6 @@ if (RFM96W == False):
 def transmitData(str):
     if (RFM96W != False and RFM96W != None):
         tx_packet =  bytes(f'{str}\r\n', 'utf-8')
-        print(tx_packet)
         RFM96W.send(tx_packet)
         print(f'Sent -> {tx_packet}')
     else:

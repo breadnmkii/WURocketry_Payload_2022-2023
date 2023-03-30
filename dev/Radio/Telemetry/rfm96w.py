@@ -73,11 +73,12 @@ if __name__ == '__main__':
     # Initialize radio
     spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
     RST = DigitalInOut(board.D23)
-    CS = DigitalInOut(board.CE0)
+    CS = DigitalInOut(board.CE1)
 
     # Configure radio frequencies
-    rf_channel = 7
-    rf_freq = 434.550 + rf_channel * 0.1
+    rf_channel = 5
+    rf_freq = 437.550 + rf_channel * 0.1
+    print(f'listening on: {rf_freq}')
 
     # Attempt setting up RFM9x Module
     try:

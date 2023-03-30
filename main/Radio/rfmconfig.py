@@ -20,13 +20,14 @@ import adafruit_rfm9x
 """
 
 # Configure RFM9x LoRa Radio
-CS = DigitalInOut(board.CE0)
+CS = DigitalInOut(board.CE1)
 RESET = DigitalInOut(board.D23)
 spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
 
 # Configure radio frequencies
-rf_channel = 7
-rf_freq = 434.550 + rf_channel * 0.1
+rf_channel = 5
+rf_freq = 437.550 + rf_channel * 0.1
+print(f'RFM_CONF: listening on: {rf_freq}')
 
 def config_RFM96w():
     try:

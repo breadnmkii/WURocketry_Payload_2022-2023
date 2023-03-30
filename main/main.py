@@ -193,8 +193,7 @@ def telemetryRoutine():
     sys_flags_pkt = sys_flags.get_bitmask_str()
 
     packet = f'{current_time} {sys_flags_pkt}'
-    print(packet)
-    # telemetry.transmitData(packet)
+    telemetry.transmitData(packet)
 
 
 # APRS
