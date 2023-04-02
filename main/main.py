@@ -16,6 +16,8 @@ from Radio import telemetry
 import time
 import datetime
 from enums import *
+import signal
+import sys
 
 
 
@@ -120,6 +122,16 @@ def update_system_flags(is_upright, heat, bmp_values_status, has_launched, is_st
 # Deployment
 SEPARATION_TIME = 75   # Seconds
 RETRACT_TIME = 50
+motor, solenoids = motive_config.electromotives_config()
+
+### FAILSAFE ABORT ###
+# SIGINT abort
+def abort_motives(sig, frame):
+    motor.throttle = 0
+    solenoids.throttle = 0
+    sys.exit(0)
+signal.signal(signal.SIGINT, abort_motives)
+
 def deployRoutine(motor, solenoids):
     if (sys_flags.STAGE_INFO == Stage.LANDED):
         if (sys_flags.DEPLOYED == Deployed.NOT_DEPLOYED):
@@ -137,8 +149,7 @@ def deployRoutine(motor, solenoids):
                 continue
 
             # Retract all solenoids in retention
-            for solenoid in solenoids:
-                solenoid.throttle = 1
+            solenoids.throttle = 1
 
             print("Released!")
             time.sleep(3)
@@ -158,8 +169,7 @@ def deployRoutine(motor, solenoids):
             time.sleep(0.5)
 
             # Release all retracted solenoids
-            for solenoid in solenoids:
-                solenoid.throttle = 0
+            solenoids.throttle = 0
             
             print(f"Retracting racks for {RETRACT_TIME}")
             motor.throttle = -1
@@ -313,13 +323,15 @@ def main():
 
         ### STAGE TRANSITION ONESHOT EXECUTIONS ###
         if (sys_flags.STAGE_INFO == Stage.MIDAIR and midair_oneshot_transition == False):
+            print("Stage 2 Entered!")
             midair_oneshot_transition = True
             # do single transition to midair stuff here
 
         if (sys_flags.STAGE_INFO == Stage.LANDED and landed_oneshot_transition == False):
+            print("Stage 3 Entered!")
             landed_oneshot_transition = True
             # deployRoutine(motor, solenoids) # Deploy imaging system
-            aprs_subprocess = APRS.begin_APRS_recieve() # Begin listening for APRS commands
+            aprs_subprocess = APRS.begin_APRS_recieve(APRS_LOG_PATH) # Begin listening for APRS commands
 
 def test_main():
     # currentState = fsm.State.WAIT
@@ -358,8 +370,8 @@ def test_main():
 
     ## Deploy test
     sys_flags.STAGE_INFO = Stage.LANDED
-    motor, solenoids = motive_config.electromotives_config()
     deployRoutine(motor, solenoids)
+
 
     # currentState = fsm.State.WAIT
     # currRAFCO_S_idx = 0

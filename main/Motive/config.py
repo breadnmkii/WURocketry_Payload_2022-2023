@@ -23,10 +23,10 @@ def servo_config(write_gpio, read_gpio):
 
     return servo, reader
 
-# motor3 = separation motor, motor1 = solenoid1, motor2 = solenoid2
+# motor2 = separation motor, motor1 = solenoids
 def electromotives_config():
     hat = MotorKit(i2c = board.I2C())
-    motor = hat.motor3
-    solenoids = (hat.motor1, hat.motor2)
+    motor = hat.motor2
+    solenoids = hat.motor1
 
     return (motor, solenoids)

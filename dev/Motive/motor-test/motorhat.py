@@ -24,19 +24,24 @@ MOTOR = hat.motor2
 
 # SIGINT abort
 def abort_motor(sig, frame):
-    MOTOR.throttle = 0
+    hat.motor1.throttle = 0
+    hat.motor2.throttle = 0
+    hat.motor3.throttle = 0
     sys.exit(0)
 signal.signal(signal.SIGINT, abort_motor)
 
 if __name__ == '__main__':
-    print("Starting...")
-    # time.sleep(1)
+    hat.motor1.throttle = 0
+    hat.motor2.throttle = 0
 
-    print("Running")
-    MOTOR.throttle = -1 #Forward
+    # print("Starting...")
+    # # time.sleep(1)
 
-    time.sleep(TIME_SEPARATE)
+    # print("Running")
+    # MOTOR.throttle = -1 #Forward
 
-    print("Done!")
-    MOTOR.throttle = 0
+    # time.sleep(TIME_SEPARATE)
+
+    # print("Done!")
+    # MOTOR.throttle = 0
 

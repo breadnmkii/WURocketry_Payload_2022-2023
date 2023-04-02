@@ -2,6 +2,7 @@ import subprocess
 import time
 
 def begin_APRS_recieve():
+    print("Running")
     with open("data", "w") as file:
         process = subprocess.Popen(["rtl_fm", "-f", "144.390M", "-s", "22050"], 
                                    stdout=subprocess.PIPE, 
@@ -11,3 +12,6 @@ def begin_APRS_recieve():
                          stdout=file, 
                          stderr=subprocess.PIPE)
     return process
+
+if __name__ == '__main__':
+    begin_APRS_recieve()
