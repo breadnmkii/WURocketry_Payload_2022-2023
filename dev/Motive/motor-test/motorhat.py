@@ -20,7 +20,7 @@ TIME_SEPARATE = 60 # in seconds
 TIME_RETRACT = 30
 
 hat = MotorKit(i2c = board.I2C())
-MOTOR = hat.motor1
+MOTOR = hat.motor2
 
 # SIGINT abort
 def abort_motor(sig, frame):
@@ -33,7 +33,7 @@ if __name__ == '__main__':
     # time.sleep(1)
 
     print("Running")
-    MOTOR.throttle = -0.5 #Forward
+    MOTOR.throttle = -1 #Forward
 
     time.sleep(TIME_SEPARATE)
 

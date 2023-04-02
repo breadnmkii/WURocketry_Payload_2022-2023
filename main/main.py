@@ -3,11 +3,11 @@
 ################################################
 
 ### IMPORTS ###
-from Avionics import config as avionics_config
+# from Avionics import config as avionics_config
 # from Imaging import config as imaging_config  # DEPRECATED
 from Motive import config as motive_config
 
-from Avionics import sensing
+# from Avionics import sensing
 from Control import fsm
 from Motive import camarm
 from Radio import APRS
@@ -35,7 +35,7 @@ at index 8: 1 means BNO or BMP initialization fails -- hardware fault
 sys_flags = System_Flags(Stage.PRELAUNCH, Movement.NOT_MOVING, Flight_Direction.INDETERMINENT, Verticality.NOT_UPRIGHT, Separated.NOT_SEPARATED, Deployed.NOT_DEPLOYED, Warn_Heat.NOMINAL, Warn_Camera.NOMINAL, Warn_Avionics.NOMINAL, Warn_Motive.NOMINAL)
 
 
-APRS_LOG_PATH = "./APRS_log.log"    # APRS Log File Path
+APRS_LOG_PATH = "./main/APRS_log.log"    # APRS Log File Path
 
 ### PAYLOAD ROUTINE FUNCTION ###
 # Sensing
@@ -118,8 +118,8 @@ def update_system_flags(is_upright, heat, bmp_values_status, has_launched, is_st
         sys_flags.STAGE_INFO = Stage.LANDED
 
 # Deployment
-SEPARATION_TIME = 7   # Seconds
-RETRACT_TIME = 5
+SEPARATION_TIME = 75   # Seconds
+RETRACT_TIME = 50
 def deployRoutine(motor, solenoids):
     if (sys_flags.STAGE_INFO == Stage.LANDED):
         if (sys_flags.DEPLOYED == Deployed.NOT_DEPLOYED):
@@ -141,7 +141,7 @@ def deployRoutine(motor, solenoids):
                 solenoid.throttle = 1
 
             print("Released!")
-            time.sleep(0.5)
+            time.sleep(3)
                 
             ##### SEPARATION PHASE
             # Wait until stable to separate
@@ -318,20 +318,33 @@ def main():
 
         if (sys_flags.STAGE_INFO == Stage.LANDED and landed_oneshot_transition == False):
             landed_oneshot_transition = True
-            deployRoutine(motor, solenoids) # Deploy imaging system
+            # deployRoutine(motor, solenoids) # Deploy imaging system
             aprs_subprocess = APRS.begin_APRS_recieve() # Begin listening for APRS commands
 
 def test_main():
+    # currentState = fsm.State.WAIT
+    # currRAFCO_S_idx = 0
+    # currRAFCO_idx = 0
 
-    ### Delta timing frequencies
-    # AVIONIC
-    AVIONIC_FREQ = 100 # bno frequncy per second -- check documentations
+    # sys_flags.STAGE_INFO = Stage.LANDED # Override to mission execution phase (to enable FSM routine)
+    # # APRS.begin_APRS_recieve(APRS_LOG_PATH)   # Begin APRS receiving process at specified file (comment out if APRS_log exists in main directory)
 
-    # TELEMETRY
-    TELEMETRY_FREQ = 1
+    # while (True):
+    #     fsmUpdate = controlRoutine(currentState, currRAFCO_S_idx, currRAFCO_idx)
+    #     currentState = fsmUpdate[0]
+    #     currRAFCO_S_idx = fsmUpdate[1]
+    #     currRAFCO_idx = fsmUpdate[2]
+    #     # avionicRoutine()
+    
+    # ### Delta timing frequencies
+    # # AVIONIC
+    # AVIONIC_FREQ = 100 # bno frequncy per second -- check documentations
 
-    # CONTROL
-    CONTROL_FREQ = 2
+    # # TELEMETRY
+    # TELEMETRY_FREQ = 1
+
+    # # CONTROL
+    # CONTROL_FREQ = 2
 
     """ Main delta timing loop (HIGHEST ROUTINE PRIORITY FROM TOP) """
 
@@ -343,6 +356,7 @@ def test_main():
     #         time_last_sample = time_this_sample
     #         telemetryRoutine()
 
+    ## Deploy test
     sys_flags.STAGE_INFO = Stage.LANDED
     motor, solenoids = motive_config.electromotives_config()
     deployRoutine(motor, solenoids)
@@ -363,7 +377,7 @@ def test_main():
 
 
 if __name__ == '__main__':
-    main()
+    test_main()
 
 
 
