@@ -11,8 +11,9 @@ import glob
 import os
 
 print("Initializing camera in imaging.py")
-camera = config.init_camera()
+# camera = config.init_camera()
 # PiCamera hardware fault
+"""
 if (camera == None):
     print("Camera could not be initialized!")
 
@@ -149,3 +150,5 @@ if __name__ == '__main__':
 # add timestamp: format with date/time
 # save to disk, rename with timestamp...
 # C3 ~ H8
+
+"""

@@ -262,7 +262,7 @@ def detectMovement(acc_accumulator):
 
     x = [item[0] for item in acc_accumulator]
     y = [item[1] for item in acc_accumulator]
-    z = [item[1] for item in acc_accumulator]
+    z = [item[2] for item in acc_accumulator]
 
     if(average_window(x, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY 
        or average_window(y, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY 
@@ -281,7 +281,7 @@ def detectLaunch(acc_accumulator):
 
     x = [item[0] for item in acc_accumulator]
     y = [item[1] for item in acc_accumulator]
-    z = [item[1] for item in acc_accumulator]
+    z = [item[2] for item in acc_accumulator]
 
     if(average_window(x, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY + MOTION_LAUNCH_SENSITIVITY 
        or average_window(y, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY + MOTION_LAUNCH_SENSITIVITY
@@ -300,8 +300,8 @@ testing status:
 def vertical(euler_accumulator):
     global euler_orient_pointer
     is_vertical = False
-    rolling_window = 10
-    threshold = 0.2 # NEED TESTING -- tested 0.15 on 3/6 by itself -- tested again 3/24 on motor hat not stable enough -> changed to 0.2
+    rolling_window = 15
+    threshold = 0.4 # NEED TESTING -- tested 0.15 on 3/6 by itself -- tested again 3/24 on motor hat not stable enough -> changed to 0.2
     rolls = [item[0] for item in euler_accumulator]
     pitches = [item[1] for item in euler_accumulator]
     pitch= abs(average_window(pitches, rolling_window, euler_orient_pointer))
@@ -312,7 +312,6 @@ def vertical(euler_accumulator):
 
     filtered_pitches = [abs(x) for x in pitches if x is not None]
     averaged_pitch = sum(filtered_pitches) / len(filtered_pitches)
-
 
     #print('inspecting rolls:', rolls)
     if (averaged_roll < threshold and averaged_pitch < threshold):
