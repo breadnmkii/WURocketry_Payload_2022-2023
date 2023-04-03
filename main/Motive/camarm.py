@@ -107,13 +107,8 @@ def right_60():
 def main():
     print("starting")
     time.sleep(2)
-    left_60()
-    right_60()
-    print("stopped and waiting 2 seconds")
-    time.sleep(2)
-    servo.stop()
-    print("extend!")
-    extend()
+    set_zero()
+    
     
 if __name__ == '__main__':
     main()

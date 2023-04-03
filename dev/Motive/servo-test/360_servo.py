@@ -18,7 +18,7 @@ lift_servo, lift_reader = config.servo_config(21,20)    # lift servo
 
 def extend():
     lift_servo.set_speed(0.4)
-    timeout = 45 # TIMEOUT * 0.1 s
+    timeout = 30 # TIMEOUT * 0.1 s
     
     while(True):
         postion1 = get_angpos(lift_reader)
@@ -107,18 +107,17 @@ def right_60():
 def main():
     print("starting...")
 
-    time.sleep(2)
-    print("extending lift")
-    extend()
-    # print("left 60")
-    # left_60()
-    # time.sleep(2)
-    # print("right 60")
-    # right_60()
-    # time.sleep(2)
+    time.sleep(1)
+
     print("zeroing")
     set_zero()
-
+    time.sleep(1)
+    # left_60()
+    # time.sleep(1)
+    # set_zero()
+    # time.sleep(1)
+    # right_60()
+    # time.sleep(1)
     print("stopped")
     servo.stop()
     

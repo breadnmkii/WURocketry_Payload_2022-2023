@@ -143,7 +143,7 @@ def deployRoutine(motor, solenoids):
             
             ##### RETENTION RELEASE PHASE
             #The soleonid will not retract in if it detects movement
-            print("Releasing retention...")
+            print("Releasing solenoids...")
             while (sys_flags.MOVEMENT == Movement.MOVING): 
                 print("wait stable...")
                 continue
@@ -151,8 +151,11 @@ def deployRoutine(motor, solenoids):
             # Retract all solenoids in retention
             solenoids.throttle = 1
 
-            print("Released!")
+            print("Released solenoids!")
             time.sleep(3)
+
+            # Release all solenoids in retraction
+            solenoids.throttle = 0
                 
             ##### SEPARATION PHASE
             # Wait until stable to separate
@@ -167,9 +170,6 @@ def deployRoutine(motor, solenoids):
             
             print("Separated!")
             time.sleep(0.5)
-
-            # Release all retracted solenoids
-            solenoids.throttle = 0
             
             print(f"Retracting racks for {RETRACT_TIME}")
             motor.throttle = -1
