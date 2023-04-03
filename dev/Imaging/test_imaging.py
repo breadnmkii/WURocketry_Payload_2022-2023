@@ -6,7 +6,7 @@ from datetime import datetime
 from pytz import timezone
 #from PIL import Image
 from datetime import date
-from . import config
+import config
 import glob
 import os
 

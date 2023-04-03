@@ -7,7 +7,7 @@
 # from Imaging import config as imaging_config  # DEPRECATED
 from Motive import config as motive_config
 
-# from Avionics import sensing
+from Avionics import sensing
 from Control import fsm
 from Motive import camarm
 from Radio import APRS
@@ -334,58 +334,8 @@ def main():
             aprs_subprocess = APRS.begin_APRS_recieve(APRS_LOG_PATH) # Begin listening for APRS commands
 
 def test_main():
-    # currentState = fsm.State.WAIT
-    # currRAFCO_S_idx = 0
-    # currRAFCO_idx = 0
-
-    # sys_flags.STAGE_INFO = Stage.LANDED # Override to mission execution phase (to enable FSM routine)
-    # # APRS.begin_APRS_recieve(APRS_LOG_PATH)   # Begin APRS receiving process at specified file (comment out if APRS_log exists in main directory)
-
-    # while (True):
-    #     fsmUpdate = controlRoutine(currentState, currRAFCO_S_idx, currRAFCO_idx)
-    #     currentState = fsmUpdate[0]
-    #     currRAFCO_S_idx = fsmUpdate[1]
-    #     currRAFCO_idx = fsmUpdate[2]
-    #     # avionicRoutine()
-    
-    # ### Delta timing frequencies
-    # # AVIONIC
-    # AVIONIC_FREQ = 100 # bno frequncy per second -- check documentations
-
-    # # TELEMETRY
-    # TELEMETRY_FREQ = 1
-
-    # # CONTROL
-    # CONTROL_FREQ = 2
-
-    """ Main delta timing loop (HIGHEST ROUTINE PRIORITY FROM TOP) """
-
-    # time_last_sample = time.time()   # Reset delta timing
-    # while(True):
-    #     # TELEMETRY ROUTINE
-    #     time_this_sample = time.time()
-    #     if(time_this_sample - time_last_sample >= TELEMETRY_FREQ):
-    #         time_last_sample = time_this_sample
-    #         telemetryRoutine()
-
-    ## Deploy test
-    sys_flags.STAGE_INFO = Stage.LANDED
-    deployRoutine(motor, solenoids)
-
-
-    # currentState = fsm.State.WAIT
-    # currRAFCO_S_idx = 0
-    # currRAFCO_idx = 0
-
-    # sys_flags.STAGE_INFO = Stage.LANDED # Override to mission execution phase (to enable FSM routine)
-    # # APRS.begin_APRS_recieve(APRS_LOG_PATH)   # Begin APRS receiving process at specified file (comment out if APRS_log exists in main directory)
-
-    # while (True):
-    #     fsmUpdate = controlRoutine(currentState, currRAFCO_S_idx, currRAFCO_idx)
-    #     currentState = fsmUpdate[0]
-    #     currRAFCO_S_idx = fsmUpdate[1]
-    #     currRAFCO_idx = fsmUpdate[2]
-    #     avionicRoutine()
+   sys_flags.STAGE_INFO = Stage.LANDED
+   telemetryRoutine()
 
 
 if __name__ == '__main__':
