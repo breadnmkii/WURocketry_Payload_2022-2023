@@ -11,9 +11,9 @@ import glob
 import os
 
 print("Initializing camera in imaging.py")
-# camera = config.init_camera()
+camera = config.init_camera()
 # PiCamera hardware fault
-"""
+
 if (camera == None):
     print("Camera could not be initialized!")
 
@@ -37,7 +37,7 @@ currently the method also outputs a jpeg of rotated picture from the most recent
 return camera with 180 degree rotation
 '''
 def rotate():
-    camera.rotation = 180
+    camera.rotation = 270
     list_of_files = glob.glob('/home/pi/WURocketry_Payload_2022-2023/main/Imaging/image_results/*.jpeg') # * means all if need specific format then *.csv
     if not list_of_files:
         return camera
@@ -73,7 +73,7 @@ def remove_filter():
     camera.image_effect = 'none'
     # reset color space
     camera.color_effects = None
-    camera.rotation=0
+    camera.rotation=90
 
     list_of_files = glob.glob('/home/pi/WURocketry_Payload_2022-2023/main/Imaging/image_results/*.jpg') # * means all if need specific format then *.csv
     if not list_of_files:
@@ -111,6 +111,7 @@ def rgb2bgr():
 # move picture taken to image_results
 # C3: take picture
 def take_picture():
+    camera.rotation = 90
     # Get the timezone object for Chicago
     tz_cst = timezone('America/Chicago') 
     # Get the current time in CST
@@ -150,5 +151,3 @@ if __name__ == '__main__':
 # add timestamp: format with date/time
 # save to disk, rename with timestamp...
 # C3 ~ H8
-
-"""
