@@ -87,7 +87,10 @@ def read_bno():
     # if bno_pointer == BNO_BUFFER_LEN-1:
     if linear_acc_pointer == BNO_BUFFER_LEN-1:
         with open('accelerations.txt', 'a') as the_file:
-            the_file.write(str(acceleration_buffer))
+            #the_file.write(str(acceleration_buffer))
+            for sublist in euler_buffer:
+                the_file.write(' '.join(str(x) for x in sublist) + '\n')
+            
     if euler_orient_pointer == BNO_BUFFER_LEN-1:
         with open('eulers.txt', 'a') as the_file:
             '''
@@ -96,7 +99,9 @@ def read_bno():
             data_f.write(f"{acc[0]}\t{acc[1]}\t{acc[2]}\t")
             data_f.write(f"{qua[0]}\t{qua[1]}\t{qua[2]}\t{qua[3]}\n")
             '''
-            the_file.write(str(euler_buffer))
+            #the_file.write(str(euler_buffer))
+            for sublist in euler_buffer:
+                the_file.write(' '.join(str(x) for x in sublist) + '\n')
     
     #bno_pointer = bno_pointer+1
         
@@ -132,7 +137,9 @@ def read_euler_buffer():
             data_f.write(f"{acc[0]}\t{acc[1]}\t{acc[2]}\t")
             data_f.write(f"{qua[0]}\t{qua[1]}\t{qua[2]}\t{qua[3]}\n")
             '''
-            the_file.write(str(euler_buffer))
+            #the_file.write(str(euler_buffer))
+            for sublist in euler_buffer:
+                the_file.write(' '.join(str(x) for x in sublist) + '\n')
     
     return euler_buffer
 
@@ -152,7 +159,9 @@ def read_acceleration_buffer():
     # if bno_pointer == BNO_BUFFER_LEN-1:
     if linear_acc_pointer == BNO_BUFFER_LEN-1:
         with open('accelerations.txt', 'a') as the_file:
-            the_file.write(str(acceleration_buffer))
+            #the_file.write(str(acceleration_buffer))
+            for sublist in acceleration_buffer:
+                the_file.write(' '.join(str(x) for x in sublist) + '\n')
     
     return acceleration_buffer
 
@@ -182,9 +191,13 @@ def read_bmp():
     
     if bmp_pointer == BMP_BUFFER_LEN-1:
         with open('altitudes.txt', 'a') as the_file:
-            the_file.write(str(altitude_buffer))
+            #the_file.write(str(altitude_buffer))
+            for sublist in altitude_buffer:
+                the_file.write(' '.join(str(x) for x in sublist) + '\n')
         with open('pressures.txt', 'a') as the_file:
-             the_file.write(str(pressure_buffer))
+            #the_file.write(str(pressure_buffer))
+            for sublist in pressure_buffer:
+                the_file.write(' '.join(str(x) for x in sublist) + '\n')
 
     return (temperature_buffer, pressure_buffer, altitude_buffer)
 
