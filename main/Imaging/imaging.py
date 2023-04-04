@@ -125,6 +125,7 @@ def take_picture():
     #print("Today's date:", today_date, type(today_date))
     annotation = str(today_date)+'_'+local_time
     print("full annotation: ", annotation)
+
     camera.annotate_text = annotation
     sleep(5)
     #store image

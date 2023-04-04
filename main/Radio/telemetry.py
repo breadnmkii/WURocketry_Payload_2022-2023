@@ -6,10 +6,9 @@ import busio
 import board
 from . import rfmconfig
 from digitalio import DigitalInOut
-# from .. import enums # this would throw import errors
+from main import enums  # this would throw import errors
 # Import the RFM9x radio module.
 import adafruit_rfm9x
-
 
 # Global RFM96w object to send/receieve data
 RFM96W = rfmconfig.config_RFM96w()
@@ -40,3 +39,11 @@ def recieveData():
         # below as integer, above try print as string
         f.write(f'{receive_time} <- {rx_data}\n')
         print(f'{receive_time} <- {rx_data}')  
+
+'''
+def decode_enums(raw):
+    strings = ""
+    raw[]
+    return strings
+'''
+
