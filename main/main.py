@@ -70,6 +70,7 @@ def avionicRoutine():
 def avionics_prelaunch():
     acceleration_buffer = sensing.read_acceleration_buffer()
     has_launched = sensing.detectLaunch(acceleration_buffer)
+    print('is it launched yet?', has_launched)
     # is_still = sensing.remain_still(acceleration_buffer)
     return (has_launched)
 
@@ -337,7 +338,8 @@ def main():
 def test_main():
    sys_flags.STAGE_INFO = Stage.PRELAUNCH
    #telemetryRoutine()
-   avionics_landed()
+   while (True):
+       avionicRoutine()
 
 
 if __name__ == '__main__':
