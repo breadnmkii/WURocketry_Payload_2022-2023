@@ -69,6 +69,9 @@ def avionicRoutine():
 
 def avionics_prelaunch():
     acceleration_buffer = sensing.read_acceleration_buffer()
+    print('in avionics_pelaunch')
+    print(acceleration_buffer)
+    print('see sbove')
     has_launched = sensing.detectLaunch(acceleration_buffer)
     print('is it launched yet?', has_launched)
     # is_still = sensing.remain_still(acceleration_buffer)
