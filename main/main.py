@@ -5,13 +5,14 @@
 ### IMPORTS ###
 # from Avionics import config as avionics_config
 # from Imaging import config as imaging_config  # DEPRECATED
+
 #from Motive import config as motive_config
 
 from Avionics import sensing
 #from Control import fsm
 #from Motive import camarm
 #from Radio import APRS
-from Radio import telemetry
+# from Radio import telemetry
 
 import time
 import datetime
@@ -122,7 +123,7 @@ def update_system_flags(is_upright, heat, bmp_values_status, has_launched, is_st
 # Deployment
 SEPARATION_TIME = 75   # Seconds
 RETRACT_TIME = 50
-motor, solenoids = motive_config.electromotives_config()
+#motor, solenoids = motive_config.electromotives_config()
 
 ### FAILSAFE ABORT ###
 # SIGINT abort
