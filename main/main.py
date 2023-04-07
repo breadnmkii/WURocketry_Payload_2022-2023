@@ -5,12 +5,12 @@
 ### IMPORTS ###
 # from Avionics import config as avionics_config
 # from Imaging import config as imaging_config  # DEPRECATED
-from Motive import config as motive_config
+#from Motive import config as motive_config
 
 from Avionics import sensing
-from Control import fsm
-from Motive import camarm
-from Radio import APRS
+#from Control import fsm
+#from Motive import camarm
+#from Radio import APRS
 from Radio import telemetry
 
 import time
