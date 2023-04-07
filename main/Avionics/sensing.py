@@ -189,7 +189,7 @@ def average_window(list, window, pointer):
     window_list = [abs(x) for x in window_list if x is not None]
     if len(window_list) == 0:
         return 0
-
+    print('normal_return')
     return sum(window_list) / len(window_list)
     
 '''
