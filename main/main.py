@@ -63,7 +63,7 @@ def avionicRoutine():
         (heat, is_still, is_upright) = avionics_landed()
 
     # update system flags -- specifics (related to avionics)
-    print("update sysflags")
+    #print("update sysflags")
     print(is_upright, heat, bmp_values_status, has_launched, is_still, ground_steady)
     update_system_flags(is_upright, heat, bmp_values_status, has_launched, is_still, ground_steady)
 

@@ -282,13 +282,16 @@ def detectLaunch(acc_accumulator):
     x = [item[0] for item in acc_accumulator]
     y = [item[1] for item in acc_accumulator]
     z = [item[2] for item in acc_accumulator]
-
-    if(average_window(x, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY + MOTION_LAUNCH_SENSITIVITY 
-       or average_window(y, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY + MOTION_LAUNCH_SENSITIVITY
-       or average_window(z, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY + MOTION_LAUNCH_SENSITIVITY
+    avg_x = average_window(x, ACC_WINDOW, linear_acc_pointer)
+    avg_y = average_window(y, ACC_WINDOW, linear_acc_pointer)
+    avg_z = average_window(z, ACC_WINDOW, linear_acc_pointer) 
+    if(avg_x > MOTION_SENSITIVITY + MOTION_LAUNCH_SENSITIVITY 
+       or avg_y > MOTION_SENSITIVITY + MOTION_LAUNCH_SENSITIVITY
+       or avg_z > MOTION_SENSITIVITY + MOTION_LAUNCH_SENSITIVITY
        ):
         print("Launch detected!")
         hasLaunched = True
+    print('x:', avg_x, 'y:', avg_y, 'z:', avg_z)
     return hasLaunched
     
     
