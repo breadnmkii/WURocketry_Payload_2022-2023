@@ -334,8 +334,9 @@ def main():
             aprs_subprocess = APRS.begin_APRS_recieve(APRS_LOG_PATH) # Begin listening for APRS commands
 
 def test_main():
-   sys_flags.STAGE_INFO = Stage.LANDED
+   sys_flags.STAGE_INFO = Stage.PRELAUNCH
    telemetryRoutine()
+   avionics_landed()
 
 
 if __name__ == '__main__':

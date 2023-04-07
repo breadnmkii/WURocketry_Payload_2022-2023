@@ -54,8 +54,8 @@ def rotate():
     #rotate image
     angle = 90
     rotated = img.rotate(angle)
-    file_path = latest_file.replace('.jpg','_rotated.jpg')
-    rotated.save(file_path)
+    new_file_path = latest_file.replace('.jpg','_rotated.jpg')
+    rotated.save(new_file_path)
 
     return rotated 
 
