@@ -12,7 +12,7 @@ from Avionics import sensing
 #from Control import fsm
 #from Motive import camarm
 #from Radio import APRS
-from Radio import telemetry
+#from Radio import telemetry
 
 import time
 import datetime
@@ -336,7 +336,7 @@ def main():
 
 def test_main():
    sys_flags.STAGE_INFO = Stage.PRELAUNCH
-   telemetryRoutine()
+   #telemetryRoutine()
    avionics_landed()
 
 
