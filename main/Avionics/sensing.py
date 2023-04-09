@@ -181,9 +181,9 @@ def average_window(list, window, pointer):
     start = (pointer - window + 1) % buf_len
     end = (pointer + 1) % buf_len
     window_list = None
-    print('pointer malfunctions?', pointer)
+    print('pointer, window, buf_len', pointer, window, buf_len)
+    print('start==end?', start, end)
     if start <= end:
-        print('in average_window of sensing.py no window manipulation', start, end)
         window_list = list[start:end]
     else:
         print('in average_window of sensing.py slicing operation', start, end)
