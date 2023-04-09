@@ -185,10 +185,9 @@ def average_window(list, window, pointer):
         window_list = list[start:end]
     else:
         window_list = list[start:] + list[:end]
-
+    print('in average_window of sensing.py, window size 0?', len(window_list))
     window_list = [abs(x) for x in window_list if x is not None]
     if len(window_list) == 0:
-        print('in average_window of sensing.py, window size 0?')
         return 0
     # TODO fix it never hits here.... need more fixing v
     print('normal_return')
