@@ -292,7 +292,6 @@ def detectLaunch(acc_accumulator):
         print("Launch detected!")
         hasLaunched = True
     print('x:', avg_x, 'y:', avg_y, 'z:', avg_z)
-    print(acc_accumulator)
     return hasLaunched
     
     
