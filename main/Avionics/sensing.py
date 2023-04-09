@@ -316,11 +316,12 @@ def vertical(euler_accumulator):
 
     #print('inspecting rolls:', rolls)
     if (averaged_roll < threshold and averaged_pitch < threshold):
-        print("Camera is vertical from horizontal: row pitch", averaged_roll, averaged_pitch)
+        #print("Camera is vertical from horizontal: row pitch", averaged_roll, averaged_pitch)
         
         is_vertical = True
     else:
-        print('not vertical:', averaged_roll, averaged_pitch)
+        #print('not vertical:', averaged_roll, averaged_pitch)
+        pass
     return is_vertical
 
 '''
