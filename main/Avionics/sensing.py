@@ -188,7 +188,9 @@ def average_window(list, window, pointer):
 
     window_list = [abs(x) for x in window_list if x is not None]
     if len(window_list) == 0:
+        print('in average_window of sensing.py, window size 0?')
         return 0
+    # TODO fix it never hits here.... need more fixing v
     print('normal_return')
     return sum(window_list) / len(window_list)
     
