@@ -332,6 +332,7 @@ def altitude_status(altitude_accumulator, pressure_accumulator):
     ascent_altitude =  2 # HOW TO TEST THRESHOLD 
     descent_pressure = 0.5 # HOW TO TEST THRESHOLD from sea level to apogee
     ascent_pressure =  -0.5 # HOW TO TEST THRESHOLD 1000-755 = 245 in range
+    print('ever_ever here? altitude_status of sensing.py')
     if (differential_window(altitude_accumulator, rolling_window) < descent_altitude and differential_window(pressure_accumulator, rolling_window) > descent_pressure):
         print('BMP -- payload is moving up')
         return 'up'
@@ -374,7 +375,7 @@ def ground_level(altitude_accumulator, pressure_accumulator):
 
 def remain_still(acc_accumulator):
     rolling_window = 50
-    acceleration_sensitivity = 0.5 # NEED TESTING 
+    acceleration_sensitivity = 0.2 # NEED TESTING 
     x = [item[0] for item in acc_accumulator]
     y = [item[1] for item in acc_accumulator]
     z = [item[2] for item in acc_accumulator]
@@ -388,8 +389,8 @@ def remain_still(acc_accumulator):
 # for heat warning
 def check_heat(temperature_accumulator):
     rolling_window = 50
-    # if averaged temperature exceeds 83 Celcius, raspberry Pi may die
-    if (average_window(temperature_accumulator, rolling_window, bmp_pointer) > 83):
+    # if averaged temperature exceeds 30 Celcius, -- not seen before in avionics bay's data
+    if (average_window(temperature_accumulator, rolling_window, bmp_pointer) > 30):
         return True
     else:
         return False
