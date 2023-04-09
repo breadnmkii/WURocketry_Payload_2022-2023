@@ -19,6 +19,7 @@ import datetime
 from enums import *
 import signal
 import sys
+import re
 
 
 
@@ -209,15 +210,30 @@ def telemetryRoutine():
     telemetry.transmitData(packet)
 
 # APRS
-def updateRAFCO():
+def updateRAFCO(callsign, APRS_LOG_PATH):
     imageCommands = []
-    with open(APRS_LOG_PATH) as file:
-        data = file.readlines()
-        for line in data:
-            cleanLine = line.strip().replace(",", "").split(" ")
-            cleanLine = list(filter(None, cleanLine))
-            imageCommands.append(cleanLine)
-        file.close()
+    current_command_list = []
+    import re
+    valid_commands = ['A1', 'B2', 'C3', 'D4', 'E5', 'F6', 'G7', 'H8']
+
+    with open(APRS_LOG_PATH, "r") as file:
+        for line in file:
+            line = line.replace(":"," ").strip()
+            if line.startswith(callsign):
+                # Split the line into words and remove the colon ':' if it exists
+                words = re.sub(r'[^\w\s]', ' ', line) #replace all special characters with a space
+                words = re.sub(r'[^A-H1-8\s]', ' ', words) #replace all things that are not A->H and 1->8 with a space
+                words = words.split(" ")
+
+                for word in words:
+                    if word in valid_commands:
+                        current_command_list.append(word)
+
+                # Append current_command_list to imageCommands and reset it for the next line
+                if current_command_list:
+                    imageCommands.append(current_command_list)
+                    current_command_list = []
+                
     return imageCommands
 
 # Control
