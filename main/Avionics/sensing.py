@@ -332,11 +332,14 @@ def altitude_status(altitude_accumulator, pressure_accumulator):
     ascent_altitude =  2 # HOW TO TEST THRESHOLD 
     descent_pressure = 0.5 # HOW TO TEST THRESHOLD from sea level to apogee
     ascent_pressure =  -0.5 # HOW TO TEST THRESHOLD 1000-755 = 245 in range
-    print('ever_ever here? altitude_status of sensing.py')
-    if (differential_window(altitude_accumulator, rolling_window) < descent_altitude and differential_window(pressure_accumulator, rolling_window) > descent_pressure):
+    altitude_differential = differential_window(altitude_accumulator, rolling_window)
+    pressure_differential = differential_window(pressure_accumulator, rolling_window) > descent_pressure
+    print('altitude differential', altitude_differential)
+    print('pressure differential', pressure_differential)
+    if (altitude_differential < descent_altitude and pressure_differential > descent_pressure):
         print('BMP -- payload is moving up')
         return 'up'
-    elif (differential_window(altitude_accumulator, rolling_window) > ascent_altitude and differential_window(pressure_accumulator, rolling_window) < ascent_pressure):
+    elif (altitude_differential > ascent_altitude and pressure_differential):
         print('BMP -- payload is moving down')
         return 'down'
     else:
