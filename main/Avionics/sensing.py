@@ -9,7 +9,7 @@ import math
 Constants
 """
 BMP_BUFFER_LEN = 200     # Length of sensor reading buffer
-BNO_BUFFER_LEN = 50  # length 50 for testing
+BNO_BUFFER_LEN = 200  # length 50 for testing
 
 
 """
