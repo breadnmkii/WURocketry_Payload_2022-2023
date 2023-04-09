@@ -329,6 +329,7 @@ def vertical(euler_accumulator):
 functionality: detect whether the payload is moving up, or moving down or 
 '''
 def altitude_status(altitude_accumulator, pressure_accumulator):
+    global sea_level_altitude
     rolling_window = 50
     descent_altitude = -6/100 # testing 4/9
     ascent_altitude =  6/100 # testing 4/9
@@ -343,6 +344,9 @@ def altitude_status(altitude_accumulator, pressure_accumulator):
     elif (altitude_differential > ascent_altitude and pressure_differential < ascent_pressure):
         print('BMP -- payload is moving down')
         return 'down'
+    elif (abs((average_window(altitude_accumulator, rolling_window)-sea_level_altitude)) > ascent_altitude 
+          and abs((average_window(pressure_accumulator, rolling_window)-bmp.sea_level_pressure)) > ascent_altitude):
+        return 'moving'
     else:
         print('BMP -- indeterminant')  
         return 'not_sure'      

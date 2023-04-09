@@ -80,7 +80,7 @@ def avionics_midair():
     (temperature_buffer, pressure_buffer, altitude_buffer) = sensing.read_bmp()
     bmp_values_status = sensing.altitude_status(altitude_buffer, pressure_buffer)
     heat = sensing.check_heat(temperature_buffer)
-    is_still = not sensing.detectMovement(acceleration_buffer)
+    is_still = not(sensing.detectMovement(acceleration_buffer))
     print('is it still?', is_still)
     ground_steady = sensing.ground_level(altitude_buffer, pressure_buffer)
     return (heat, is_still, ground_steady, bmp_values_status)
@@ -104,6 +104,8 @@ def update_system_flags(is_upright, heat, bmp_values_status, has_launched, is_st
             sys_flags.FLIGHT_DIRECTION = Flight_Direction.MOVING_UP
         elif sys_flags.MOVEMENT == Movement.MOVING and bmp_values_status == 'down':
             sys_flags.FLIGHT_DIRECTION = Flight_Direction.MOVING_DOWN
+        elif sys_flags.MOVEMENT == Movement.MOVING and bmp_values_status == 'moving':
+            sys_flags.FLIGHT_DIRECTION = Flight_Direction.MOVING
         else:
             sys_flags.FLIGHT_DIRECTION = Flight_Direction.INDETERMINENT
 
