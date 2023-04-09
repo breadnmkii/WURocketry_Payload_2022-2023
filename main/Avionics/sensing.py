@@ -330,10 +330,10 @@ functionality: detect whether the payload is moving up, or moving down or
 '''
 def altitude_status(altitude_accumulator, pressure_accumulator):
     rolling_window = 50
-    descent_altitude = -2 # HOW TO TEST THRESHOLD
-    ascent_altitude =  2 # HOW TO TEST THRESHOLD 
-    descent_pressure = 0.5 # HOW TO TEST THRESHOLD from sea level to apogee
-    ascent_pressure =  -0.5 # HOW TO TEST THRESHOLD 1000-755 = 245 in range
+    descent_altitude = -6/100 # testing 4/9
+    ascent_altitude =  6/100 # testing 4/9
+    descent_pressure = 0.006 # testing 4/9
+    ascent_pressure =  -0.006 # HOW TO TEST THRESHOLD 1000-755 = 245 in range
     altitude_differential = differential_window(altitude_accumulator, rolling_window)
     pressure_differential = differential_window(pressure_accumulator, rolling_window)  
     print('altitude differential in cm', altitude_differential*100, 'pressure differential', pressure_differential)
