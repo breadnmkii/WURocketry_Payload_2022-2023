@@ -181,18 +181,13 @@ def average_window(list, window, pointer):
     start = (pointer - window + 1) % buf_len
     end = (pointer + 1) % buf_len
     window_list = None
-    print('pointer, window, buf_len', pointer, window, buf_len)
-    print('start==end?', start, end)
     if start <= end:
         window_list = list[start:end]
     else:
-        print('in average_window of sensing.py slicing operation', start, end)
         window_list = list[start:] + list[:end]
     window_list = [abs(x) for x in window_list if x is not None]
     if len(window_list) == 0:
         return 0
-    # TODO fix it never hits here.... need more fixing v
-    print('normal_return')
     return sum(window_list) / len(window_list)
     
 '''
@@ -212,19 +207,7 @@ def average_sum_abs_range(list, least_recent, most_recent):
 def differential_window(list, window):
     if (not list):
         return 0
-    
-    '''
-    most_recent = bmp_pointer
-    least_recent = bmp_pointer-window
-    diff = []
-    if least_recent < 0:
-        least_recent = BMP_BUFFER_LEN-1-abs(least_recent)
-        diff = [list[i+1] - list[i] for i in range(0, most_recent)]
-        diff.append([list[i+1] - list[i] for i in range(least_recent, BMP_BUFFER_LEN-1)])
-    else:
-        # when least_recent >= 0
-        diff = [list[i+1] - list[i] for i in range(least_recent, most_recent)]
-    '''
+
     buf_len = len(list)
     start = (bmp_pointer - window + 1) % buf_len
     end = (bmp_pointer + 1) % buf_len
