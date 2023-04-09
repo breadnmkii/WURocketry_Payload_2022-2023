@@ -68,17 +68,23 @@ def read_bno():
     # write data to file 
     # if bno_pointer == BNO_BUFFER_LEN-1:
     if linear_acc_pointer == BNO_BUFFER_LEN-1:
-        with open('accelerations.txt', 'a') as the_file:
-            the_file.write(str(acceleration_buffer))
+        with open('Avionics/accelerations.txt', 'a') as the_file:
+            #the_file.write(str(acceleration_buffer))
+            for three_element in acceleration_buffer:
+                line = ' '.join(str(elem) for elem in three_element) + '\n'
+                the_file.write(line)
     if euler_orient_pointer == BNO_BUFFER_LEN-1:
-        with open('eulers.txt', 'a') as the_file:
+        with open('Avionics/eulers.txt', 'a') as the_file:
             '''
             # may need to format txt files
             data_f.write(f"{time_thisSample-time_launchStart}")
             data_f.write(f"{acc[0]}\t{acc[1]}\t{acc[2]}\t")
             data_f.write(f"{qua[0]}\t{qua[1]}\t{qua[2]}\t{qua[3]}\n")
             '''
-            the_file.write(str(euler_buffer))
+            #the_file.write(str(euler_buffer))
+            for three_element in euler_buffer:
+                line = ' '.join(str(elem) for elem in three_element) + '\n'
+                the_file.write(line)
     
     #bno_pointer = bno_pointer+1
         
@@ -107,14 +113,17 @@ def read_euler_buffer():
         euler_orient_pointer = euler_orient_pointer+1
     
     if euler_orient_pointer == BNO_BUFFER_LEN-1:
-        with open('eulers.txt', 'a') as the_file:
+        with open('Avionics/eulers.txt', 'a') as the_file:
             '''
             # may need to format txt files
             data_f.write(f"{time_thisSample-time_launchStart}")
             data_f.write(f"{acc[0]}\t{acc[1]}\t{acc[2]}\t")
             data_f.write(f"{qua[0]}\t{qua[1]}\t{qua[2]}\t{qua[3]}\n")
             '''
-            the_file.write(str(euler_buffer))
+            #the_file.write(str(euler_buffer))
+            for three_element in euler_buffer:
+                line = ' '.join(str(elem) for elem in three_element) + '\n'
+                the_file.write(line)
     
     return euler_buffer
 
@@ -133,8 +142,11 @@ def read_acceleration_buffer():
     # write data to file 
     # if bno_pointer == BNO_BUFFER_LEN-1:
     if linear_acc_pointer == BNO_BUFFER_LEN-1:
-        with open('accelerations.txt', 'a') as the_file:
-            the_file.write(str(acceleration_buffer))
+        with open('Avionics/accelerations.txt', 'a') as the_file:
+            #the_file.write(str(acceleration_buffer))
+            for three_element in acceleration_buffer:
+                line = ' '.join(str(elem) for elem in three_element) + '\n'
+                the_file.write(line)
     
     return acceleration_buffer
 
@@ -163,10 +175,14 @@ def read_bmp():
         bmp_pointer = bmp_pointer+1
     
     if bmp_pointer == BMP_BUFFER_LEN-1:
-        with open('altitudes.txt', 'a') as the_file:
-            the_file.write(str(altitude_buffer))
-        with open('pressures.txt', 'a') as the_file:
-             the_file.write(str(pressure_buffer))
+        with open('Avionics/altitudes.txt', 'a') as the_file:
+            #the_file.write(str(altitude_buffer))
+            for altitude in altitude_buffer:
+                the_file.write(str(altitude) + '\n')
+        with open('Avionics/pressures.txt', 'a') as the_file:
+            #the_file.write(str(pressure_buffer))
+            for pressure in pressure_buffer:
+                the_file.write(str(pressure) + '\n')
 
     return (temperature_buffer, pressure_buffer, altitude_buffer)
 
@@ -174,9 +190,6 @@ def read_bmp():
 def average_window(list, window, pointer):
     if(not list):
         return 0
-    print('in average_window')
-    print(list)
-    print('see above')
     buf_len = len(list)
     start = (pointer - window + 1) % buf_len
     end = (pointer + 1) % buf_len
