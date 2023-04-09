@@ -182,10 +182,11 @@ def average_window(list, window, pointer):
     end = (pointer + 1) % buf_len
     window_list = None
     if start <= end:
+        print('in average_window of sensing.py no window manipulation', start, end)
         window_list = list[start:end]
     else:
+        print('in average_window of sensing.py slicing operation', start, end)
         window_list = list[start:] + list[:end]
-    print('in average_window of sensing.py, window size 0?', len(window_list))
     window_list = [abs(x) for x in window_list if x is not None]
     if len(window_list) == 0:
         return 0
