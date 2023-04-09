@@ -368,8 +368,8 @@ def ground_level(altitude_accumulator, pressure_accumulator):
     rolling_window = 50
     ground_altitude_sensitivity = 0.5 # NEED TESTING 
     ground_pressure_sensitivity = 0.5 # NEED TESTING 
-    if ((abs(average_window(altitude_accumulator, rolling_window, bmp_pointer), sea_level_altitude) < ground_altitude_sensitivity) and
-        (abs(average_window(pressure_accumulator, rolling_window, bmp_pointer), bmp.sea_level_pressure)) < ground_pressure_sensitivity):
+    if (abs(average_window(altitude_accumulator, rolling_window, bmp_pointer)-sea_level_altitude) < ground_altitude_sensitivity and
+        abs(average_window(pressure_accumulator, rolling_window, bmp_pointer)-bmp.sea_level_pressure) < ground_pressure_sensitivity):
         return True
     else:
         return False
