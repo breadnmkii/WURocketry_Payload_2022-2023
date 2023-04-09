@@ -119,7 +119,7 @@ def update_system_flags(is_upright, heat, bmp_values_status, has_launched, is_st
             print('NOTICE: sensor uncertain of movement ')
 
     # switch stages
-    if (sys_flags.STAGE_INFO == Stage.PRELAUNCH and has_launched and bmp_values_status == 'up'):
+    if (sys_flags.STAGE_INFO == Stage.PRELAUNCH and has_launched and (bmp_values_status == 'up' or bmp_values_status == 'moving')):
         sys_flags.STAGE_INFO = Stage.MIDAIR
 
     if (sys_flags.STAGE_INFO == Stage.MIDAIR and is_still and ground_steady):
