@@ -16,7 +16,7 @@ BNO_BUFFER_LEN = 200  # length 50 for testing
 Main components
 """
 bno = config.init_bno()
-bmp = config.init_bmp()
+(bmp, sea_level_altitude) = config.init_bmp()
 # delete any values from the front??? -- TODO: pointer none stuffs
 bno_buf = []
 bmp_buf = []
@@ -364,10 +364,11 @@ def isAboveAltitude(altitude):
 TODO: testing
 '''
 def ground_level(altitude_accumulator, pressure_accumulator):
+    global sea_level_altitude
     rolling_window = 50
     ground_altitude_sensitivity = 0.5 # NEED TESTING 
     ground_pressure_sensitivity = 0.5 # NEED TESTING 
-    if ((abs(average_window(altitude_accumulator, rolling_window, bmp_pointer), bmp.sea_level_altitude) < ground_altitude_sensitivity) and
+    if ((abs(average_window(altitude_accumulator, rolling_window, bmp_pointer), sea_level_altitude) < ground_altitude_sensitivity) and
         (abs(average_window(pressure_accumulator, rolling_window, bmp_pointer), bmp.sea_level_pressure)) < ground_pressure_sensitivity):
         return True
     else:
