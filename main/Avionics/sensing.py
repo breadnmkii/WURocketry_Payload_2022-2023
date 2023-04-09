@@ -256,7 +256,7 @@ testing status:
 '''
 def detectMovement(acc_accumulator):
     global linear_acc_pointer
-    MOTION_SENSITIVITY = 2           # Amount of 3-axis acceleration needed to be read to trigger "movement" detection
+    MOTION_SENSITIVITY = 0.2         # Amount of 3-axis acceleration needed to be read to trigger "movement" detection
     isMoving = False
     ACC_WINDOW = 20                  # Range of values to apply rolling average in 'acc_accumulator'
 
@@ -347,6 +347,7 @@ def altitude_status(altitude_accumulator, pressure_accumulator):
         return 'down'
     elif (abs((average_window(altitude_accumulator, rolling_window, bmp_pointer)-sea_level_altitude)) > ascent_altitude 
           and abs((average_window(pressure_accumulator, rolling_window, bmp_pointer)-bmp.sea_level_pressure)) > ascent_altitude):
+        print('BMP -- general moving')
         return 'moving'
     else:
         print('BMP -- indeterminant')  
