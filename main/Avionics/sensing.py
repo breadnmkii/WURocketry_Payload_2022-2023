@@ -283,9 +283,6 @@ def detectLaunch(acc_accumulator):
     MOTION_LAUNCH_SENSITIVITY = 3   # Amount of accel added to offset for stronger initial launch accel
     hasLaunched = False
     ACC_WINDOW = 50                  # Range of values to apply rolling average in 'acc_accumulator'
-    print('almost none')
-    print(acc_accumulator)
-    print('see above')
     x = [item[0] for item in acc_accumulator]
     y = [item[1] for item in acc_accumulator]
     z = [item[2] for item in acc_accumulator]
