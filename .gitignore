@@ -4,4 +4,6 @@ imaging-venv
 __pycache__
 image_results
 .vscode
+*.txt
+.gitignore
 nohup.out
