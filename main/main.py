@@ -90,6 +90,7 @@ def avionics_landed():
     (temperature_buffer, pressure_buffer, altitude_buffer) = sensing.read_bmp()
     heat = sensing.check_heat(temperature_buffer)
     is_still = sensing.remain_still(acceleration_buffer)
+    print('is it still?', is_still)
     is_upright = sensing.vertical(euler_buffer)
     return (heat, is_still, is_upright)
 
@@ -352,7 +353,7 @@ def main():
             aprs_subprocess = APRS.begin_APRS_recieve(APRS_LOG_PATH) # Begin listening for APRS commands
 
 def test_main():
-   sys_flags.STAGE_INFO = Stage.LANDED
+   sys_flags.STAGE_INFO = Stage.MIDAIR
    #telemetryRoutine()
    while (True):
        avionicRoutine()

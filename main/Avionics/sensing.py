@@ -304,7 +304,7 @@ def vertical(euler_accumulator):
     global euler_orient_pointer
     is_vertical = False
     rolling_window = 15
-    threshold = 0.4 # NEED TESTING -- tested 0.15 on 3/6 by itself -- tested again 3/24 on motor hat not stable enough -> changed to 0.2
+    threshold = 0.3 # NEED TESTING -- tested 0.15 on 3/6 by itself -- tested again 3/24 on motor hat not stable enough -> changed to 0.2
     rolls = [item[0] for item in euler_accumulator]
     pitches = [item[1] for item in euler_accumulator]
     pitch= abs(average_window(pitches, rolling_window, euler_orient_pointer))
