@@ -334,13 +334,13 @@ def altitude_status(altitude_accumulator, pressure_accumulator):
     descent_pressure = 0.5 # HOW TO TEST THRESHOLD from sea level to apogee
     ascent_pressure =  -0.5 # HOW TO TEST THRESHOLD 1000-755 = 245 in range
     altitude_differential = differential_window(altitude_accumulator, rolling_window)
-    pressure_differential = differential_window(pressure_accumulator, rolling_window) > descent_pressure
-    print('altitude differential', altitude_differential)
+    pressure_differential = differential_window(pressure_accumulator, rolling_window)  
+    print('altitude differential in cm', altitude_differential*100)
     print('pressure differential', pressure_differential)
     if (altitude_differential < descent_altitude and pressure_differential > descent_pressure):
         print('BMP -- payload is moving up')
         return 'up'
-    elif (altitude_differential > ascent_altitude and pressure_differential):
+    elif (altitude_differential > ascent_altitude and pressure_differential < ascent_pressure):
         print('BMP -- payload is moving down')
         return 'down'
     else:
@@ -379,7 +379,7 @@ def ground_level(altitude_accumulator, pressure_accumulator):
 
 def remain_still(acc_accumulator):
     rolling_window = 50
-    acceleration_sensitivity = 0.2 # NEED TESTING 
+    acceleration_sensitivity = 0.5 # NEED TESTING 
     x = [item[0] for item in acc_accumulator]
     y = [item[1] for item in acc_accumulator]
     z = [item[2] for item in acc_accumulator]
