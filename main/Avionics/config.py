@@ -64,7 +64,7 @@ def __calibrate_BNO055(bno055):
     SECOND_NS = 1_000_000_000
     SAMPLE_FREQUENCY = 100   # in Hz
     DELTA_T = SECOND_NS/SAMPLE_FREQUENCY
-    while ( bno055.calibration_status != (3, 3, 3, 3)):  # bno055.calibration_status[3] != 3
+    while (bno055.calibration_status[3] != 3):  # bno055.calibration_status != (3, 3, 3, 3)
         print(f'Calibration (s,g,a,m) {bno055.calibration_status}')
 
 
