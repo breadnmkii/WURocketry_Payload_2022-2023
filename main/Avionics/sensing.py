@@ -163,7 +163,7 @@ def read_bmp():
     altitude = bmp.altitude
     pressure = bmp.pressure
     temperature = bmp.temperature
-    print('altitude:', altitude, 'pressure:', pressure, 'temperature:', temperature)
+    #print('altitude:', altitude, 'pressure:', pressure, 'temperature:', temperature)
     '''
     transfering to ring buffer idea
     altitude_buffer.append(altitude)
@@ -336,8 +336,7 @@ def altitude_status(altitude_accumulator, pressure_accumulator):
     ascent_pressure =  -0.5 # HOW TO TEST THRESHOLD 1000-755 = 245 in range
     altitude_differential = differential_window(altitude_accumulator, rolling_window)
     pressure_differential = differential_window(pressure_accumulator, rolling_window)  
-    print('altitude differential in cm', altitude_differential*100)
-    print('pressure differential', pressure_differential)
+    print('altitude differential in cm', altitude_differential*100, 'pressure differential', pressure_differential)
     if (altitude_differential < descent_altitude and pressure_differential > descent_pressure):
         print('BMP -- payload is moving up')
         return 'up'
