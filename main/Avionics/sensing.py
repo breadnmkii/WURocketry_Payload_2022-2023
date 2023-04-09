@@ -376,7 +376,12 @@ def ground_level(altitude_accumulator, pressure_accumulator):
 def remain_still(acc_accumulator):
     rolling_window = 50
     acceleration_sensitivity = 0.5 # NEED TESTING 
-    if (abs(average_window(acc_accumulator, rolling_window, linear_acc_pointer)) < acceleration_sensitivity):
+    x = [item[0] for item in acc_accumulator]
+    y = [item[1] for item in acc_accumulator]
+    z = [item[2] for item in acc_accumulator]
+    if (abs(average_window(x, rolling_window, linear_acc_pointer)) < acceleration_sensitivity
+        and abs(average_window(y, rolling_window, linear_acc_pointer)) < acceleration_sensitivity
+        and abs(average_window(z, rolling_window, linear_acc_pointer)) < acceleration_sensitivity):
         return True
     else:
         return False
