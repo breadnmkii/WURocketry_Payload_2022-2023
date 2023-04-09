@@ -163,6 +163,7 @@ def read_bmp():
     altitude = bmp.altitude
     pressure = bmp.pressure
     temperature = bmp.temperature
+    print('altitude:', altitude, 'pressure:', pressure, 'temperature:', temperature)
     '''
     transfering to ring buffer idea
     altitude_buffer.append(altitude)
