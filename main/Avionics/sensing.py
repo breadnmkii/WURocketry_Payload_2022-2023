@@ -388,7 +388,6 @@ def remain_still(acc_accumulator):
         and abs(average_window(z, rolling_window, linear_acc_pointer)) < acceleration_sensitivity):
         return True
     else:
-        print("it's not still due to x:", x, "y:", y, "z:", z)
         return False
 
 # for heat warning
