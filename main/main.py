@@ -80,7 +80,7 @@ def avionics_midair():
     (temperature_buffer, pressure_buffer, altitude_buffer) = sensing.read_bmp()
     bmp_values_status = sensing.altitude_status(altitude_buffer, pressure_buffer)
     heat = sensing.check_heat(temperature_buffer)
-    is_still = sensing.detectMovement(acceleration_buffer)
+    is_still = not sensing.detectMovement(acceleration_buffer)
     print('is it still?', is_still)
     ground_steady = sensing.ground_level(altitude_buffer, pressure_buffer)
     return (heat, is_still, ground_steady, bmp_values_status)

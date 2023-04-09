@@ -369,7 +369,7 @@ TODO: testing
 def ground_level(altitude_accumulator, pressure_accumulator):
     global sea_level_altitude
     rolling_window = 50
-    ground_altitude_sensitivity = 0.5 # NEED TESTING 
+    ground_altitude_sensitivity = 0.127 # NEED TESTING 
     ground_pressure_sensitivity = 0.5 # NEED TESTING 
     if (abs(average_window(altitude_accumulator, rolling_window, bmp_pointer)-sea_level_altitude) < ground_altitude_sensitivity and
         abs(average_window(pressure_accumulator, rolling_window, bmp_pointer)-bmp.sea_level_pressure) < ground_pressure_sensitivity):
@@ -388,6 +388,7 @@ def remain_still(acc_accumulator):
         and abs(average_window(z, rolling_window, linear_acc_pointer)) < acceleration_sensitivity):
         return True
     else:
+        print("it's not still due to x:", x, "y:", y, "z:", z)
         return False
 
 # for heat warning
