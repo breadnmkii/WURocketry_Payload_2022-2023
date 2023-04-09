@@ -256,7 +256,7 @@ testing status:
 '''
 def detectMovement(acc_accumulator):
     global linear_acc_pointer
-    MOTION_SENSITIVITY = 0.2         # Amount of 3-axis acceleration needed to be read to trigger "movement" detection
+    MOTION_SENSITIVITY = 0.7         # Amount of 3-axis acceleration needed to be read to trigger "movement" detection
     isMoving = False
     ACC_WINDOW = 20                  # Range of values to apply rolling average in 'acc_accumulator'
 
