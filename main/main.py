@@ -39,7 +39,7 @@ at index 8: 1 means BNO or BMP initialization fails -- hardware fault
 sys_flags = System_Flags(Stage.PRELAUNCH, Movement.NOT_MOVING, Flight_Direction.INDETERMINENT, Verticality.NOT_UPRIGHT, Separated.NOT_SEPARATED, Deployed.NOT_DEPLOYED, Warn_Heat.NOMINAL, Warn_Camera.NOMINAL, Warn_Avionics.NOMINAL, Warn_Motive.NOMINAL)
 
 
-APRS_LOG_PATH = "./main/APRS_log.log"    # APRS Log File Path
+APRS_LOG_PATH = "./APRS_log.log"    # APRS Log File Path
 
 ### PAYLOAD ROUTINE FUNCTION ###
 # Sensing
@@ -222,7 +222,7 @@ def updateRAFCO(callsign, APRS_LOG_PATH):
     with open(APRS_LOG_PATH, "r") as file:
         for line in file:
             line = line.replace(":"," ").strip()
-            if line.startswith(callsign):
+            if callsign in line:
                 # Split the line into words and remove the colon ':' if it exists
                 words = re.sub(r'[^\w\s]', ' ', line) #replace all special characters with a space
                 words = re.sub(r'[^A-H1-8\s]', ' ', words) #replace all things that are not A->H and 1->8 with a space
@@ -355,10 +355,24 @@ def main():
             aprs_subprocess = APRS.begin_APRS_recieve(APRS_LOG_PATH) # Begin listening for APRS commands
 
 def test_main():
-   sys_flags.STAGE_INFO = Stage.MIDAIR
+   sys_flags.STAGE_INFO = Stage.LANDED
    #telemetryRoutine()
    while (True):
        avionicRoutine()
+
+    # currentState = fsm.State.WAIT
+    # currRAFCO_S_idx = 0
+    # currRAFCO_idx = 0
+
+    # sys_flags.STAGE_INFO = Stage.LANDED # Override to mission execution phase (to enable FSM routine)
+    # APRS.begin_APRS_recieve(APRS_LOG_PATH)   # Begin APRS receiving process at specified file (comment out if APRS_log exists in main directory)
+
+    # while (True):
+    #     fsmUpdate = controlRoutine(currentState, currRAFCO_S_idx, currRAFCO_idx)
+    #     currentState = fsmUpdate[0]
+    #     currRAFCO_S_idx = fsmUpdate[1]
+    #     currRAFCO_idx = fsmUpdate[2]
+        # avionicRoutine()
 
 
 if __name__ == '__main__':
@@ -366,18 +380,3 @@ if __name__ == '__main__':
 
 
 
-""" APRS TEST CODE
-currentState = fsm.State.WAIT
-    currRAFCO_S_idx = 0
-    currRAFCO_idx = 0
-
-    sys_flags.STAGE_INFO = Stage.LANDED # Override to mission execution phase (to enable FSM routine)
-    # APRS.begin_APRS_recieve(APRS_LOG_PATH)   # Begin APRS receiving process at specified file (comment out if APRS_log exists in main directory)
-
-    while (True):
-        fsmUpdate = controlRoutine(currentState, currRAFCO_S_idx, currRAFCO_idx)
-        currentState = fsmUpdate[0]
-        currRAFCO_S_idx = fsmUpdate[1]
-        currRAFCO_idx = fsmUpdate[2]
-        avionicRoutine()
-"""

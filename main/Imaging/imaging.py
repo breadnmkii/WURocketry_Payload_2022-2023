@@ -38,14 +38,15 @@ return camera with 180 degree rotation
 '''
 def rotate():
     camera.rotation = 270
-    list_of_files = glob.glob('/home/pi/WURocketry_Payload_2022-2023/main/Imaging/image_results/*.jpeg') # * means all if need specific format then *.csv
-    if not list_of_files:
-        return camera
+
+    # list_of_files = glob.glob('/home/pi/WURocketry_Payload_2022-2023/main/Imaging/image_results/*.jpeg') # * means all if need specific format then *.csv
+    # if not list_of_files:
+    #     return camera
     
-    latest_file = max(list_of_files, key=os.path.getctime)
-    print(latest_file)
-    file_path = latest_file.replace('.jpeg','_rotated.jpeg')
-    print(file_path)
+    # latest_file = max(list_of_files, key=os.path.getctime)
+    # print(latest_file)
+    # file_path = latest_file.replace('.jpeg','_rotated.jpeg')
+    # print(file_path)
 
     # using Pillow
     
@@ -57,7 +58,7 @@ def rotate():
     new_file_path = latest_file.replace('.jpg','_rotated.jpg')
     rotated.save(new_file_path)
 
-    return rotated 
+    # return rotated 
 
 # E5: change camera mode back from grayscale to color 
 def to_color_mode():
@@ -71,9 +72,9 @@ remove filter on taking pictures
 def remove_filter():
     # remove special filter
     camera.image_effect = 'none'
+    camera.rotation = 90
     # reset color space
     camera.color_effects = None
-    camera.rotation=90
 
     list_of_files = glob.glob('/home/pi/WURocketry_Payload_2022-2023/main/Imaging/image_results/*.jpg') # * means all if need specific format then *.csv
     if not list_of_files:
@@ -111,7 +112,6 @@ def rgb2bgr():
 # move picture taken to image_results
 # C3: take picture
 def take_picture():
-    camera.rotation = 90
     # Get the timezone object for Chicago
     tz_cst = timezone('America/Chicago') 
     # Get the current time in CST
