@@ -6,10 +6,13 @@ import busio
 import board
 from . import rfmconfig
 from digitalio import DigitalInOut
-# from .. import enums # this would throw import errors
+import sys
+#from main import enums  # this would throw import errors
 # Import the RFM9x radio module.
 import adafruit_rfm9x
-
+sys.path.append('/home/pi/WURocketry_Payload_2022-2023')
+from main.enums import Stage, Movement, Flight_Direction, Verticality, Separated, Deployed, Warn_Heat, Warn_Camera, Warn_Avionics, Warn_Motive
+#from main.enums import System_Flags
 
 # Global RFM96w object to send/receieve data
 RFM96W = rfmconfig.config_RFM96w()
@@ -33,10 +36,17 @@ def recieveData():
         receive_time = time.time_ns()
         rx_data = str(rx_packet, "utf-8")
         rx_data = int(rx_data.replace("|", "").replace(" ", "").replace(",", ""))
-        # encoding = enums.Stage(rx_data[0])+enums.Movement(rx_data[1])+enums.Flight_Direction(rx_data[2])+enums.Verticality(rx_data[3])+enums.Separated(rx_data[4])+enums.Deployed(rx_data[5])+enums.Warn_Heat(rx_data[6])+enums.Warn_Camera(rx_data[7])+enums.Warn_Avionics(rx_data[8])+enums.Warn_Motive(rx_data[9])
-        
-        #f.write(f'{receive_time} <- {encoding}\n')
-        #print(f'{receive_time} <- {encoding}')
+        encoding = str(Stage(rx_data[0]))+str(Movement(rx_data[1]))+str(Flight_Direction(rx_data[2]))+str(Verticality(rx_data[3]))+str(Separated(rx_data[4]))+str(Deployed(rx_data[5]))+str(Warn_Heat(rx_data[6]))+str(Warn_Camera(rx_data[7]))+str(Warn_Avionics(rx_data[8]))+str(Warn_Motive(rx_data[9]))
+        f.write(f'{receive_time} <- {encoding}\n')
+        print(f'{receive_time} <- {encoding}')
         # below as integer, above try print as string
         f.write(f'{receive_time} <- {rx_data}\n')
         print(f'{receive_time} <- {rx_data}')  
+
+'''
+def decode_enums(raw):
+    strings = ""
+    raw[]
+    return strings
+'''
+

@@ -9,14 +9,14 @@ import math
 Constants
 """
 BMP_BUFFER_LEN = 200     # Length of sensor reading buffer
-BNO_BUFFER_LEN = 50  # length 50 for testing
+BNO_BUFFER_LEN = 200  # length 50 for testing
 
 
 """
 Main components
 """
 bno = config.init_bno()
-bmp = config.init_bmp()
+(bmp, sea_level_altitude) = config.init_bmp()
 # delete any values from the front??? -- TODO: pointer none stuffs
 bno_buf = []
 bmp_buf = []
@@ -68,17 +68,23 @@ def read_bno():
     # write data to file 
     # if bno_pointer == BNO_BUFFER_LEN-1:
     if linear_acc_pointer == BNO_BUFFER_LEN-1:
-        with open('accelerations.txt', 'a') as the_file:
-            the_file.write(str(acceleration_buffer))
+        with open('Avionics/accelerations.txt', 'a') as the_file:
+            #the_file.write(str(acceleration_buffer))
+            for three_element in acceleration_buffer:
+                line = ' '.join(str(elem) for elem in three_element) + '\n'
+                the_file.write(line)
     if euler_orient_pointer == BNO_BUFFER_LEN-1:
-        with open('eulers.txt', 'a') as the_file:
+        with open('Avionics/eulers.txt', 'a') as the_file:
             '''
             # may need to format txt files
             data_f.write(f"{time_thisSample-time_launchStart}")
             data_f.write(f"{acc[0]}\t{acc[1]}\t{acc[2]}\t")
             data_f.write(f"{qua[0]}\t{qua[1]}\t{qua[2]}\t{qua[3]}\n")
             '''
-            the_file.write(str(euler_buffer))
+            #the_file.write(str(euler_buffer))
+            for three_element in euler_buffer:
+                line = ' '.join(str(elem) for elem in three_element) + '\n'
+                the_file.write(line)
     
     #bno_pointer = bno_pointer+1
         
@@ -107,14 +113,17 @@ def read_euler_buffer():
         euler_orient_pointer = euler_orient_pointer+1
     
     if euler_orient_pointer == BNO_BUFFER_LEN-1:
-        with open('eulers.txt', 'a') as the_file:
+        with open('Avionics/eulers.txt', 'a') as the_file:
             '''
             # may need to format txt files
             data_f.write(f"{time_thisSample-time_launchStart}")
             data_f.write(f"{acc[0]}\t{acc[1]}\t{acc[2]}\t")
             data_f.write(f"{qua[0]}\t{qua[1]}\t{qua[2]}\t{qua[3]}\n")
             '''
-            the_file.write(str(euler_buffer))
+            #the_file.write(str(euler_buffer))
+            for three_element in euler_buffer:
+                line = ' '.join(str(elem) for elem in three_element) + '\n'
+                the_file.write(line)
     
     return euler_buffer
 
@@ -133,8 +142,11 @@ def read_acceleration_buffer():
     # write data to file 
     # if bno_pointer == BNO_BUFFER_LEN-1:
     if linear_acc_pointer == BNO_BUFFER_LEN-1:
-        with open('accelerations.txt', 'a') as the_file:
-            the_file.write(str(acceleration_buffer))
+        with open('Avionics/accelerations.txt', 'a') as the_file:
+            #the_file.write(str(acceleration_buffer))
+            for three_element in acceleration_buffer:
+                line = ' '.join(str(elem) for elem in three_element) + '\n'
+                the_file.write(line)
     
     return acceleration_buffer
 
@@ -151,6 +163,7 @@ def read_bmp():
     altitude = bmp.altitude
     pressure = bmp.pressure
     temperature = bmp.temperature
+    #print('altitude:', altitude, 'pressure:', pressure, 'temperature:', temperature)
     '''
     transfering to ring buffer idea
     altitude_buffer.append(altitude)
@@ -163,10 +176,14 @@ def read_bmp():
         bmp_pointer = bmp_pointer+1
     
     if bmp_pointer == BMP_BUFFER_LEN-1:
-        with open('altitudes.txt', 'a') as the_file:
-            the_file.write(str(altitude_buffer))
-        with open('pressures.txt', 'a') as the_file:
-             the_file.write(str(pressure_buffer))
+        with open('Avionics/altitudes.txt', 'a') as the_file:
+            #the_file.write(str(altitude_buffer))
+            for altitude in altitude_buffer:
+                the_file.write(str(altitude) + '\n')
+        with open('Avionics/pressures.txt', 'a') as the_file:
+            #the_file.write(str(pressure_buffer))
+            for pressure in pressure_buffer:
+                the_file.write(str(pressure) + '\n')
 
     return (temperature_buffer, pressure_buffer, altitude_buffer)
 
@@ -174,7 +191,6 @@ def read_bmp():
 def average_window(list, window, pointer):
     if(not list):
         return 0
-    
     buf_len = len(list)
     start = (pointer - window + 1) % buf_len
     end = (pointer + 1) % buf_len
@@ -183,11 +199,9 @@ def average_window(list, window, pointer):
         window_list = list[start:end]
     else:
         window_list = list[start:] + list[:end]
-
     window_list = [abs(x) for x in window_list if x is not None]
     if len(window_list) == 0:
         return 0
-
     return sum(window_list) / len(window_list)
     
 '''
@@ -196,30 +210,18 @@ testing status:
 '''
 def average_sum_abs_range(list, least_recent, most_recent):
     of_interest = list[least_recent:most_recent+1]
-    print('averaging window:', of_interest)
+    #print('averaging window:', of_interest)
     values = [abs(x) for x in of_interest if x is not None]
     if len(values) == 0:
         return 0
-    print('average:', sum(values) / len(values))
+    #print('average:', sum(values) / len(values))
     return sum(values) / len(values)
 
 # for BMP readings only 
 def differential_window(list, window):
     if (not list):
         return 0
-    
-    '''
-    most_recent = bmp_pointer
-    least_recent = bmp_pointer-window
-    diff = []
-    if least_recent < 0:
-        least_recent = BMP_BUFFER_LEN-1-abs(least_recent)
-        diff = [list[i+1] - list[i] for i in range(0, most_recent)]
-        diff.append([list[i+1] - list[i] for i in range(least_recent, BMP_BUFFER_LEN-1)])
-    else:
-        # when least_recent >= 0
-        diff = [list[i+1] - list[i] for i in range(least_recent, most_recent)]
-    '''
+
     buf_len = len(list)
     start = (bmp_pointer - window + 1) % buf_len
     end = (bmp_pointer + 1) % buf_len
@@ -230,12 +232,10 @@ def differential_window(list, window):
         window_list = list[start:] + list[:end]
     # need to take care of none initializations
     filtered_list = [x for x in window_list if x is not None]
-    print('erroring:', filtered_list)
-    #window_list = list(filter(lambda item: item is not None, window_list))
     # for the first value ever written to the list
     if len(filtered_list) < 2:
         return filtered_list[0]
-    diff = [filtered_list[i+1] - filtered_list[i] for i in filtered_list 
+    diff = [filtered_list[i+1] - filtered_list[i] for i in range(len(filtered_list)-1)
             #if window_list[i] is not None and window_list[i+1] is not None
             ]
 
@@ -256,7 +256,7 @@ testing status:
 '''
 def detectMovement(acc_accumulator):
     global linear_acc_pointer
-    MOTION_SENSITIVITY = 2           # Amount of 3-axis acceleration needed to be read to trigger "movement" detection
+    MOTION_SENSITIVITY = 0.7         # Amount of 3-axis acceleration needed to be read to trigger "movement" detection
     isMoving = False
     ACC_WINDOW = 20                  # Range of values to apply rolling average in 'acc_accumulator'
 
@@ -275,20 +275,22 @@ def detectMovement(acc_accumulator):
 def detectLaunch(acc_accumulator):
     global linear_acc_pointer
     MOTION_SENSITIVITY = 1           # Amount of 3-axis acceleration needed to be read to trigger "movement" detection
-    MOTION_LAUNCH_SENSITIVITY = 3   # Amount of accel added to offset for stronger initial launch accel
+    MOTION_LAUNCH_SENSITIVITY = 6  # Amount of accel added to offset for stronger initial launch accel
     hasLaunched = False
     ACC_WINDOW = 50                  # Range of values to apply rolling average in 'acc_accumulator'
-
     x = [item[0] for item in acc_accumulator]
     y = [item[1] for item in acc_accumulator]
     z = [item[2] for item in acc_accumulator]
-
-    if(average_window(x, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY + MOTION_LAUNCH_SENSITIVITY 
-       or average_window(y, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY + MOTION_LAUNCH_SENSITIVITY
-       or average_window(z, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY + MOTION_LAUNCH_SENSITIVITY
+    avg_x = average_window(x, ACC_WINDOW, linear_acc_pointer)
+    avg_y = average_window(y, ACC_WINDOW, linear_acc_pointer)
+    avg_z = average_window(z, ACC_WINDOW, linear_acc_pointer) 
+    if(avg_x > MOTION_SENSITIVITY + MOTION_LAUNCH_SENSITIVITY 
+       or avg_y > MOTION_SENSITIVITY + MOTION_LAUNCH_SENSITIVITY
+       or avg_z > MOTION_SENSITIVITY + MOTION_LAUNCH_SENSITIVITY
        ):
         print("Launch detected!")
         hasLaunched = True
+    print('x:', avg_x, 'y:', avg_y, 'z:', avg_z)
     return hasLaunched
     
     
@@ -301,7 +303,7 @@ def vertical(euler_accumulator):
     global euler_orient_pointer
     is_vertical = False
     rolling_window = 15
-    threshold = 0.4 # NEED TESTING -- tested 0.15 on 3/6 by itself -- tested again 3/24 on motor hat not stable enough -> changed to 0.2
+    threshold = 0.3 # NEED TESTING -- tested 0.15 on 3/6 by itself -- tested again 3/24 on motor hat not stable enough -> changed to 0.2
     rolls = [item[0] for item in euler_accumulator]
     pitches = [item[1] for item in euler_accumulator]
     pitch= abs(average_window(pitches, rolling_window, euler_orient_pointer))
@@ -315,28 +317,38 @@ def vertical(euler_accumulator):
 
     #print('inspecting rolls:', rolls)
     if (averaged_roll < threshold and averaged_pitch < threshold):
-        print("Camera is vertical from horizontal: row pitch", averaged_roll, averaged_pitch)
+        #print("Camera is vertical from horizontal: row pitch", averaged_roll, averaged_pitch)
         
         is_vertical = True
     else:
-        print('not vertical:', averaged_roll, averaged_pitch)
+        #print('not vertical:', averaged_roll, averaged_pitch)
+        pass
     return is_vertical
 
 '''
 functionality: detect whether the payload is moving up, or moving down or 
 '''
 def altitude_status(altitude_accumulator, pressure_accumulator):
+    global sea_level_altitude
+    global bmp_pointer
     rolling_window = 50
-    descent_altitude = -2 # HOW TO TEST THRESHOLD
-    ascent_altitude =  2 # HOW TO TEST THRESHOLD 
-    descent_pressure = 0.5 # HOW TO TEST THRESHOLD from sea level to apogee
-    ascent_pressure =  -0.5 # HOW TO TEST THRESHOLD 1000-755 = 245 in range
-    if (differential_window(altitude_accumulator, rolling_window) < descent_altitude and differential_window(pressure_accumulator, rolling_window) > descent_pressure):
+    descent_altitude = -6/100 # testing 4/9
+    ascent_altitude =  6/100 # testing 4/9
+    descent_pressure = 0.006 # testing 4/9
+    ascent_pressure =  -0.006 # HOW TO TEST THRESHOLD 1000-755 = 245 in range
+    altitude_differential = differential_window(altitude_accumulator, rolling_window)
+    pressure_differential = differential_window(pressure_accumulator, rolling_window)  
+    print('altitude differential in cm', altitude_differential*100, 'pressure differential', pressure_differential)
+    if (altitude_differential < descent_altitude and pressure_differential > descent_pressure):
         print('BMP -- payload is moving up')
         return 'up'
-    elif (differential_window(altitude_accumulator, rolling_window) > ascent_altitude and differential_window(pressure_accumulator, rolling_window) < ascent_pressure):
+    elif (altitude_differential > ascent_altitude and pressure_differential < ascent_pressure):
         print('BMP -- payload is moving down')
         return 'down'
+    elif (abs((average_window(altitude_accumulator, rolling_window, bmp_pointer)-sea_level_altitude)) > ascent_altitude 
+          and abs((average_window(pressure_accumulator, rolling_window, bmp_pointer)-bmp.sea_level_pressure)) > ascent_altitude):
+        print('BMP -- general moving')
+        return 'moving'
     else:
         print('BMP -- indeterminant')  
         return 'not_sure'      
@@ -361,11 +373,12 @@ def isAboveAltitude(altitude):
 TODO: testing
 '''
 def ground_level(altitude_accumulator, pressure_accumulator):
+    global sea_level_altitude
     rolling_window = 50
-    ground_altitude_sensitivity = 0.5 # NEED TESTING 
+    ground_altitude_sensitivity = 0.127 # NEED TESTING 
     ground_pressure_sensitivity = 0.5 # NEED TESTING 
-    if ((abs(average_window(altitude_accumulator, rolling_window, bmp_pointer), bmp.sea_level_altitude) < ground_altitude_sensitivity) and
-        (abs(average_window(pressure_accumulator, rolling_window, bmp_pointer), bmp.sea_level_pressure)) < ground_pressure_sensitivity):
+    if (abs(average_window(altitude_accumulator, rolling_window, bmp_pointer)-sea_level_altitude) < ground_altitude_sensitivity and
+        abs(average_window(pressure_accumulator, rolling_window, bmp_pointer)-bmp.sea_level_pressure) < ground_pressure_sensitivity):
         return True
     else:
         return False
@@ -373,7 +386,12 @@ def ground_level(altitude_accumulator, pressure_accumulator):
 def remain_still(acc_accumulator):
     rolling_window = 50
     acceleration_sensitivity = 0.5 # NEED TESTING 
-    if (abs(average_window(acc_accumulator, rolling_window, linear_acc_pointer)) < acceleration_sensitivity):
+    x = [item[0] for item in acc_accumulator]
+    y = [item[1] for item in acc_accumulator]
+    z = [item[2] for item in acc_accumulator]
+    if (abs(average_window(x, rolling_window, linear_acc_pointer)) < acceleration_sensitivity
+        and abs(average_window(y, rolling_window, linear_acc_pointer)) < acceleration_sensitivity
+        and abs(average_window(z, rolling_window, linear_acc_pointer)) < acceleration_sensitivity):
         return True
     else:
         return False
@@ -381,8 +399,8 @@ def remain_still(acc_accumulator):
 # for heat warning
 def check_heat(temperature_accumulator):
     rolling_window = 50
-    # if averaged temperature exceeds 83 Celcius, raspberry Pi may die
-    if (average_window(temperature_accumulator, rolling_window, bmp_pointer) > 83):
+    # if averaged temperature exceeds 30 Celcius, -- not seen before in avionics bay's data
+    if (average_window(temperature_accumulator, rolling_window, bmp_pointer) > 30):
         return True
     else:
         return False

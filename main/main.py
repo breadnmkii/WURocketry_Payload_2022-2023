@@ -5,19 +5,21 @@
 ### IMPORTS ###
 # from Avionics import config as avionics_config
 # from Imaging import config as imaging_config  # DEPRECATED
-from Motive import config as motive_config
 
-# from Avionics import sensing
-from Control import fsm
-from Motive import camarm
-from Radio import APRS
-from Radio import telemetry
+#from Motive import config as motive_config
+
+from Avionics import sensing
+#from Control import fsm
+#from Motive import camarm
+#from Radio import APRS
+#from Radio import telemetry
 
 import time
 import datetime
 from enums import *
 import signal
 import sys
+import re
 
 
 
@@ -62,13 +64,14 @@ def avionicRoutine():
         (heat, is_still, is_upright) = avionics_landed()
 
     # update system flags -- specifics (related to avionics)
-    print("update sysflags")
+    #print("update sysflags")
     print(is_upright, heat, bmp_values_status, has_launched, is_still, ground_steady)
     update_system_flags(is_upright, heat, bmp_values_status, has_launched, is_still, ground_steady)
 
 def avionics_prelaunch():
     acceleration_buffer = sensing.read_acceleration_buffer()
     has_launched = sensing.detectLaunch(acceleration_buffer)
+    print('is it launched yet?', has_launched)
     # is_still = sensing.remain_still(acceleration_buffer)
     return (has_launched)
 
@@ -77,7 +80,8 @@ def avionics_midair():
     (temperature_buffer, pressure_buffer, altitude_buffer) = sensing.read_bmp()
     bmp_values_status = sensing.altitude_status(altitude_buffer, pressure_buffer)
     heat = sensing.check_heat(temperature_buffer)
-    is_still = sensing.detectMovement(acceleration_buffer)
+    is_still = not(sensing.detectMovement(acceleration_buffer))
+    print('is it still?', is_still)
     ground_steady = sensing.ground_level(altitude_buffer, pressure_buffer)
     return (heat, is_still, ground_steady, bmp_values_status)
 
@@ -100,6 +104,8 @@ def update_system_flags(is_upright, heat, bmp_values_status, has_launched, is_st
             sys_flags.FLIGHT_DIRECTION = Flight_Direction.MOVING_UP
         elif sys_flags.MOVEMENT == Movement.MOVING and bmp_values_status == 'down':
             sys_flags.FLIGHT_DIRECTION = Flight_Direction.MOVING_DOWN
+        elif sys_flags.MOVEMENT == Movement.MOVING and bmp_values_status == 'moving':
+            sys_flags.FLIGHT_DIRECTION = Flight_Direction.MOVING
         else:
             sys_flags.FLIGHT_DIRECTION = Flight_Direction.INDETERMINENT
 
@@ -113,7 +119,7 @@ def update_system_flags(is_upright, heat, bmp_values_status, has_launched, is_st
             print('NOTICE: sensor uncertain of movement ')
 
     # switch stages
-    if (sys_flags.STAGE_INFO == Stage.PRELAUNCH and has_launched and bmp_values_status == 'up'):
+    if (sys_flags.STAGE_INFO == Stage.PRELAUNCH and has_launched and (bmp_values_status == 'up' or bmp_values_status == 'moving')):
         sys_flags.STAGE_INFO = Stage.MIDAIR
 
     if (sys_flags.STAGE_INFO == Stage.MIDAIR and is_still and ground_steady):
@@ -122,7 +128,7 @@ def update_system_flags(is_upright, heat, bmp_values_status, has_launched, is_st
 # Deployment
 SEPARATION_TIME = 75   # Seconds
 RETRACT_TIME = 50
-motor, solenoids = motive_config.electromotives_config()
+#motor, solenoids = motive_config.electromotives_config()
 
 ### FAILSAFE ABORT ###
 # SIGINT abort
@@ -207,15 +213,30 @@ def telemetryRoutine():
     telemetry.transmitData(packet)
 
 # APRS
-def updateRAFCO():
+def updateRAFCO(callsign, APRS_LOG_PATH):
     imageCommands = []
-    with open(APRS_LOG_PATH) as file:
-        data = file.readlines()
-        for line in data:
-            cleanLine = line.strip().replace(",", "").split(" ")
-            cleanLine = list(filter(None, cleanLine))
-            imageCommands.append(cleanLine)
-        file.close()
+    current_command_list = []
+    import re
+    valid_commands = ['A1', 'B2', 'C3', 'D4', 'E5', 'F6', 'G7', 'H8']
+
+    with open(APRS_LOG_PATH, "r") as file:
+        for line in file:
+            line = line.replace(":"," ").strip()
+            if callsign in line:
+                # Split the line into words and remove the colon ':' if it exists
+                words = re.sub(r'[^\w\s]', ' ', line) #replace all special characters with a space
+                words = re.sub(r'[^A-H1-8\s]', ' ', words) #replace all things that are not A->H and 1->8 with a space
+                words = words.split(" ")
+
+                for word in words:
+                    if word in valid_commands:
+                        current_command_list.append(word)
+
+                # Append current_command_list to imageCommands and reset it for the next line
+                if current_command_list:
+                    imageCommands.append(current_command_list)
+                    current_command_list = []
+                
     return imageCommands
 
 # Control
@@ -334,8 +355,10 @@ def main():
             aprs_subprocess = APRS.begin_APRS_recieve(APRS_LOG_PATH) # Begin listening for APRS commands
 
 def test_main():
-#    sys_flags.STAGE_INFO = Stage.LANDED
-#    telemetryRoutine()
+   sys_flags.STAGE_INFO = Stage.MIDAIR
+   #telemetryRoutine()
+   while (True):
+       avionicRoutine()
 
     currentState = fsm.State.WAIT
     currRAFCO_S_idx = 0

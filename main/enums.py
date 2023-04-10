@@ -14,6 +14,7 @@ class Flight_Direction(IntEnum):
     MOVING_UP = 0
     MOVING_DOWN = 1
     INDETERMINENT = 2
+    MOVING = 3
 
 class Verticality(IntEnum):
     NOT_UPRIGHT = 0

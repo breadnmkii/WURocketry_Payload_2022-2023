@@ -3,6 +3,7 @@ venvs
 imaging-venv
 __pycache__
 image_results
-*.txt
 .vscode
+*.txt
 nohup.out
+*.swp

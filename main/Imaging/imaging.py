@@ -51,12 +51,12 @@ def rotate():
     # using Pillow
     
     #read the image, not using OpenCV
-    # img = Image.open(latest_file)
-    # #rotate image
-    # angle = 90
-    # rotated = img.rotate(angle)
-    # file_path = latest_file.replace('.jpg','_rotated.jpg')
-    # rotated.save(file_path)
+    img = Image.open(latest_file)
+    #rotate image
+    angle = 90
+    rotated = img.rotate(angle)
+    new_file_path = latest_file.replace('.jpg','_rotated.jpg')
+    rotated.save(new_file_path)
 
     # return rotated 
 
@@ -125,6 +125,7 @@ def take_picture():
     #print("Today's date:", today_date, type(today_date))
     annotation = str(today_date)+'_'+local_time
     print("full annotation: ", annotation)
+
     camera.annotate_text = annotation
     sleep(5)
     #store image

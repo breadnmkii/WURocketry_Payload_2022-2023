@@ -22,7 +22,7 @@ def init_avionics():
     
     __config_BNO055(bno055, adafruit_bno055.NDOF_MODE)
     __calibrate_BNO055(bno055)
-    __config_BMP388(bmp388, 25)
+    sea_level_altitude = __config_BMP388(bmp388, 25)
 
     return(bno055, bmp388)
 
@@ -35,9 +35,9 @@ def init_bmp():
         bmp388 = None
 
     
-    #__config_BMP388(bmp388, 25)
+    sea_level_altitude = __config_BMP388(bmp388, 25)
 
-    return bmp388
+    return (bmp388, sea_level_altitude)
 
 def init_bno():
     i2c = board.I2C()
@@ -64,7 +64,7 @@ def __calibrate_BNO055(bno055):
     SECOND_NS = 1_000_000_000
     SAMPLE_FREQUENCY = 100   # in Hz
     DELTA_T = SECOND_NS/SAMPLE_FREQUENCY
-    while ( bno055.calibration_status[3] != 3 ):  # bno055.calibration_status[3] != 3
+    while (bno055.calibration_status[3] != 3):  # bno055.calibration_status != (3, 3, 3, 3)
         print(f'Calibration (s,g,a,m) {bno055.calibration_status}')
 
 
@@ -109,8 +109,9 @@ def __config_BMP388(sensor, avg_iter):
 
     avg = sum([sensor.pressure for _ in range(avg_iter)])/avg_iter
     sensor.sea_level_pressure = avg
-    avg = sum([sensor.altitude for _ in range(avg_iter)])/avg_iter
-    sensor.sea_level_altitude = avg # COULD BE BUGGY
-    
     print("...set base MSL pressure to", avg)
-
+    avg = sum([sensor.altitude for _ in range(avg_iter)])/avg_iter
+    #sensor.sea_level_altitude = avg # COULD BE BUGGY
+    
+    print("...set base MSL altitude to", avg)
+    return avg
