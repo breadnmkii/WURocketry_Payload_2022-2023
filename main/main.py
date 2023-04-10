@@ -222,7 +222,7 @@ def updateRAFCO(callsign, APRS_LOG_PATH):
     with open(APRS_LOG_PATH, "r") as file:
         for line in file:
             line = line.replace(":"," ").strip()
-            if line.startswith(callsign):
+            if callsign in line:
                 # Split the line into words and remove the colon ':' if it exists
                 words = re.sub(r'[^\w\s]', ' ', line) #replace all special characters with a space
                 words = re.sub(r'[^A-H1-8\s]', ' ', words) #replace all things that are not A->H and 1->8 with a space
