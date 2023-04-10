@@ -355,23 +355,23 @@ def main():
             aprs_subprocess = APRS.begin_APRS_recieve(APRS_LOG_PATH) # Begin listening for APRS commands
 
 def test_main():
-   sys_flags.STAGE_INFO = Stage.MIDAIR
+   sys_flags.STAGE_INFO = Stage.LANDED
    #telemetryRoutine()
    while (True):
        avionicRoutine()
 
-    currentState = fsm.State.WAIT
-    currRAFCO_S_idx = 0
-    currRAFCO_idx = 0
+    # currentState = fsm.State.WAIT
+    # currRAFCO_S_idx = 0
+    # currRAFCO_idx = 0
 
-    sys_flags.STAGE_INFO = Stage.LANDED # Override to mission execution phase (to enable FSM routine)
+    # sys_flags.STAGE_INFO = Stage.LANDED # Override to mission execution phase (to enable FSM routine)
     # APRS.begin_APRS_recieve(APRS_LOG_PATH)   # Begin APRS receiving process at specified file (comment out if APRS_log exists in main directory)
 
-    while (True):
-        fsmUpdate = controlRoutine(currentState, currRAFCO_S_idx, currRAFCO_idx)
-        currentState = fsmUpdate[0]
-        currRAFCO_S_idx = fsmUpdate[1]
-        currRAFCO_idx = fsmUpdate[2]
+    # while (True):
+    #     fsmUpdate = controlRoutine(currentState, currRAFCO_S_idx, currRAFCO_idx)
+    #     currentState = fsmUpdate[0]
+    #     currRAFCO_S_idx = fsmUpdate[1]
+    #     currRAFCO_idx = fsmUpdate[2]
         # avionicRoutine()
 
 
