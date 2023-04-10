@@ -12,7 +12,7 @@ from Avionics import sensing
 #from Control import fsm
 #from Motive import camarm
 #from Radio import APRS
-#from Radio import telemetry
+from Radio import telemetry
 
 import time
 import datetime
