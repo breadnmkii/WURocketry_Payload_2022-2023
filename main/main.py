@@ -7,7 +7,7 @@
 # from Imaging import config as imaging_config  # DEPRECATED
 from Motive import config as motive_config
 
-from Avionics import sensing
+# from Avionics import sensing
 from Control import fsm
 from Motive import camarm
 from Radio import APRS
@@ -37,7 +37,7 @@ at index 8: 1 means BNO or BMP initialization fails -- hardware fault
 sys_flags = System_Flags(Stage.PRELAUNCH, Movement.NOT_MOVING, Flight_Direction.INDETERMINENT, Verticality.NOT_UPRIGHT, Separated.NOT_SEPARATED, Deployed.NOT_DEPLOYED, Warn_Heat.NOMINAL, Warn_Camera.NOMINAL, Warn_Avionics.NOMINAL, Warn_Motive.NOMINAL)
 
 
-APRS_LOG_PATH = "./main/APRS_log.log"    # APRS Log File Path
+APRS_LOG_PATH = "./APRS_log.log"    # APRS Log File Path
 
 ### PAYLOAD ROUTINE FUNCTION ###
 # Sensing
@@ -334,17 +334,10 @@ def main():
             aprs_subprocess = APRS.begin_APRS_recieve(APRS_LOG_PATH) # Begin listening for APRS commands
 
 def test_main():
-   sys_flags.STAGE_INFO = Stage.LANDED
-   telemetryRoutine()
+#    sys_flags.STAGE_INFO = Stage.LANDED
+#    telemetryRoutine()
 
-
-if __name__ == '__main__':
-    test_main()
-
-
-
-""" APRS TEST CODE
-currentState = fsm.State.WAIT
+    currentState = fsm.State.WAIT
     currRAFCO_S_idx = 0
     currRAFCO_idx = 0
 
@@ -356,5 +349,11 @@ currentState = fsm.State.WAIT
         currentState = fsmUpdate[0]
         currRAFCO_S_idx = fsmUpdate[1]
         currRAFCO_idx = fsmUpdate[2]
-        avionicRoutine()
-"""
+        # avionicRoutine()
+
+
+if __name__ == '__main__':
+    test_main()
+
+
+

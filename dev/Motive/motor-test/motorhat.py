@@ -15,6 +15,7 @@ from adafruit_motorkit import MotorKit
 
 
 ## NOTE: left Mport is GND, right Mport is POS
+# throttle = 1 is outwards, -1 is backwards (into body tube)
 
 TIME_SEPARATE = 60 # in seconds
 TIME_RETRACT = 30
@@ -32,9 +33,14 @@ def abort_motor(sig, frame):
 signal.signal(signal.SIGINT, abort_motor)
 
 if __name__ == '__main__':
-    hat.motor1.throttle = 0
-    hat.motor2.throttle = -1
-    time.sleep(100000)
+    hat.motor1.throttle = 1
+    time.sleep(4)
+    # hat.motor2.throttle = -1
+    
+    
+    # busy loop to ensure we can ctrl+c process
+    while True:
+        pass
 
     # print("Starting...")
     # # time.sleep(1)
