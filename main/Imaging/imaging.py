@@ -38,14 +38,16 @@ return camera with 180 degree rotation
 '''
 def rotate():
     camera.rotation = 270
+    rotate_old()
 
-    # list_of_files = glob.glob('/home/pi/WURocketry_Payload_2022-2023/main/Imaging/image_results/*.jpeg') # * means all if need specific format then *.csv
-    # if not list_of_files:
-    #     return camera
+def rotate_old():
+    list_of_files = glob.glob('/home/pi/WURocketry_Payload_2022-2023/main/Imaging/image_results/*.jpeg') # * means all if need specific format then *.csv
+    if not list_of_files:
+        return camera
     
-    # latest_file = max(list_of_files, key=os.path.getctime)
+    latest_file = max(list_of_files, key=os.path.getctime)
     # print(latest_file)
-    # file_path = latest_file.replace('.jpeg','_rotated.jpeg')
+    file_path = latest_file.replace('.jpeg','_rotated.jpeg')
     # print(file_path)
 
     # using Pillow
@@ -58,7 +60,7 @@ def rotate():
     new_file_path = latest_file.replace('.jpg','_rotated.jpg')
     rotated.save(new_file_path)
 
-    # return rotated 
+    return rotated 
 
 # E5: change camera mode back from grayscale to color 
 def to_color_mode():
