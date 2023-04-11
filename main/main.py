@@ -356,9 +356,9 @@ def main():
 
 def test_main():
    sys_flags.STAGE_INFO = Stage.LANDED
-   #telemetryRoutine()
    while (True):
        avionicRoutine()
+       telemetryRoutine()
 
     # currentState = fsm.State.WAIT
     # currRAFCO_S_idx = 0
