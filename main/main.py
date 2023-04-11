@@ -8,11 +8,11 @@
 
 #from Motive import config as motive_config
 
-from Avionics import sensing
-#from Control import fsm
+# from Avionics import sensing
+from Control import fsm
 #from Motive import camarm
-#from Radio import APRS
-#from Radio import telemetry
+from Radio import APRS
+# from Radio import telemetry
 
 import time
 import datetime
@@ -40,6 +40,7 @@ sys_flags = System_Flags(Stage.PRELAUNCH, Movement.NOT_MOVING, Flight_Direction.
 
 
 APRS_LOG_PATH = "./APRS_log.log"    # APRS Log File Path
+CALLSIGN = "KD9THD-7"               # Nasa's callsign
 
 ### PAYLOAD ROUTINE FUNCTION ###
 # Sensing
@@ -196,9 +197,11 @@ def deployRoutine(motor, solenoids):
                 continue
             print("Extending...")
             camarm.extend()
+
             
             print("Extended!")
             time.sleep(0.5)
+            camarm.setzero()
             
             sys_flags.DEPLOYED = Deployed.DEPLOYED
             
@@ -213,16 +216,15 @@ def telemetryRoutine():
     telemetry.transmitData(packet)
 
 # APRS
-def updateRAFCO(callsign, APRS_LOG_PATH):
+def updateRAFCO():
     imageCommands = []
-    current_command_list = []
-    import re
+    current_command_list = [CALLSIGN]
     valid_commands = ['A1', 'B2', 'C3', 'D4', 'E5', 'F6', 'G7', 'H8']
 
     with open(APRS_LOG_PATH, "r") as file:
         for line in file:
             line = line.replace(":"," ").strip()
-            if callsign in line:
+            if line.startswith(CALLSIGN):
                 # Split the line into words and remove the colon ':' if it exists
                 words = re.sub(r'[^\w\s]', ' ', line) #replace all special characters with a space
                 words = re.sub(r'[^A-H1-8\s]', ' ', words) #replace all things that are not A->H and 1->8 with a space
@@ -235,7 +237,7 @@ def updateRAFCO(callsign, APRS_LOG_PATH):
                 # Append current_command_list to imageCommands and reset it for the next line
                 if current_command_list:
                     imageCommands.append(current_command_list)
-                    current_command_list = []
+                    current_command_list = [CALLSIGN]
                 
     return imageCommands
 
@@ -243,9 +245,12 @@ def updateRAFCO(callsign, APRS_LOG_PATH):
 def controlRoutine(currentState, currRAFCO_S_idx, currRAFCO_idx):
     if (sys_flags.STAGE_INFO == Stage.LANDED):
         RAFCOS_LIST = updateRAFCO() # READ ONLY list of ALL (including past) received APRS RAFCOS (rafco sequence)
+        
 
         # Check if any unprocessed or is processing rafco in list (guaranteed to transition out of wait state)
         if (len(RAFCOS_LIST) > currRAFCO_S_idx):
+            print(f"Current RAFCO Log: {RAFCOS_LIST}")
+
             fsmUpdate = fsm.FSM(currentState, RAFCOS_LIST[currRAFCO_S_idx], currRAFCO_idx)
 
             # Update fsm inputs
@@ -351,28 +356,27 @@ def main():
         if (sys_flags.STAGE_INFO == Stage.LANDED and landed_oneshot_transition == False):
             print("Stage 3 Entered!")
             landed_oneshot_transition = True
+            
             # deployRoutine(motor, solenoids) # Deploy imaging system
             aprs_subprocess = APRS.begin_APRS_recieve(APRS_LOG_PATH) # Begin listening for APRS commands
 
 def test_main():
-   sys_flags.STAGE_INFO = Stage.LANDED
-   #telemetryRoutine()
-   while (True):
-       avionicRoutine()
 
-    # currentState = fsm.State.WAIT
-    # currRAFCO_S_idx = 0
-    # currRAFCO_idx = 0
+    # print(updateRAFCO("KQ4CTL-6", APRS_LOG_PATH))
+    
+    # FSM TEST
+    sys_flags.STAGE_INFO = Stage.LANDED
+    currentState = fsm.State.WAIT
+    currRAFCO_S_idx = 0
+    currRAFCO_idx = 0
 
-    # sys_flags.STAGE_INFO = Stage.LANDED # Override to mission execution phase (to enable FSM routine)
-    # APRS.begin_APRS_recieve(APRS_LOG_PATH)   # Begin APRS receiving process at specified file (comment out if APRS_log exists in main directory)
+    processes = APRS.begin_APRS_recieve(APRS_LOG_PATH)   # Begin APRS receiving process at specified file (comment out if APRS_log exists in main directory)
+    while (True):
+        fsmUpdate = controlRoutine(currentState, currRAFCO_S_idx, currRAFCO_idx)
+        currentState = fsmUpdate[0]
+        currRAFCO_S_idx = fsmUpdate[1]
+        currRAFCO_idx = fsmUpdate[2]
 
-    # while (True):
-    #     fsmUpdate = controlRoutine(currentState, currRAFCO_S_idx, currRAFCO_idx)
-    #     currentState = fsmUpdate[0]
-    #     currRAFCO_S_idx = fsmUpdate[1]
-    #     currRAFCO_idx = fsmUpdate[2]
-        # avionicRoutine()
 
 
 if __name__ == '__main__':
