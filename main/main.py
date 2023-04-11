@@ -356,10 +356,10 @@ def main():
 
 def test_main():
    sys_flags.STAGE_INFO = Stage.PRELAUNCH
-   #telemetryRoutine()
+   
    while (True):
-       avionicRoutine()
-
+    avionicRoutine()
+    telemetryRoutine()
     # currentState = fsm.State.WAIT
     # currRAFCO_S_idx = 0
     # currRAFCO_idx = 0
