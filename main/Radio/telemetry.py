@@ -42,7 +42,9 @@ def recieveData():
         #print(f'{receive_time} <- {encoding}')
         # below as integer, above try print as string
         #f.write(f'{receive_time} <- {rx_data}\n')
-        #print(f'{receive_time} <- {rx_data}')  
+        #print(f'{receive_time} <- {rx_data}')
+    return 0
+
 
 '''
 def decode_enums(raw):
