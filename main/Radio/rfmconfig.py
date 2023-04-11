@@ -11,8 +11,8 @@ import adafruit_rfm9x
 
 """
  GPIO (not physical pin no)
-   19 - MOSI
-   21 - MISO
+   GPIO 10 - MOSI
+   GPIO 09 - MISO
    ce1 - CS     # ONLY CAN USE CE1!!!!
    22 - EN  # not used?
    23 - RST
