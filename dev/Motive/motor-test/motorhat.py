@@ -33,8 +33,7 @@ def abort_motor(sig, frame):
 signal.signal(signal.SIGINT, abort_motor)
 
 if __name__ == '__main__':
-    hat.motor1.throttle = 1
-    time.sleep(4)
+    MOTOR.throttle = 1 # temp -negative --> outwards 4/13
     # hat.motor2.throttle = -1
     
     

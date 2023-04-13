@@ -8,10 +8,10 @@
 
 #from Motive import config as motive_config
 
-from Avionics import sensing
-#from Control import fsm
+# from Avionics import sensing
+from Control import fsm
 #from Motive import camarm
-#from Radio import APRS
+from Radio import APRS
 from Radio import telemetry
 
 import time
@@ -40,7 +40,7 @@ sys_flags = System_Flags(Stage.PRELAUNCH, Movement.NOT_MOVING, Flight_Direction.
 
 
 APRS_LOG_PATH = "./APRS_log.log"    # APRS Log File Path
-CALLSIGN = "KD9THD-7"               # Nasa's callsign
+CALLSIGN = "KQ4CTL-6"               # Nasa's callsign
 
 ### PAYLOAD ROUTINE FUNCTION ###
 # Sensing
@@ -222,17 +222,25 @@ def updateRAFCO():
     valid_commands = ['A1', 'B2', 'C3', 'D4', 'E5', 'F6', 'G7', 'H8']
 
     with open(APRS_LOG_PATH, "r") as file:
+        filelines = []
         for line in file:
-            line = line.replace(":"," ").strip()
-            if line.startswith(CALLSIGN):
-                # Split the line into words and remove the colon ':' if it exists
-                words = re.sub(r'[^\w\s]', ' ', line) #replace all special characters with a space
-                words = re.sub(r'[^A-H1-8\s]', ' ', words) #replace all things that are not A->H and 1->8 with a space
-                words = words.split(" ")
+            filelines.append(line)
+        
+        
+        for i in range(0, len(filelines)):
+            if CALLSIGN in filelines[i] and i+1 < len(filelines):
+                
+                line = filelines[i+1].replace(":"," ").strip()
+                if line:
+                    print('line?????')
+                    # Split the line into words and remove the colon ':' if it exists
+                    words = re.sub(r'[^\w\s]', ' ', line) #replace all special characters with a space
+                    words = re.sub(r'[^A-H1-8\s]', ' ', words) #replace all things that are not A->H and 1->8 with a space
+                    words = words.split(" ")
 
-                for word in words:
-                    if word in valid_commands:
-                        current_command_list.append(word)
+                    for word in words:
+                        if word in valid_commands:
+                            current_command_list.append(word)
 
                 # Append current_command_list to imageCommands and reset it for the next line
                 if current_command_list:
@@ -361,24 +369,30 @@ def main():
             aprs_subprocess = APRS.begin_APRS_recieve(APRS_LOG_PATH) # Begin listening for APRS commands
 
 def test_main():
-   sys_flags.STAGE_INFO = Stage.PRELAUNCH
-   
-   while (True):
-    avionicRoutine()
-    telemetryRoutine()
-    # currentState = fsm.State.WAIT
-    # currRAFCO_S_idx = 0
-    # currRAFCO_idx = 0
+    # print("Reading APRS transmissions...")
+    # while True:
+    #     print(updateRAFCO())
 
-    # sys_flags.STAGE_INFO = Stage.LANDED # Override to mission execution phase (to enable FSM routine)
-    # APRS.begin_APRS_recieve(APRS_LOG_PATH)   # Begin APRS receiving process at specified file (comment out if APRS_log exists in main directory)
-
+    """ Telemetry avionics test """
+    # sys_flags.STAGE_INFO = Stage.PRELAUNCH
+    
     # while (True):
-    #     fsmUpdate = controlRoutine(currentState, currRAFCO_S_idx, currRAFCO_idx)
-    #     currentState = fsmUpdate[0]
-    #     currRAFCO_S_idx = fsmUpdate[1]
-    #     currRAFCO_idx = fsmUpdate[2]
-        # avionicRoutine()
+    #  avionicRoutine()
+    #  telemetryRoutine()
+
+    """ FSM TEST """
+    currentState = fsm.State.WAIT
+    currRAFCO_S_idx = 0
+    currRAFCO_idx = 0
+
+    sys_flags.STAGE_INFO = Stage.LANDED # Override to mission execution phase (to enable FSM routine)
+    APRS.begin_APRS_recieve(APRS_LOG_PATH)   # Begin APRS receiving process at specified file (comment out if APRS_log exists in main directory)
+
+    while (True):
+        fsmUpdate = controlRoutine(currentState, currRAFCO_S_idx, currRAFCO_idx)
+        currentState = fsmUpdate[0]
+        currRAFCO_S_idx = fsmUpdate[1]
+        currRAFCO_idx = fsmUpdate[2]
 
 
 if __name__ == '__main__':

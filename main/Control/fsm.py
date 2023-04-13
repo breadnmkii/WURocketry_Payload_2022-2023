@@ -12,7 +12,7 @@ from enum import Enum
 from Imaging import imaging
 from Motive import camarm
 
-CALLSIGN = "KD9THD-7" # NASA's callsign (FSM only responds to RAFCO sequences headed by this callsign)
+CALLSIGN = "KQ4CTL-6" # NASA's callsign (FSM only responds to RAFCO sequences headed by this callsign)
 
 # States enum
 class State(Enum):

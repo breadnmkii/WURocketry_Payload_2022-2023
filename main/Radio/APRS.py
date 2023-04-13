@@ -3,7 +3,7 @@ import time
 
 def begin_APRS_recieve(path):
     with open(path, "w") as file:
-        process1 = subprocess.Popen(["rtl_fm", "-f", "144.390M", "-s", "22050"], 
+        process1 = subprocess.Popen(["rtl_fm", "-f", "144.900M", "-s", "22050"], 
                                    stdout=subprocess.PIPE, 
                                    stderr=subprocess.PIPE)
         process2 = subprocess.Popen(["multimon-ng", "-t", "raw", "-a", "AFSK1200", "-f", "alpha", "/dev/stdin"], 
@@ -14,7 +14,7 @@ def begin_APRS_recieve(path):
 
 
 if __name__ == "__main__":
-    output_file_path = "decoded_APRS_data.txt"
+    output_file_path = "/home/pi/WURocketry_Payload_2022-2023/main/APRS_log.log"
     process = begin_APRS_recieve(output_file_path)
 
     try:
