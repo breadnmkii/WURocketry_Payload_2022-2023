@@ -97,7 +97,7 @@ def avionics_landed():
 
 def update_system_flags(is_upright, heat, bmp_values_status, has_launched, is_still, ground_steady):
     if is_upright:
-        sys_flags.VERTICALITY = int(is_upright == True) 
+        sys_flags.VERTICALITY = int(is_upright == True)  
     if heat:
         sys_flags.WARN_HEAT = int(heat == True) 
     if bmp_values_status:
@@ -380,22 +380,20 @@ def test_main():
     #  telemetryRoutine()
 
     """ FSM TEST """
-    currentState = fsm.State.WAIT
-    currRAFCO_S_idx = 0
-    currRAFCO_idx = 0
+    # currentState = fsm.State.WAIT
+    # currRAFCO_S_idx = 0
+    # currRAFCO_idx = 0
 
     sys_flags.STAGE_INFO = Stage.LANDED # Override to mission execution phase (to enable FSM routine)
-    APRS.begin_APRS_recieve(APRS_LOG_PATH)   # Begin APRS receiving process at specified file (comment out if APRS_log exists in main directory)
+    # APRS.begin_APRS_recieve(APRS_LOG_PATH)   # Begin APRS receiving process at specified file (comment out if APRS_log exists in main directory)
 
     while (True):
-        fsmUpdate = controlRoutine(currentState, currRAFCO_S_idx, currRAFCO_idx)
-        currentState = fsmUpdate[0]
-        currRAFCO_S_idx = fsmUpdate[1]
-        currRAFCO_idx = fsmUpdate[2]
+        avionicRoutine()
+
 
 
 if __name__ == '__main__':
-    main()
+    test_main()
 
 
 

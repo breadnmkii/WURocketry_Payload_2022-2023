@@ -107,6 +107,7 @@ def read_euler_buffer():
         # clamping asin values
         pitch = math.asin(max(-1, min(2 * w * y - x * z, 1)))
         roll= math.atan2(2 * (w* z + x * y), 1 - 2*(yy+z * z))
+        print('raw raw roll:', roll, 'raw raw pitch:', pitch)
         three_ele = [roll, pitch, yaw]
         #print("r,p,y:\t", three_ele)
         euler_buffer[euler_orient_pointer] = [roll, pitch, yaw]
@@ -203,6 +204,22 @@ def average_window(list, window, pointer):
     if len(window_list) == 0:
         return 0
     return sum(window_list) / len(window_list)
+
+def finer_average_window(list, window, pointer):
+    if(not list):
+        return 100
+    buf_len = len(list)
+    start = (pointer - window + 1) % buf_len
+    end = (pointer + 1) % buf_len
+    window_list = None
+    if start <= end:
+        window_list = list[start:end]
+    else:
+        window_list = list[start:] + list[:end]
+    window_list = [x for x in window_list if x is not None]
+    if len(window_list) == 0:
+        return 0
+    return sum(window_list) / len(window_list)
     
 '''
 testing status:
@@ -256,7 +273,7 @@ testing status:
 '''
 def detectMovement(acc_accumulator):
     global linear_acc_pointer
-    MOTION_SENSITIVITY = 0.7         # Amount of 3-axis acceleration needed to be read to trigger "movement" detection
+    MOTION_SENSITIVITY = 0.75         # Amount of 3-axis acceleration needed to be read to trigger "movement" detection
     isMoving = False
     ACC_WINDOW = 20                  # Range of values to apply rolling average in 'acc_accumulator'
 
@@ -264,6 +281,7 @@ def detectMovement(acc_accumulator):
     y = [item[1] for item in acc_accumulator]
     z = [item[2] for item in acc_accumulator]
 
+    #print('x:', xx, 'y:', yy, 'z:', zz)
     if(average_window(x, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY 
        or average_window(y, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY 
        or average_window(z, ACC_WINDOW, linear_acc_pointer) > MOTION_SENSITIVITY
@@ -303,20 +321,22 @@ def vertical(euler_accumulator):
     global euler_orient_pointer
     is_vertical = False
     rolling_window = 15
-    threshold = 0.3 # NEED TESTING -- tested 0.15 on 3/6 by itself -- tested again 3/24 on motor hat not stable enough -> changed to 0.2
+    pitch_threshold = 0.3 # NEED TESTING -- tested 0.15 on 3/6 by itself -- tested again 3/24 on motor hat not stable enough -> changed to 0.2
     rolls = [item[0] for item in euler_accumulator]
     pitches = [item[1] for item in euler_accumulator]
+    roll_threshold = 3.14-0.52 # 2pi radian deviated from 30 degrees
     pitch= abs(average_window(pitches, rolling_window, euler_orient_pointer))
     roll = abs(average_window(rolls, rolling_window, euler_orient_pointer))
 
-    filtered_rolls = [abs(x) for x in rolls if x is not None]
-    averaged_roll = sum(filtered_rolls) / len(filtered_rolls)
+    #filtered_rolls = [abs(x) for x in rolls if x is not None]
+    #averaged_roll = sum(filtered_rolls) / len(filtered_rolls)
 
-    filtered_pitches = [abs(x) for x in pitches if x is not None]
-    averaged_pitch = sum(filtered_pitches) / len(filtered_pitches)
+    #filtered_pitches = [abs(x) for x in pitches if x is not None]
+    #averaged_pitch = sum(filtered_pitches) / len(filtered_pitches)
 
-    #print('inspecting rolls:', rolls)
-    if (averaged_roll < threshold and averaged_pitch < threshold):
+    print('rolls:', roll, 'pitch', pitch)
+    #print('raw roll:', rolls[euler_orient_pointer], 'raw pitch:', pitches[euler_orient_pointer])
+    if (roll > roll_threshold and pitch < pitch_threshold):
         #print("Camera is vertical from horizontal: row pitch", averaged_roll, averaged_pitch)
         
         is_vertical = True
@@ -346,7 +366,7 @@ def altitude_status(altitude_accumulator, pressure_accumulator):
         print('BMP -- payload is moving down')
         return 'down'
     elif (abs((average_window(altitude_accumulator, rolling_window, bmp_pointer)-sea_level_altitude)) > ascent_altitude 
-          and abs((average_window(pressure_accumulator, rolling_window, bmp_pointer)-bmp.sea_level_pressure)) > ascent_altitude):
+          and abs((average_window(pressure_accumulator, rolling_window, bmp_pointer)-bmp.sea_level_pressure)) < descent_pressure):
         print('BMP -- general moving')
         return 'moving'
     else:
@@ -375,17 +395,18 @@ TODO: testing
 def ground_level(altitude_accumulator, pressure_accumulator):
     global sea_level_altitude
     rolling_window = 50
-    ground_altitude_sensitivity = 0.127 # NEED TESTING 
-    ground_pressure_sensitivity = 0.5 # NEED TESTING 
-    if (abs(average_window(altitude_accumulator, rolling_window, bmp_pointer)-sea_level_altitude) < ground_altitude_sensitivity and
-        abs(average_window(pressure_accumulator, rolling_window, bmp_pointer)-bmp.sea_level_pressure) < ground_pressure_sensitivity):
+    ground_altitude_sensitivity = 10 # NEED TESTING 
+    ground_pressure_sensitivity = 0.02 # NEED TESTING 
+    #print("altitude?", altitude, "pressure", pressure)
+    if (abs(finer_average_window(altitude_accumulator, rolling_window, bmp_pointer)-sea_level_altitude) < ground_altitude_sensitivity and
+       abs(finer_average_window(pressure_accumulator, rolling_window, bmp_pointer)-bmp.sea_level_pressure) < ground_pressure_sensitivity):
         return True
     else:
         return False
 
 def remain_still(acc_accumulator):
     rolling_window = 50
-    acceleration_sensitivity = 0.5 # NEED TESTING 
+    acceleration_sensitivity = 0.75 # NEED TESTING 
     x = [item[0] for item in acc_accumulator]
     y = [item[1] for item in acc_accumulator]
     z = [item[2] for item in acc_accumulator]
