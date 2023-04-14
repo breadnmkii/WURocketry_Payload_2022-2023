@@ -133,11 +133,11 @@ RETRACT_TIME = 50
 
 ### FAILSAFE ABORT ###
 # SIGINT abort
-def abort_motives(sig, frame):
+def abort_motives(motor, solenoids):
     motor.throttle = 0
     solenoids.throttle = 0
     sys.exit(0)
-signal.signal(signal.SIGINT, abort_motives)
+
 
 def deployRoutine(motor, solenoids):
     if (sys_flags.STAGE_INFO == Stage.LANDED):
