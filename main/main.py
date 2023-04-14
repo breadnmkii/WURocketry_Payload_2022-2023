@@ -3,14 +3,14 @@
 ################################################
 
 ### IMPORTS ###
-# from Avionics import config as avionics_config
+from Avionics import config as avionics_config
 # from Imaging import config as imaging_config  # DEPRECATED
 
-#from Motive import config as motive_config
+from Motive import config as motive_config
 
-# from Avionics import sensing
+from Avionics import sensing
 from Control import fsm
-#from Motive import camarm
+from Motive import camarm
 from Radio import APRS
 from Radio import telemetry
 
@@ -232,7 +232,6 @@ def updateRAFCO():
                 
                 line = filelines[i+1].replace(":"," ").strip()
                 if line:
-                    print('line?????')
                     # Split the line into words and remove the colon ':' if it exists
                     words = re.sub(r'[^\w\s]', ' ', line) #replace all special characters with a space
                     words = re.sub(r'[^A-H1-8\s]', ' ', words) #replace all things that are not A->H and 1->8 with a space
@@ -301,7 +300,7 @@ def main():
     """ INITIALIZATION PHASE """
     ### Generic global config
     # Set current flight stage to prelaunch
-    sys_flags.STAGE_INFO = Stage.PRELAUNCH
+    sys_flags.STAGE_INFO = Stage.MIDAIR      # TEMP HARDCODE TO LANDING
     midair_oneshot_transition = False
     landed_oneshot_transition = False
 
@@ -340,7 +339,7 @@ def main():
             avionicRoutine()
 
         # TELEMETRY ROUTINE
-        this_time= time.time()
+        this_time = time.time()
         if(this_time - telemetry_last_time >= TELEMETRY_FREQ):
             telemetry_last_time = this_time + TELEMETRY_FREQ
             telemetryRoutine()
@@ -366,7 +365,7 @@ def main():
             landed_oneshot_transition = True
             
             # deployRoutine(motor, solenoids) # Deploy imaging system
-            aprs_subprocess = APRS.begin_APRS_recieve(APRS_LOG_PATH) # Begin listening for APRS commands
+            # aprs_subprocess = APRS.begin_APRS_recieve(APRS_LOG_PATH) # Begin listening for APRS commands
 
 def test_main():
     # print("Reading APRS transmissions...")
@@ -396,7 +395,7 @@ def test_main():
 
 
 if __name__ == '__main__':
-    test_main()
+    main()
 
 
 
