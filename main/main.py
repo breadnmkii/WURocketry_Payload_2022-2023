@@ -133,11 +133,11 @@ RETRACT_TIME = 50
 
 ### FAILSAFE ABORT ###
 # SIGINT abort
-def abort_motives(sig, frame):
+def abort_motives(motor, solenoids):
     motor.throttle = 0
     solenoids.throttle = 0
     sys.exit(0)
-signal.signal(signal.SIGINT, abort_motives)
+
 
 def deployRoutine(motor, solenoids):
     if (sys_flags.STAGE_INFO == Stage.LANDED):
@@ -217,8 +217,10 @@ def telemetryRoutine():
 
 # APRS
 def updateRAFCO():
-    imageCommands = []
+    hardcoded = [CALLSIGN, 'C3', 'A1', 'D4', 'C3', 'E5', 'A1', 'G7', 'C3', 'H8', 'A1', 'F6', 'C3']
+    imageCommands = [hardcoded]
     current_command_list = [CALLSIGN]
+    
     valid_commands = ['A1', 'B2', 'C3', 'D4', 'E5', 'F6', 'G7', 'H8']
 
     with open(APRS_LOG_PATH, "r") as file:
