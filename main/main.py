@@ -217,8 +217,10 @@ def telemetryRoutine():
 
 # APRS
 def updateRAFCO():
-    imageCommands = []
+    hardcoded = [CALLSIGN, 'C3', 'A1', 'D4', 'C3', 'E5', 'A1', 'G7', 'C3', 'H8', 'A1', 'F6', 'C3']
+    imageCommands = [hardcoded]
     current_command_list = [CALLSIGN]
+    
     valid_commands = ['A1', 'B2', 'C3', 'D4', 'E5', 'F6', 'G7', 'H8']
 
     with open(APRS_LOG_PATH, "r") as file:
