@@ -136,8 +136,8 @@ MARGIN = 2
 current = get_angpos(reader)
 def main():
     print("starting...")
-    extend()
-    # set_zero()
+    # extend()
+    set_zero()
 
     time.sleep(1)
 

@@ -41,7 +41,7 @@ if __name__ == '__main__':
     # time.sleep(2)
     # hat.motor1.throttle = 0
     print("Move")
-    hat.motor2.throttle = 1
+    hat.motor2.throttle = -1
     
     # busy loop to ensure we can ctrl+c process
     while True:

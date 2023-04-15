@@ -63,14 +63,13 @@ def avionicRoutine():
         (heat, is_still, is_upright) = avionics_landed()
 
     # update system flags -- specifics (related to avionics)
-    #print("update sysflags")
-    print(is_upright, heat, bmp_values_status, has_launched, is_still, ground_steady)
+    # print("update sysflags")
+    # print(is_upright, heat, bmp_values_status, has_launched, is_still, ground_steady)
     update_system_flags(is_upright, heat, bmp_values_status, has_launched, is_still, ground_steady)
 
 def avionics_prelaunch():
     acceleration_buffer = sensing.read_acceleration_buffer()
     has_launched = sensing.detectLaunch(acceleration_buffer)
-    print('is it launched yet?', has_launched)
     # is_still = sensing.remain_still(acceleration_buffer)
     return (has_launched)
 
@@ -80,7 +79,6 @@ def avionics_midair():
     bmp_values_status = sensing.altitude_status(altitude_buffer, pressure_buffer)
     heat = sensing.check_heat(temperature_buffer)
     is_still = not(sensing.detectMovement(acceleration_buffer))
-    print('is it still?', is_still)
     ground_steady = sensing.ground_level(altitude_buffer, pressure_buffer)
     return (heat, is_still, ground_steady, bmp_values_status)
 
@@ -115,7 +113,6 @@ def update_system_flags(is_upright, heat, bmp_values_status, has_launched, is_st
             sys_flags.MOVEMENT = Movement.NOT_MOVING
         else:
             sys_flags.MOVEMENT = Movement.CONFLICTING_DECISION
-            print('NOTICE: sensor uncertain of movement ')
 
     # switch stages
     if (sys_flags.STAGE_INFO == Stage.PRELAUNCH and has_launched and (bmp_values_status == 'up' or bmp_values_status == 'moving')):
@@ -138,20 +135,17 @@ def abort_motives(motor, solenoids):
 
 
 def deployRoutine(motor, solenoids):
-    # if (sys_flags.STAGE_INFO == Stage.LANDED):
-    #     if (sys_flags.DEPLOYED == Deployed.NOT_DEPLOYED):       
-     
-    ##### RETENTION RELEASE PHASE
-    #The soleonid will not retract in if it detects movement
-    print("Releasing solenoids...")
-    # while (sys_flags.MOVEMENT == Movement.MOVING): 
-    #     print("wait stable...")
-    #     continue
+
+
+    current_time = datetime.datetime.now()
+    message = "releasing selenoid"
+    packet = f'{current_time} {message}'
+    telemetry.transmitData(packet)
 
     # Retract all solenoids in retention
     solenoids.throttle = 1
 
-    print("Released solenoids!")
+    # print("Released solenoids!")
     time.sleep(3)
 
     # Release all solenoids in retraction
@@ -159,46 +153,57 @@ def deployRoutine(motor, solenoids):
         
     ##### SEPARATION PHASE
     # Wait until stable to separate
-    print("Separating bay...")
+    # print("Separating bay...")
     # while (sys_flags.MOVEMENT == Movement.MOVING):
     #     print("wait stable...")
     #     continue
-    print(f"Separating for {SEPARATION_TIME}s")
+    # print(f"Separating for {SEPARATION_TIME}s")
     motor.throttle = 1 # Motorhat will separate forward once it's not moving
     time.sleep(SEPARATION_TIME) 
     motor.throttle = 0 # Stops separating
-    
-    print("Separated!")
+    current_time = datetime.datetime.now()
+    message = "selenoid separated"
+    packet = f'{current_time} {message}'
+    telemetry.transmitData(packet)
+
+    # print("Separated!")
     time.sleep(0.5)
     
-    print(f"Retracting racks for {RETRACT_TIME}")
+    # print(f"Retracting racks for {RETRACT_TIME}")
     motor.throttle = -1
     time.sleep(RETRACT_TIME)
     motor.throttle = 0
+    current_time = datetime.datetime.now()
+    message = "within retracting"
+    packet = f'{current_time} {message}'
+    telemetry.transmitData(packet)
 
-    print("Retracted!")
+    # print("Retracted!")
     time.sleep(0.5)
     
     sys_flags.SEPARATED = Separated.SEPARATED
-    print("~ System separated ~")
+    # print("~ System separated ~")
 
     ##### EXTEND CAMERA PHASE
-    print("Extending camarm...")
+    # print("Extending camarm...")
     # Wait until stable and upright to deploy camarm
     # while((sys_flags.VERTICALITY == Verticality.NOT_UPRIGHT) or (sys_flags.MOVEMENT == Movement.NOT_MOVING)):
     #     print("wait stable upright...")
     #     continue
     time.sleep(2)
-    print("Extending...")
+    # print("Extending...")
     camarm.extend()
+    message = "extending arms"
+    packet = f'{current_time} {message}'
+    telemetry.transmitData(packet)
 
-    print("Extended!")
+    # print("Extended!")
     time.sleep(0.5)
     camarm.set_zero()
     
     sys_flags.DEPLOYED = Deployed.DEPLOYED
     
-    print("~ System deployed ~")
+    # print("~ System deployed ~")
 
 # Telemetry
 def telemetryRoutine():
@@ -251,7 +256,7 @@ def controlRoutine(currentState, currRAFCO_S_idx, currRAFCO_idx):
 
         # Check if any unprocessed or is processing rafco in list (guaranteed to transition out of wait state)
         if (len(RAFCOS_LIST) > currRAFCO_S_idx):
-            print(f"Current RAFCO Log: {RAFCOS_LIST}")
+            # print(f"Current RAFCO Log: {RAFCOS_LIST}")
 
             fsmUpdate = fsm.FSM(currentState, RAFCOS_LIST[currRAFCO_S_idx], currRAFCO_idx)
 
@@ -259,11 +264,11 @@ def controlRoutine(currentState, currRAFCO_S_idx, currRAFCO_idx):
             currentState = fsmUpdate[0]
             currRAFCO_idx = fsmUpdate[1]
 
-            print(currentState)
+            # print(currentState)
 
             # If FSM complete (i.e. returned to a wait state)
             if (currentState == fsm.State.WAIT):
-                print(f'Processed RAFCO_S: {RAFCOS_LIST[currRAFCO_S_idx]}\n')
+                # print(f'Processed RAFCO_S: {RAFCOS_LIST[currRAFCO_S_idx]}\n')
                 currRAFCO_S_idx += 1    # Increment to next RAFCO_S when FSM has completed
                 currRAFCO_idx = 0       # Seek back to beginning of RAFCO_S
                 
@@ -305,7 +310,7 @@ def main():
     """ INITIALIZATION PHASE """
     ### Generic global config
     # Set current flight stage to prelaunch
-    sys_flags.STAGE_INFO = Stage.PRELAUNCH
+    sys_flags.STAGE_INFO = Stage.MIDAIR
     midair_oneshot_transition = False
     landed_oneshot_transition = False
 
@@ -361,12 +366,12 @@ def main():
 
         ### STAGE TRANSITION ONESHOT EXECUTIONS ###
         if (sys_flags.STAGE_INFO == Stage.MIDAIR and midair_oneshot_transition == False):
-            print("Stage 2 Entered!")
+            # print("Stage 2 Entered!")
             midair_oneshot_transition = True
             # do single transition to midair stuff here
 
         if (sys_flags.STAGE_INFO == Stage.LANDED and landed_oneshot_transition == False):
-            print("Stage 3 Entered!")
+            # print("Stage 3 Entered!")
             landed_oneshot_transition = True
             
             deployRoutine(motor, solenoids) # Deploy imaging system
