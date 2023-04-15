@@ -29,6 +29,15 @@ def transmitData(str):
     else:
         print("Failed transmit!")
         return False
+    
+def transmit_deploy_status(str):
+    if (RFM96W != False and RFM96W != None):
+        tx_packet =  bytes(f'{str}\r\n', 'utf-8')
+        RFM96W.send(tx_packet)
+        print(f'Sent deploy status -> {tx_packet}')
+    else:
+        print("Failed transmit for deploy status!")
+        return False
 
 def recieveData():
     rx_packet = RFM96W.receive()
