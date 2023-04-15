@@ -6,7 +6,7 @@
 # from Avionics import config as avionics_config
 from Motive import config as motive_config
 
-# from Avionics import sensing
+from Avionics import sensing
 from Control import fsm
 from Motive import camarm
 from Radio import APRS
@@ -126,8 +126,8 @@ def update_system_flags(is_upright, heat, bmp_values_status, has_launched, is_st
         sys_flags.STAGE_INFO = Stage.LANDED
 
 # Deployment
-SEPARATION_TIME = 80   # Seconds
-RETRACT_TIME = 75
+SEPARATION_TIME = 82   # Seconds
+RETRACT_TIME = 70
 #motor, solenoids = motive_config.electromotives_config()
 
 ### FAILSAFE ABORT ###
@@ -399,8 +399,10 @@ def test_main():
     # sys_flags.STAGE_INFO = Stage.LANDED # Override to mission execution phase (to enable FSM routine)
     # APRS.begin_APRS_recieve(APRS_LOG_PATH)   # Begin APRS receiving process at specified file (comment out if APRS_log exists in main directory)
 
-    # while (True):
-    #     avionicRoutine()
+    while (True):
+        euler_buffer = sensing.read_euler_buffer()
+        is_upright = sensing.vertical(euler_buffer)
+        print(is_upright)
 
 
 
