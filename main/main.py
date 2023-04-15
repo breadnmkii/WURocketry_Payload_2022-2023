@@ -37,7 +37,7 @@ at index 8: 1 means BNO or BMP initialization fails -- hardware fault
 sys_flags = System_Flags(Stage.PRELAUNCH, Movement.NOT_MOVING, Flight_Direction.INDETERMINENT, Verticality.NOT_UPRIGHT, Separated.NOT_SEPARATED, Deployed.NOT_DEPLOYED, Warn_Heat.NOMINAL, Warn_Camera.NOMINAL, Warn_Avionics.NOMINAL, Warn_Motive.NOMINAL)
 
 
-APRS_LOG_PATH = "./APRS_log.log"    # APRS Log File Path
+APRS_LOG_PATH = "/home/pi/WURocketry_Payload_2022-2023/main/APRS_log.log"    # APRS Log File Path
 CALLSIGN = "KQ4CTL-6"               # Nasa's callsign
 
 ### PAYLOAD ROUTINE FUNCTION ###

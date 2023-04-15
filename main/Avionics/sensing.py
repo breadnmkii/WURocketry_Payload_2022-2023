@@ -68,13 +68,13 @@ def read_bno():
     # write data to file 
     # if bno_pointer == BNO_BUFFER_LEN-1:
     if linear_acc_pointer == BNO_BUFFER_LEN-1:
-        with open('Avionics/accelerations.txt', 'a') as the_file:
+        with open('/home/pi/WURocketry_Payload_2022-2023/main/Avionics/accelerations.txt', 'a') as the_file:
             #the_file.write(str(acceleration_buffer))
             for three_element in acceleration_buffer:
                 line = ' '.join(str(elem) for elem in three_element) + '\n'
                 the_file.write(line)
     if euler_orient_pointer == BNO_BUFFER_LEN-1:
-        with open('Avionics/eulers.txt', 'a') as the_file:
+        with open('/home/pi/WURocketry_Payload_2022-2023/main/Avionics/eulers.txt', 'a') as the_file:
             '''
             # may need to format txt files
             data_f.write(f"{time_thisSample-time_launchStart}")
@@ -114,7 +114,7 @@ def read_euler_buffer():
         euler_orient_pointer = euler_orient_pointer+1
     
     if euler_orient_pointer == BNO_BUFFER_LEN-1:
-        with open('Avionics/eulers.txt', 'a') as the_file:
+        with open('/home/pi/WURocketry_Payload_2022-2023/main/Avionics/eulers.txt', 'a') as the_file:
             '''
             # may need to format txt files
             data_f.write(f"{time_thisSample-time_launchStart}")
@@ -143,7 +143,7 @@ def read_acceleration_buffer():
     # write data to file 
     # if bno_pointer == BNO_BUFFER_LEN-1:
     if linear_acc_pointer == BNO_BUFFER_LEN-1:
-        with open('Avionics/accelerations.txt', 'a') as the_file:
+        with open('/home/pi/WURocketry_Payload_2022-2023/main/accelerations.txt', 'a') as the_file:
             #the_file.write(str(acceleration_buffer))
             for three_element in acceleration_buffer:
                 line = ' '.join(str(elem) for elem in three_element) + '\n'
@@ -177,11 +177,11 @@ def read_bmp():
         bmp_pointer = bmp_pointer+1
     
     if bmp_pointer == BMP_BUFFER_LEN-1:
-        with open('Avionics/altitudes.txt', 'a') as the_file:
+        with open('/home/pi/WURocketry_Payload_2022-2023/main/Avionics/altitudes.txt', 'a') as the_file:
             #the_file.write(str(altitude_buffer))
             for altitude in altitude_buffer:
                 the_file.write(str(altitude) + '\n')
-        with open('Avionics/pressures.txt', 'a') as the_file:
+        with open('/home/pi/WURocketry_Payload_2022-2023/main/Avionics/pressures.txt', 'a') as the_file:
             #the_file.write(str(pressure_buffer))
             for pressure in pressure_buffer:
                 the_file.write(str(pressure) + '\n')
