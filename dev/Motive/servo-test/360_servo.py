@@ -1,7 +1,8 @@
 import time
 import config
-MARGIN = 2
-current = 0
+import signal
+import sys
+
 ## Init servo components
 # servo_config takes two params, GPIO for (r,w) respectively
 """
@@ -15,6 +16,14 @@ SERVO
 # write/read parameters
 servo, reader = config.servo_config(19,16)              # cam servo
 lift_servo, lift_reader = config.servo_config(21,20)    # lift servo
+
+# SIGINT abort
+def abort_servo(sig, frame):
+    print("Caught SIGINT")
+    lift_servo.stop()
+    servo.stop()
+    sys.exit(0)
+signal.signal(signal.SIGINT, abort_servo)
 
 def extend():
     lift_servo.set_speed(0.4)
@@ -52,7 +61,7 @@ def get_angpos_helper(read_dc):
 def set_angpos(moveto_angle):
     
     global current
-    
+    print(f"Current angle: {current}")
     if moveto_angle < current:
         servo.set_speed(-0.2)   # @6v -0.15
     else:
@@ -78,6 +87,21 @@ def get_angpos(given_reader):
 
 #set angular position to zero    
 def set_zero():
+
+    global current
+
+    if current < 180:
+        servo.set_speed(-0.15)   # @6v -0.15
+    else:
+        servo.set_speed(0.09)    # @6v 0.09
+
+    curr_pos = get_angpos(reader)
+    while (curr_pos > 0+MARGIN or curr_pos < 0-MARGIN):
+        curr_pos = get_angpos(reader)
+    
+    current = 0
+    servo.stop()
+
     set_angpos(0)
     print("Set 360 Position to Zero Sucessfully")
     
@@ -104,20 +128,39 @@ def right_60():
     set_angpos(moveto_angle)
 
 
+
+
+### INIT GLOBALS
+
+MARGIN = 2
+current = get_angpos(reader)
 def main():
     print("starting...")
-
-    time.sleep(1)
-
-    print("zeroing")
     set_zero()
+
     time.sleep(1)
-    # left_60()
-    # time.sleep(1)
-    # set_zero()
+
+    # right_60()
+
+    # right_60()
     # time.sleep(1)
     # right_60()
     # time.sleep(1)
+    # right_60()
+    # time.sleep(1)
+    # right_60()
+    # time.sleep(1)
+    # right_60()
+    # time.sleep(1)
+    # left_60()
+
+
+    # time.sleep(1)
+
+    # print("zeroing")
+    # set_zero()
+    # time.sleep(1)
+    
     print("stopped")
     servo.stop()
     

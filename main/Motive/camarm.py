@@ -78,6 +78,21 @@ def get_angpos(given_reader):
 
 #set angular position to zero    
 def set_zero():
+
+    global current
+
+    if current < 180:
+        servo.set_speed(-0.15)   # @6v -0.15
+    else:
+        servo.set_speed(0.09)    # @6v 0.09
+
+    curr_pos = get_angpos(reader)
+    while (curr_pos > 0+MARGIN or curr_pos < 0-MARGIN):
+        curr_pos = get_angpos(reader)
+    
+    current = 0
+    servo.stop()
+
     set_angpos(0)
     print("Set 360 Position to Zero Sucessfully")
     

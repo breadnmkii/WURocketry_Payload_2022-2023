@@ -3,9 +3,7 @@
 ################################################
 
 ### IMPORTS ###
-from Avionics import config as avionics_config
-# from Imaging import config as imaging_config  # DEPRECATED
-
+# from Avionics import config as avionics_config
 from Motive import config as motive_config
 
 from Avionics import sensing
@@ -17,9 +15,10 @@ from Radio import telemetry
 import time
 import datetime
 from enums import *
-import signal
 import sys
 import re
+import signal
+import atexit
 
 
 
@@ -140,72 +139,66 @@ def abort_motives(motor, solenoids):
 
 
 def deployRoutine(motor, solenoids):
-    if (sys_flags.STAGE_INFO == Stage.LANDED):
-        if (sys_flags.DEPLOYED == Deployed.NOT_DEPLOYED):
-            ##### REALIGN (New phase, need to "pull" nosecone back a bit to release retention)
-            """ DEPRECATED - Racks not connected to nosecone """
-            # motor.throttle = -1
-            # time.sleep(0.5)
-            # motor.throttle = 0
-            
-            ##### RETENTION RELEASE PHASE
-            #The soleonid will not retract in if it detects movement
-            print("Releasing solenoids...")
-            while (sys_flags.MOVEMENT == Movement.MOVING): 
-                print("wait stable...")
-                continue
+    # if (sys_flags.STAGE_INFO == Stage.LANDED):
+    #     if (sys_flags.DEPLOYED == Deployed.NOT_DEPLOYED):       
+     
+    ##### RETENTION RELEASE PHASE
+    #The soleonid will not retract in if it detects movement
+    print("Releasing solenoids...")
+    # while (sys_flags.MOVEMENT == Movement.MOVING): 
+    #     print("wait stable...")
+    #     continue
 
-            # Retract all solenoids in retention
-            solenoids.throttle = 1
+    # Retract all solenoids in retention
+    solenoids.throttle = 1
 
-            print("Released solenoids!")
-            time.sleep(3)
+    print("Released solenoids!")
+    time.sleep(3)
 
-            # Release all solenoids in retraction
-            solenoids.throttle = 0
-                
-            ##### SEPARATION PHASE
-            # Wait until stable to separate
-            print("Separating bay...")
-            while (sys_flags.MOVEMENT == Movement.MOVING):
-                print("wait stable...")
-                continue
-            print(f"Separating for {SEPARATION_TIME}s")
-            motor.throttle = 1 # Motorhat will separate forward once it's not moving
-            time.sleep(SEPARATION_TIME) 
-            motor.throttle = 0 # Stops separating
-            
-            print("Separated!")
-            time.sleep(0.5)
-            
-            print(f"Retracting racks for {RETRACT_TIME}")
-            motor.throttle = -1
-            time.sleep(RETRACT_TIME)
-            motor.throttle = 0
+    # Release all solenoids in retraction
+    solenoids.throttle = 0
+        
+    ##### SEPARATION PHASE
+    # Wait until stable to separate
+    print("Separating bay...")
+    # while (sys_flags.MOVEMENT == Movement.MOVING):
+    #     print("wait stable...")
+    #     continue
+    print(f"Separating for {SEPARATION_TIME}s")
+    motor.throttle = 1 # Motorhat will separate forward once it's not moving
+    time.sleep(SEPARATION_TIME) 
+    motor.throttle = 0 # Stops separating
+    
+    print("Separated!")
+    time.sleep(0.5)
+    
+    print(f"Retracting racks for {RETRACT_TIME}")
+    motor.throttle = -1
+    time.sleep(RETRACT_TIME)
+    motor.throttle = 0
 
-            print("Retracted!")
-            time.sleep(0.5)
-            
-            sys_flags.SEPARATED = Separated.SEPARATED
-            print("~ System separated ~")
+    print("Retracted!")
+    time.sleep(0.5)
+    
+    sys_flags.SEPARATED = Separated.SEPARATED
+    print("~ System separated ~")
 
-            ##### EXTEND CAMERA PHASE
-            print("Extending camarm...")
-            # Wait until stable and upright to deploy camarm
-            while((sys_flags.VERTICALITY == Verticality.NOT_UPRIGHT) or (sys_flags.MOVEMENT == Movement.NOT_MOVING)):
-                print("wait stable upright...")
-                continue
-            print("Extending...")
-            camarm.extend()
+    ##### EXTEND CAMERA PHASE
+    print("Extending camarm...")
+    # Wait until stable and upright to deploy camarm
+    # while((sys_flags.VERTICALITY == Verticality.NOT_UPRIGHT) or (sys_flags.MOVEMENT == Movement.NOT_MOVING)):
+    #     print("wait stable upright...")
+    #     continue
+    print("Extending...")
+    camarm.extend()
 
-            
-            print("Extended!")
-            time.sleep(0.5)
-            camarm.setzero()
-            
-            sys_flags.DEPLOYED = Deployed.DEPLOYED
-            
-            print("~ System deployed ~")
+    print("Extended!")
+    time.sleep(0.5)
+    camarm.setzero()
+    
+    sys_flags.DEPLOYED = Deployed.DEPLOYED
+    
+    print("~ System deployed ~")
 
 # Telemetry
 def telemetryRoutine():
@@ -298,6 +291,16 @@ Transition Factors:
 
 '''
 
+# SIGINT abort
+motor, solenoids = motive_config.electromotives_config()
+
+def abort_motor(sig, frame):
+    print("Caught SIGINT")
+    motor.throttle = 0
+    solenoids.throttle
+    sys.exit(0)
+signal.signal(signal.SIGINT, abort_motor)
+
 def main():
     """ INITIALIZATION PHASE """
     ### Generic global config
@@ -370,6 +373,13 @@ def main():
             aprs_subprocess = APRS.begin_APRS_recieve(APRS_LOG_PATH) # Begin listening for APRS commands
 
 def test_main():
+    print("Running test main...")
+
+
+    time.sleep(5)
+    """ Deploy routine test """
+    deployRoutine(motor, solenoids)
+
     # print("Reading APRS transmissions...")
     # while True:
     #     print(updateRAFCO())
@@ -386,7 +396,7 @@ def test_main():
     # currRAFCO_S_idx = 0
     # currRAFCO_idx = 0
 
-    sys_flags.STAGE_INFO = Stage.LANDED # Override to mission execution phase (to enable FSM routine)
+    # sys_flags.STAGE_INFO = Stage.LANDED # Override to mission execution phase (to enable FSM routine)
     # APRS.begin_APRS_recieve(APRS_LOG_PATH)   # Begin APRS receiving process at specified file (comment out if APRS_log exists in main directory)
 
     while (True):
