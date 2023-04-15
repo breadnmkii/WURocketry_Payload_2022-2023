@@ -6,7 +6,7 @@
 # from Avionics import config as avionics_config
 from Motive import config as motive_config
 
-from Avionics import sensing
+# from Avionics import sensing
 from Control import fsm
 from Motive import camarm
 from Radio import APRS
@@ -376,7 +376,7 @@ def test_main():
     print("Running test main...")
 
 
-    time.sleep(5)
+    time.sleep(3)
     """ Deploy routine test """
     deployRoutine(motor, solenoids)
 
@@ -391,6 +391,12 @@ def test_main():
     #  avionicRoutine()
     #  telemetryRoutine()
 
+    ''' v2'''
+    # while (True):
+    #     euler_buffer = sensing.read_euler_buffer()
+    #     is_upright = sensing.vertical(euler_buffer)
+    #     print(is_upright)
+
     """ FSM TEST """
     # currentState = fsm.State.WAIT
     # currRAFCO_S_idx = 0
@@ -399,10 +405,7 @@ def test_main():
     # sys_flags.STAGE_INFO = Stage.LANDED # Override to mission execution phase (to enable FSM routine)
     # APRS.begin_APRS_recieve(APRS_LOG_PATH)   # Begin APRS receiving process at specified file (comment out if APRS_log exists in main directory)
 
-    while (True):
-        euler_buffer = sensing.read_euler_buffer()
-        is_upright = sensing.vertical(euler_buffer)
-        print(is_upright)
+
 
 
 
