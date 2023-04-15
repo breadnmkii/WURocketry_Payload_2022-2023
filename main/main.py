@@ -144,6 +144,11 @@ def deployRoutine(motor, solenoids):
      
     ##### RETENTION RELEASE PHASE
     #The soleonid will not retract in if it detects movement
+    current_time = datetime.datetime.now()
+    message = 'releasing selenoid'
+    packet = f'{current_time} {message}'
+    telemetry.transmit_deploy_status(packet)
+
     print("Releasing solenoids...")
     # while (sys_flags.MOVEMENT == Movement.MOVING): 
     #     print("wait stable...")
@@ -154,6 +159,11 @@ def deployRoutine(motor, solenoids):
 
     print("Released solenoids!")
     time.sleep(3)
+
+    current_time = datetime.datetime.now()
+    message = 'selenoid released, separating bay'
+    packet = f'{current_time} {message}'
+    telemetry.transmit_deploy_status(packet)
 
     # Release all solenoids in retraction
     solenoids.throttle = 0
@@ -171,7 +181,12 @@ def deployRoutine(motor, solenoids):
     
     print("Separated!")
     time.sleep(0.5)
-    
+
+    current_time = datetime.datetime.now()
+    message = 'selenoid separated, retract racks'
+    packet = f'{current_time} {message}'
+    telemetry.transmit_deploy_status(packet)
+
     print(f"Retracting racks for {RETRACT_TIME}")
     motor.throttle = -1
     time.sleep(RETRACT_TIME)
