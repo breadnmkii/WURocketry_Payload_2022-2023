@@ -126,8 +126,8 @@ def update_system_flags(is_upright, heat, bmp_values_status, has_launched, is_st
         sys_flags.STAGE_INFO = Stage.LANDED
 
 # Deployment
-SEPARATION_TIME = 75   # Seconds
-RETRACT_TIME = 50
+SEPARATION_TIME = 80   # Seconds
+RETRACT_TIME = 75
 #motor, solenoids = motive_config.electromotives_config()
 
 ### FAILSAFE ABORT ###
