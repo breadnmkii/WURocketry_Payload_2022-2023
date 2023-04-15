@@ -194,7 +194,7 @@ def deployRoutine(motor, solenoids):
 
     print("Extended!")
     time.sleep(0.5)
-    camarm.setzero()
+    camarm.set_zero()
     
     sys_flags.DEPLOYED = Deployed.DEPLOYED
     
