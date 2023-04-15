@@ -366,8 +366,8 @@ def main():
             print("Stage 3 Entered!")
             landed_oneshot_transition = True
             
-            # deployRoutine(motor, solenoids) # Deploy imaging system
-            # aprs_subprocess = APRS.begin_APRS_recieve(APRS_LOG_PATH) # Begin listening for APRS commands
+            deployRoutine(motor, solenoids) # Deploy imaging system
+            aprs_subprocess = APRS.begin_APRS_recieve(APRS_LOG_PATH) # Begin listening for APRS commands
 
 def test_main():
     # print("Reading APRS transmissions...")
