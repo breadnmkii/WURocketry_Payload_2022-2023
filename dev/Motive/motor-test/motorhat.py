@@ -33,13 +33,16 @@ def abort_motor(sig, frame):
 signal.signal(signal.SIGINT, abort_motor)
 
 if __name__ == '__main__':
-    MOTOR.throttle = 1 # temp -negative --> outwards 4/13
+    print("Running")
+    hat.motor1.throttle = 1 # temp -negative --> outwards 4/13
+    time.sleep(10)
+    hat.motor1.throttle = 0
     # hat.motor2.throttle = -1
     
     
     # busy loop to ensure we can ctrl+c process
-    while True:
-        pass
+    # while True:
+    #     pass
 
     # print("Starting...")
     # # time.sleep(1)
