@@ -305,7 +305,7 @@ def main():
     """ INITIALIZATION PHASE """
     ### Generic global config
     # Set current flight stage to prelaunch
-    sys_flags.STAGE_INFO = Stage.MIDAIR      # TEMP HARDCODE TO LANDING
+    sys_flags.STAGE_INFO = Stage.PRELAUNCH
     midair_oneshot_transition = False
     landed_oneshot_transition = False
 
