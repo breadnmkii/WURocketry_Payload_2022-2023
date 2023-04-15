@@ -3,10 +3,10 @@
 ################################################
 
 ### IMPORTS ###
-from Avionics import config as avionics_config
+# from Avionics import config as avionics_config
 from Motive import config as motive_config
 
-from Avionics import sensing
+# from Avionics import sensing
 from Control import fsm
 from Motive import camarm
 from Radio import APRS
@@ -146,7 +146,7 @@ def deployRoutine(motor, solenoids):
     solenoids.throttle = 1
 
     # print("Released solenoids!")
-    time.sleep(3)
+    time.sleep(10)
 
     # Release all solenoids in retraction
     solenoids.throttle = 0
@@ -216,7 +216,7 @@ def telemetryRoutine():
 # APRS
 def updateRAFCO():
     hardcoded = [CALLSIGN, 'C3', 'A1', 'D4', 'C3', 'E5', 'A1', 'G7', 'C3', 'H8', 'A1', 'F6', 'C3']
-    imageCommands = [hardcoded]
+    imageCommands = []  # tmp: remove hardcoded
     current_command_list = [CALLSIGN]
     
     valid_commands = ['A1', 'B2', 'C3', 'D4', 'E5', 'F6', 'G7', 'H8']
@@ -245,7 +245,7 @@ def updateRAFCO():
                 if current_command_list:
                     imageCommands.append(current_command_list)
                     current_command_list = [CALLSIGN]
-                
+    print(imageCommands)
     return imageCommands
 
 # Control
@@ -310,7 +310,7 @@ def main():
     """ INITIALIZATION PHASE """
     ### Generic global config
     # Set current flight stage to prelaunch
-    sys_flags.STAGE_INFO = Stage.MIDAIR
+    sys_flags.STAGE_INFO = Stage.PRELAUNCH
     midair_oneshot_transition = False
     landed_oneshot_transition = False
 
@@ -380,40 +380,23 @@ def main():
 def test_main():
     print("Running test main...")
 
-
-    time.sleep(3)
-    """ Deploy routine test """
-    deployRoutine(motor, solenoids)
-
-    # print("Reading APRS transmissions...")
-    # while True:
-    #     print(updateRAFCO())
-
-    """ Telemetry avionics test """
-    # sys_flags.STAGE_INFO = Stage.PRELAUNCH
-    
-    # while (True):
-    #  avionicRoutine()
-    #  telemetryRoutine()
-
-    ''' v2'''
-    # while (True):
-    #     euler_buffer = sensing.read_euler_buffer()
-    #     is_upright = sensing.vertical(euler_buffer)
-    #     print(is_upright)
-
     """ FSM TEST """
-    # currentState = fsm.State.WAIT
-    # currRAFCO_S_idx = 0
-    # currRAFCO_idx = 0
+    currentState = fsm.State.WAIT
+    currRAFCO_S_idx = 0
+    currRAFCO_idx = 0
 
-    # sys_flags.STAGE_INFO = Stage.LANDED # Override to mission execution phase (to enable FSM routine)
-    # APRS.begin_APRS_recieve(APRS_LOG_PATH)   # Begin APRS receiving process at specified file (comment out if APRS_log exists in main directory)
+    sys_flags.STAGE_INFO = Stage.LANDED # Override to mission execution phase (to enable FSM routine)
+    APRS.begin_APRS_recieve(APRS_LOG_PATH)   # Begin APRS receiving process at specified file (comment out if APRS_log exists in main directory)
 
+    while True:
+        fsmUpdate = controlRoutine(currentState, currRAFCO_S_idx, currRAFCO_idx)
+        currentState = fsmUpdate[0]
+        currRAFCO_S_idx = fsmUpdate[1]
+        currRAFCO_idx = fsmUpdate[2]
 
 
 if __name__ == '__main__':
-    main()
+    test_main()
 
 
 

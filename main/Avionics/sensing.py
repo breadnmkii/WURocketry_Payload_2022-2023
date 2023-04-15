@@ -293,7 +293,7 @@ def detectMovement(acc_accumulator):
 def detectLaunch(acc_accumulator):
     global linear_acc_pointer
     MOTION_SENSITIVITY = 1           # Amount of 3-axis acceleration needed to be read to trigger "movement" detection
-    MOTION_LAUNCH_SENSITIVITY = 6  # Amount of accel added to offset for stronger initial launch accel
+    MOTION_LAUNCH_SENSITIVITY = 9  # Amount of accel added to offset for stronger initial launch accel
     hasLaunched = False
     ACC_WINDOW = 50                  # Range of values to apply rolling average in 'acc_accumulator'
     x = [item[0] for item in acc_accumulator]
