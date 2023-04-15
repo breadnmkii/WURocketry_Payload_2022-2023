@@ -27,7 +27,7 @@ signal.signal(signal.SIGINT, abort_servo)
 
 def extend():
     lift_servo.set_speed(0.4)
-    timeout = 30 # TIMEOUT * 0.1 s
+    timeout = 20 # TIMEOUT * 0.1 s
     
     while(True):
         postion1 = get_angpos(lift_reader)
@@ -136,7 +136,8 @@ MARGIN = 2
 current = get_angpos(reader)
 def main():
     print("starting...")
-    set_zero()
+    extend()
+    # set_zero()
 
     time.sleep(1)
 

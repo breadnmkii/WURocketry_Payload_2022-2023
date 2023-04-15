@@ -3,7 +3,7 @@
 ################################################
 
 ### IMPORTS ###
-# from Avionics import config as avionics_config
+from Avionics import config as avionics_config
 from Motive import config as motive_config
 
 from Avionics import sensing
@@ -18,7 +18,6 @@ from enums import *
 import sys
 import re
 import signal
-import atexit
 
 
 
@@ -38,7 +37,7 @@ at index 8: 1 means BNO or BMP initialization fails -- hardware fault
 sys_flags = System_Flags(Stage.PRELAUNCH, Movement.NOT_MOVING, Flight_Direction.INDETERMINENT, Verticality.NOT_UPRIGHT, Separated.NOT_SEPARATED, Deployed.NOT_DEPLOYED, Warn_Heat.NOMINAL, Warn_Camera.NOMINAL, Warn_Avionics.NOMINAL, Warn_Motive.NOMINAL)
 
 
-APRS_LOG_PATH = "./APRS_log.log"    # APRS Log File Path
+APRS_LOG_PATH = "/home/pi/WURocketry_Payload_2022-2023/main/APRS_log.log"    # APRS Log File Path
 CALLSIGN = "KQ4CTL-6"               # Nasa's callsign
 
 ### PAYLOAD ROUTINE FUNCTION ###
@@ -126,8 +125,8 @@ def update_system_flags(is_upright, heat, bmp_values_status, has_launched, is_st
         sys_flags.STAGE_INFO = Stage.LANDED
 
 # Deployment
-SEPARATION_TIME = 75   # Seconds
-RETRACT_TIME = 50
+SEPARATION_TIME = 82   # Seconds
+RETRACT_TIME = 70
 #motor, solenoids = motive_config.electromotives_config()
 
 ### FAILSAFE ABORT ###
@@ -144,11 +143,6 @@ def deployRoutine(motor, solenoids):
      
     ##### RETENTION RELEASE PHASE
     #The soleonid will not retract in if it detects movement
-    current_time = datetime.datetime.now()
-    message = 'releasing selenoid'
-    packet = f'{current_time} {message}'
-    telemetry.transmit_deploy_status(packet)
-
     print("Releasing solenoids...")
     # while (sys_flags.MOVEMENT == Movement.MOVING): 
     #     print("wait stable...")
@@ -159,11 +153,6 @@ def deployRoutine(motor, solenoids):
 
     print("Released solenoids!")
     time.sleep(3)
-
-    current_time = datetime.datetime.now()
-    message = 'selenoid released, separating bay'
-    packet = f'{current_time} {message}'
-    telemetry.transmit_deploy_status(packet)
 
     # Release all solenoids in retraction
     solenoids.throttle = 0
@@ -181,12 +170,7 @@ def deployRoutine(motor, solenoids):
     
     print("Separated!")
     time.sleep(0.5)
-
-    current_time = datetime.datetime.now()
-    message = 'selenoid separated, retract racks'
-    packet = f'{current_time} {message}'
-    telemetry.transmit_deploy_status(packet)
-
+    
     print(f"Retracting racks for {RETRACT_TIME}")
     motor.throttle = -1
     time.sleep(RETRACT_TIME)
@@ -204,12 +188,13 @@ def deployRoutine(motor, solenoids):
     # while((sys_flags.VERTICALITY == Verticality.NOT_UPRIGHT) or (sys_flags.MOVEMENT == Movement.NOT_MOVING)):
     #     print("wait stable upright...")
     #     continue
+    time.sleep(2)
     print("Extending...")
     camarm.extend()
 
     print("Extended!")
     time.sleep(0.5)
-    camarm.setzero()
+    camarm.set_zero()
     
     sys_flags.DEPLOYED = Deployed.DEPLOYED
     
@@ -320,7 +305,7 @@ def main():
     """ INITIALIZATION PHASE """
     ### Generic global config
     # Set current flight stage to prelaunch
-    sys_flags.STAGE_INFO = Stage.MIDAIR      # TEMP HARDCODE TO LANDING
+    sys_flags.STAGE_INFO = Stage.PRELAUNCH
     midair_oneshot_transition = False
     landed_oneshot_transition = False
 
@@ -391,7 +376,7 @@ def test_main():
     print("Running test main...")
 
 
-    time.sleep(5)
+    time.sleep(3)
     """ Deploy routine test """
     deployRoutine(motor, solenoids)
 
@@ -406,6 +391,12 @@ def test_main():
     #  avionicRoutine()
     #  telemetryRoutine()
 
+    ''' v2'''
+    # while (True):
+    #     euler_buffer = sensing.read_euler_buffer()
+    #     is_upright = sensing.vertical(euler_buffer)
+    #     print(is_upright)
+
     """ FSM TEST """
     # currentState = fsm.State.WAIT
     # currRAFCO_S_idx = 0
@@ -414,15 +405,10 @@ def test_main():
     # sys_flags.STAGE_INFO = Stage.LANDED # Override to mission execution phase (to enable FSM routine)
     # APRS.begin_APRS_recieve(APRS_LOG_PATH)   # Begin APRS receiving process at specified file (comment out if APRS_log exists in main directory)
 
-    while (True):
-        euler_buffer = sensing.read_euler_buffer()
-        is_upright = sensing.vertical(euler_buffer)
-        print(is_upright)
-
 
 
 if __name__ == '__main__':
-    test_main()
+    main()
 
 
 
