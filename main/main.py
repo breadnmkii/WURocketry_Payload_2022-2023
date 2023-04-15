@@ -390,7 +390,9 @@ def test_main():
     # APRS.begin_APRS_recieve(APRS_LOG_PATH)   # Begin APRS receiving process at specified file (comment out if APRS_log exists in main directory)
 
     while (True):
-        avionicRoutine()
+        euler_buffer = sensing.read_euler_buffer()
+        is_upright = sensing.vertical(euler_buffer)
+        print(is_upright)
 
 
 
