@@ -1,9 +1,5 @@
 .DS_Store
-venvs
-imaging-venv
 __pycache__
-image_results
 .vscode
-*.txt
 nohup.out
 *.swp

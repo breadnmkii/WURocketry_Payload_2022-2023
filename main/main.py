@@ -7,10 +7,10 @@
 from Motive import config as motive_config
 
 # from Avionics import sensing
-from Control import fsm
+#from Control import fsm
 from Motive import camarm
-from Radio import APRS
-from Radio import telemetry
+#from Radio import APRS
+#from Radio import telemetry
 
 import time
 import datetime
@@ -137,10 +137,10 @@ def abort_motives(motor, solenoids):
 def deployRoutine(motor, solenoids):
 
 
-    current_time = datetime.datetime.now()
-    message = "releasing selenoid"
-    packet = f'{current_time} {message}'
-    telemetry.transmitData(packet)
+   # current_time = datetime.datetime.now()
+  #  message = "releasing selenoid"
+ #   packet = f'{current_time} {message}'
+#    telemetry.transmitData(packet)
 
     # Retract all solenoids in retention
     solenoids.throttle = 1
@@ -161,10 +161,10 @@ def deployRoutine(motor, solenoids):
     motor.throttle = 1 # Motorhat will separate forward once it's not moving
     time.sleep(SEPARATION_TIME) 
     motor.throttle = 0 # Stops separating
-    current_time = datetime.datetime.now()
-    message = "selenoid separated"
-    packet = f'{current_time} {message}'
-    telemetry.transmitData(packet)
+    #current_time = datetime.datetime.now()
+    #message = "selenoid separated"
+    #packet = f'{current_time} {message}'
+    #telemetry.transmitData(packet)
 
     # print("Separated!")
     time.sleep(0.5)
@@ -173,10 +173,10 @@ def deployRoutine(motor, solenoids):
     motor.throttle = -1
     time.sleep(RETRACT_TIME)
     motor.throttle = 0
-    current_time = datetime.datetime.now()
-    message = "within retracting"
-    packet = f'{current_time} {message}'
-    telemetry.transmitData(packet)
+    #current_time = datetime.datetime.now()
+    #message = "within retracting"
+    #packet = f'{current_time} {message}'
+    #telemetry.transmitData(packet)
 
     # print("Retracted!")
     time.sleep(0.5)
@@ -193,9 +193,9 @@ def deployRoutine(motor, solenoids):
     time.sleep(2)
     # print("Extending...")
     camarm.extend()
-    message = "extending arms"
-    packet = f'{current_time} {message}'
-    telemetry.transmitData(packet)
+    #message = "extending arms"
+    #packet = f'{current_time} {message}'
+    #telemetry.transmitData(packet)
 
     # print("Extended!")
     time.sleep(0.5)
@@ -380,8 +380,11 @@ def main():
 def test_main():
     print("Running test main...")
 
+    deployRoutine(motor, solenoids);
+
     """ FSM TEST """
-    currentState = fsm.State.WAIT
+    """
+     currentState = fsm.State.WAIT
     currRAFCO_S_idx = 0
     currRAFCO_idx = 0
 
@@ -393,7 +396,7 @@ def test_main():
         currentState = fsmUpdate[0]
         currRAFCO_S_idx = fsmUpdate[1]
         currRAFCO_idx = fsmUpdate[2]
-
+    """
 
 if __name__ == '__main__':
     test_main()

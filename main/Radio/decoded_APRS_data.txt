@@ -1,0 +1,9 @@
+Enabled demodulators: AFSK1200
+AFSK1200: fm KD9THD-7 to APDR16-0 via WIDE1-1,WIDE2-2 UI^ pid=F0
+:KD9THD-7 :A1 B2 C3 E4 F5 H6{16
+AFSK1200: fm KD9THD-7 to APDR16-0 via WIDE1-1,WIDE2-2 UI^ pid=F0
+:KD9THD-7 :This is a test for rocketry nasa student launch competition {17
+AFSK1200: fm KD9THD-7 to APDR16-0 via WIDE1-1,WIDE2-2 UI^ pid=F0
+:KD9THD-7 :A1{18
+AFSK1200: fm KD9THD-7 to APDR16-0 via WIDE1-1,WIDE2-2 UI^ pid=F0
+:KD9THD-7 :ack18

@@ -1,0 +1,79 @@
+Metadata-Version: 2.1
+Name: mathlib
+Version: 0.4.0
+Summary: A pure-python maths library
+Home-page: https://github.com/spapanik/mathlib
+License: LGPL-3.0+
+Keywords: mathematics
+Author: Stephanos Kuma
+Author-email: stephanos@kuma.ai
+Requires-Python: >=3.7.0,<4.0.0
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Topic :: Scientific/Engineering :: Mathematics
+Project-URL: Repository, https://github.com/spapanik/mathlib
+Description-Content-Type: text/x-rst
+
+====================================
+mathlib: a pure python maths library
+====================================
+
+.. image:: https://github.com/spapanik/mathlib/actions/workflows/build.yml/badge.svg
+  :alt: Build
+  :target: https://github.com/spapanik/mathlib/actions/workflows/build.yml
+.. image:: https://img.shields.io/lgtm/alerts/g/spapanik/mathlib.svg
+  :alt: Total alerts
+  :target: https://lgtm.com/projects/g/spapanik/mathlib/alerts/
+.. image:: https://img.shields.io/github/license/spapanik/mathlib
+  :alt: License
+  :target: https://github.com/spapanik/mathlib/blob/main/LICENSE.txt
+.. image:: https://img.shields.io/pypi/v/mathlib
+  :alt: PyPI
+  :target: https://pypi.org/project/mathlib
+.. image:: https://pepy.tech/badge/mathlib
+  :alt: Downloads
+  :target: https://pepy.tech/project/mathlib
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+  :alt: Code style
+  :target: https://github.com/psf/black
+
+``mathlib`` is a maths library written in pure python, so that it can be used
+
+In a nutshell
+-------------
+
+Installation
+^^^^^^^^^^^^
+
+The easiest way is to use `poetry`_ to manage your dependencies and add *mathlib* to them.
+
+.. code-block:: toml
+
+    [tool.poetry.dependencies]
+    mathlib = "^0.4.0"
+
+Usage
+^^^^^
+
+``mathlib`` mainly offers some number theoretic functions.
+
+
+Links
+-----
+
+- `Documentation`_
+- `Changelog`_
+
+
+.. _poetry: https://python-poetry.org/
+.. _Changelog: https://github.com/spapanik/mathlib/blob/main/CHANGELOG.rst
+.. _Documentation: https://mathlib.readthedocs.io/en/latest/
+

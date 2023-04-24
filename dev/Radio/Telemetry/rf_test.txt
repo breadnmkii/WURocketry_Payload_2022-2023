@@ -1,0 +1,2 @@
+Collection started: 2023-03-30 09:00:05.221606
+RFM96W setup failed! No telemetry logged
